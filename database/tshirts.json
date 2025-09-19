@@ -1,0 +1,90 @@
+[
+  {
+    "title": "Mens Premium Blank Full Sleeve T-Shirt - Lavenderash",
+    "description": "Regular fit, Crew Neck Mid-weight, 5.16 oz/yd2 (~175 GSM)",
+    "price": 685,
+    "discount": 10,
+    "ability": [
+      {
+        "_id": { "$oid": "64b8b9f59f4e9a1234567897" },
+        "title": "Ringspum Combed Compact 100% Cotton, Organic"
+      },
+      {
+        "_id": { "$oid": "64b8b9f59f4e9a1234567896" },
+        "title": "Fabric Color: Reactive Dye, Enzyme and Silicon washed"
+      },
+      {
+        "_id": { "$oid": "64b8b9f59f4e9a1234567894" },
+        "title": "Preshurnk to minimize shrinkage"
+      }
+    ],
+    "user": { "$oid": "672e0ff152ec89e3c44cddff" },
+    "thumbnail": "https://i.ibb.co.com/Y3rRX6w/image.png",
+    "gallery": ["https://i.ibb.co.com/D8h4pT2/image.png"],
+    "stock": 50,
+    "category": "Tshirt"
+  },
+  {
+    "title": "Sample Product 2",
+    "description": "A description of the sample product 2",
+    "price": 89.99,
+    "discount": 5,
+    "ability": [
+      { "_id": { "$oid": "64b8b9f59f4e9a1234567890" }, "title": "Ability 1" },
+      { "_id": { "$oid": "64b8b9f59f4e9a1234567891" }, "title": "Ability 2" }
+    ],
+    "user": { "$oid": "64b8b9f59f4e9a1234567893" },
+    "thumbnail": "https://i.ibb.co.com/PcnKS20/638741f4b738e-square.jpg",
+    "gallery": [],
+    "stock": 30,
+    "category": "Hoodie"
+  },
+  {
+    "title": "Sample Product 3",
+    "description": "A description of the sample product 3",
+    "price": 120.0,
+    "discount": 15,
+    "ability": [
+      { "_id": { "$oid": "64b8b9f59f4e9a1234567890" }, "title": "Ability 1" },
+      { "_id": { "$oid": "64b8b9f59f4e9a1234567891" }, "title": "Ability 2" }
+    ],
+    "user": { "$oid": "64b8b9f59f4e9a1234567894" },
+    "thumbnail": "https://i.ibb.co.com/KWLJtBn/image.png",
+    "gallery": [],
+    "stock": 75,
+    "category": "Switter"
+  },
+  {
+    "title": "Sample Product 4",
+    "description": "A description of the sample product 4",
+    "price": 79.99,
+    "discount": 20,
+    "ability": [
+      { "_id": { "$oid": "64b8b9f59f4e9a1234567890" }, "title": "Ability 1" },
+      { "_id": { "$oid": "64b8b9f59f4e9a1234567891" }, "title": "Ability 2" }
+    ],
+    "user": { "$oid": "64b8b9f59f4e9a1234567895" },
+    "thumbnail": "https://i.ibb.co.com/GcKHLJz/image.png",
+    "gallery": [],
+    "stock": 80,
+    "category": "Tshirt"
+  },
+  {
+    "title": "Sample Product 5",
+    "description": "A description of the sample product 5",
+    "price": 110.0,
+    "discount": 10,
+    "ability": [
+      { "_id": { "$oid": "64b8b9f59f4e9a1234567890" }, "title": "Ability 1" },
+      { "_id": { "$oid": "64b8b9f59f4e9a1234567891" }, "title": "Ability 2" }
+    ],
+    "user": { "$oid": "64b8b9f59f4e9a1234567896" },
+    "thumbnail": "https://i.ibb.co.com/DWyckD7/image.png",
+    "gallery": [
+      "https://i.ibb.co.com/mCVrkhQ/image.png",
+      "https://i.ibb.co.com/3mwb2Vj/image.png"
+    ],
+    "stock": 100,
+    "category": "Hoodie"
+  }
+]

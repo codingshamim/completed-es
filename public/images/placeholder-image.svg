@@ -1,0 +1,55 @@
+<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+  <!-- Black Background -->
+  <rect width="100%" height="100%" fill="#000000"/>
+  
+  <!-- Subtle Grid Pattern -->
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1a1a1a" stroke-width="0.5" opacity="0.3"/>
+    </pattern>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#grid)"/>
+  
+  <!-- Central Circle -->
+  <circle cx="200" cy="200" r="80" fill="none" stroke="#333333" stroke-width="2" opacity="0.6"/>
+  <circle cx="200" cy="200" r="60" fill="none" stroke="#404040" stroke-width="1" opacity="0.4"/>
+  
+  <!-- T-Shirt Icon -->
+  <g transform="translate(200, 200)">
+    <!-- Shirt Body -->
+    <path d="M -30 -10 L -30 40 L 30 40 L 30 -10 L 25 -15 L 25 -25 L 15 -30 L -15 -30 L -25 -25 L -25 -15 Z" 
+          fill="none" stroke="#666666" stroke-width="2" stroke-linejoin="round" opacity="0.8"/>
+    
+    <!-- Sleeves -->
+    <path d="M -25 -15 L -40 -10 L -40 10 L -30 15" 
+          fill="none" stroke="#666666" stroke-width="2" stroke-linejoin="round" opacity="0.8"/>
+    <path d="M 25 -15 L 40 -10 L 40 10 L 30 15" 
+          fill="none" stroke="#666666" stroke-width="2" stroke-linejoin="round" opacity="0.8"/>
+    
+    <!-- Collar -->
+    <path d="M -15 -30 Q 0 -35 15 -30" 
+          fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
+  </g>
+  
+  <!-- Decorative Elements -->
+  <circle cx="120" cy="120" r="3" fill="#333333" opacity="0.4"/>
+  <circle cx="280" cy="120" r="2" fill="#333333" opacity="0.3"/>
+  <circle cx="120" cy="280" r="2" fill="#333333" opacity="0.3"/>
+  <circle cx="280" cy="280" r="3" fill="#333333" opacity="0.4"/>
+  
+  <!-- Corner Accents -->
+  <path d="M 20 20 L 40 20 L 40 40" fill="none" stroke="#444444" stroke-width="1" opacity="0.5"/>
+  <path d="M 380 20 L 360 20 L 360 40" fill="none" stroke="#444444" stroke-width="1" opacity="0.5"/>
+  <path d="M 20 380 L 40 380 L 40 360" fill="none" stroke="#444444" stroke-width="1" opacity="0.5"/>
+  <path d="M 380 380 L 360 380 L 360 360" fill="none" stroke="#444444" stroke-width="1" opacity="0.5"/>
+  
+  <!-- Text -->
+  <text x="200" y="320" text-anchor="middle" fill="#555555" font-family="Arial, sans-serif" font-size="14" font-weight="500" opacity="0.7">
+    Product Image
+  </text>
+  
+  <!-- Subtle Brand Element -->
+  <circle cx="200" cy="80" r="2" fill="#666666" opacity="0.5"/>
+  <circle cx="190" cy="80" r="1" fill="#555555" opacity="0.4"/>
+  <circle cx="210" cy="80" r="1" fill="#555555" opacity="0.4"/>
+</svg>

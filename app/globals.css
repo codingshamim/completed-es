@@ -1,0 +1,208 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Asimovian&display=swap");
+@font-face {
+  font-family: "logo-font";
+  src: url("./fonts/es-logo.ttf");
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+.logo-font {
+  font-family: "logo-font";
+}
+.logo-es {
+  font-family: "Asimovian", sans-serif;
+}
+
+* {
+  font-family: "Montserrat", sans-serif;
+}
+
+.nav-item {
+  width: 30px; /* Default width */
+  transition: width 0.3s ease-in-out; /* Add transition effect */
+}
+
+.nav-item:hover {
+  @apply w-[40px] h-[40px] rounded-full bg-secondary;
+}
+
+/* Tooltip styling */
+
+.nav-item label {
+  display: none; /* Hide the tooltip by default */
+}
+.cart-item label {
+  display: flex !important; /* Hide the tooltip by default */
+}
+/* Show the tooltip on hover */
+.nav-item:hover label {
+  display: block;
+}
+
+.custom-border {
+  border-width: 0.5px;
+}
+.nav-border {
+  border: 1px solid #374151;
+}
+.custom-border:focus {
+  border-color: #fff;
+}
+.btn {
+  @apply py-[2px] px-4 bg-white text-black text-sm rounded-sm;
+}
+.new-btn {
+  @apply py-[7px]  hover:bg-[#e0e0e0] flex items-center gap-2 px-6 font-medium active:scale-[98%] transition-all duration-300 rounded-md bg-white text-black text-sm;
+}
+.variable-btn {
+  @apply py-[2px] px-4  text-sm rounded-sm;
+}
+.new-variable-btn {
+  @apply py-[7px]  hover:bg-secondary flex items-center gap-2 px-6 font-medium active:scale-[98%] transition-all duration-300 rounded-md  text-white text-sm;
+}
+
+.btn:hover {
+  background-color: #cacaca;
+}
+.form-control input,
+.form-control textarea,
+.form-control select {
+  @apply py-[4px] px-8 bg-transparent nav-border outline-none focus:border-white mt-2;
+}
+.form-control .svg {
+  @apply absolute top-[41px] left-2;
+}
+.form-control .text-area-svg {
+  @apply absolute !top-[41px] left-2;
+}
+.form-control {
+  @apply flex flex-col mt-4 relative;
+}
+.anim-btn {
+  @apply py-[2px] px-4  text-sm rounded-sm;
+}
+.anim {
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.anim-bg {
+  @apply animate-pulse rounded-sm;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Hide the increment and decrement buttons on Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.33);
+  }
+  40%,
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.2);
+  }
+}
+
+@keyframes checkmark {
+  0% {
+    stroke-dashoffset: 100;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.float-animation {
+  animation: float 3s ease-in-out infinite;
+}
+.pulse-ring {
+  animation: pulse-ring 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+}
+.checkmark-path {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: checkmark 1s ease-in-out forwards;
+  animation-delay: 0.5s;
+}
+
+@keyframes gradient-shift {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.gradient-animation {
+  background: linear-gradient(-45deg, #10b981, #3b82f6, #8b5cf6, #ef4444);
+  background-size: 400% 400%;
+  animation: gradient-shift 8s ease infinite;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.glass-effect {
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.progress-step {
+  transition: all 0.3s ease;
+}
+
+.progress-step.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  transform: scale(1.1);
+}
+
+.progress-line {
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+}
+
+.hover-glow:hover {
+  box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+}
+
+::selection {
+  background-color: #fff;
+  color: #000;
+}

@@ -1,15 +1,15 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Asimovian&display=swap");
 @font-face {
-  font-family: "logo-font";
-  src: url("./fonts/es-logo.ttf");
+  font-family: "EsLogo";
+  src: url("/fonts/es-logo.ttf");
 }
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 .logo-font {
-  font-family: "logo-font";
+  font-family: "EsLogo" !important;
 }
 .logo-es {
   font-family: "Asimovian", sans-serif;
@@ -54,7 +54,7 @@
   @apply py-[2px] px-4 bg-white text-black text-sm rounded-sm;
 }
 .new-btn {
-  @apply py-[7px]  hover:bg-[#e0e0e0] flex items-center gap-2 px-6 font-medium active:scale-[98%] transition-all duration-300 rounded-md bg-white text-black text-sm;
+  @apply py-[7px]  hover:bg-[#e0e0e0] flex items-center gap-2 px-4 md:px-6 font-medium active:scale-[98%] transition-all duration-300 rounded-md bg-white text-black text-sm;
 }
 .variable-btn {
   @apply py-[2px] px-4  text-sm rounded-sm;

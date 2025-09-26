@@ -70,7 +70,7 @@ export default function InfiniteScrollProducts({ query = "", filter = {} }) {
       fetchProducts(1);
       isInitialMount.current = false;
     }
-  }, [query, filter]); // Only depend on query and filter
+  }, [query, filter, fetchProducts]); // Only depend on query and filter
 
   // Intersection observer effect
   useEffect(() => {
@@ -98,7 +98,7 @@ export default function InfiniteScrollProducts({ query = "", filter = {} }) {
         observer.unobserve(currentRef);
       }
     };
-  }, [page, hasMore, loading]); // Simple dependencies
+  }, [page, hasMore, loading, fetchProducts]); // Simple dependencies
 
   return (
     <>

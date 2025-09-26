@@ -17,7 +17,7 @@ export default auth(async (req) => {
   const { nextUrl } = req;
   const isAuthenticated = !!req.auth;
   const currentPath = nextUrl.pathname;
-  console.log(isAuthenticated);
+
   const isPublicRoute =
     PUBLIC_ROUTES.some((route) => currentPath.startsWith(route)) ||
     currentPath === ROOT;

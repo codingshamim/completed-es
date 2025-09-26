@@ -1,7 +1,3 @@
-// ===== MAIN CATEGORIES PAGE =====
-// app/creator/categories/page.js
-import { Search } from "lucide-react";
-
 import { getCategories } from "@/app/actions/category.action";
 import CategoryModal from "./_component/CategoryModal";
 import CreateButton from "./_component/CreateButton";

@@ -1,32 +1,40 @@
 import { auth } from "@/auth";
 import CommonProviders from "./src/providers/CommonProviders";
 import "./globals.css";
+import siteSettings, { siteAddres } from "@/site-setting";
 
 export const metadata = {
   // Basic SEO
   title:
-    "Esvibes - Premium T-Shirts with Unique Designs | Shop Stylish Apparel",
+    siteSettings?.siteTitle ||
+    "Esvibes | Premium T-Shirts & Unique Apparel Designs",
   description:
+    siteSettings?.siteDescription ||
     "Discover Esvibes' collection of premium T-shirts featuring unique, trendy designs. High-quality materials, comfortable fit, and original artwork. Free shipping on orders over $50. Shop now!",
+  // Open Graph image
+  image:
+    siteSettings?.openGraph?.images?.[0]?.url ||
+    "https://i.ibb.co.com/LtjVBLq/image.png",
 
   // Keywords for better discoverability
-  keywords: [
+  keywords: siteSettings?.siteKeywords || [
     "premium t-shirts",
     "unique t-shirt designs",
-    "stylish apparel",
-    "comfortable t-shirts",
-    "trendy clothing",
-    "original artwork shirts",
-    "quality fashion",
-    "casual wear",
-    "graphic tees",
-    "custom designs",
   ],
 
   // Author and publisher info
-  authors: [{ name: "Esvibes Team" }],
-  creator: "Esvibes",
-  publisher: "Esvibes",
+  authors: siteSettings?.authors || [
+    {
+      name: "Md Shamim Mia",
+      role: "CEO & Founder",
+      brand: "Esvibes",
+      description:
+        "Full Stack Developer specializing in JavaScript and Next.js, founder of Esvibes, a premium t-shirt and stylish apparel brand.",
+      email: "contact@esvibes.com",
+    },
+  ],
+  creator: siteSettings?.creator || "Esvibes",
+  publisher: siteSettings?.publisher || "Esvibes",
 
   // Robots and indexing
   robots: {
@@ -42,78 +50,22 @@ export const metadata = {
   },
 
   // Open Graph (Facebook, LinkedIn, etc.)
-  openGraph: {
-    type: "website",
-    locale: "en_US",
-    url: "https://esvibes.com",
-    title: "Esvibes - Premium T-Shirts with Unique Designs",
-    description:
-      "Discover premium T-shirts with unique designs at Esvibes. High-quality materials, comfortable fit, and original artwork. Shop stylish apparel now!",
-    siteName: "Esvibes",
-    images: [
-      {
-        url: "https://i.ibb.co.com/LtjVBLq/image.png",
-        width: 1200,
-        height: 600,
-        alt: "Esvibes - Premium T-Shirts Collection",
-        type: "image/png",
-      },
-      {
-        url: "https://esvibes.com/og-square.jpg", // Add a square image for better compatibility
-        width: 600,
-        height: 600,
-        alt: "Esvibes Logo",
-        type: "image/jpeg",
-      },
-    ],
-  },
-
-  // Twitter Card
-  twitter: {
-    card: "summary_large_image",
-    site: "@esvibes", // Replace with your actual Twitter handle
-    creator: "@esvibes",
-    title: "Esvibes - Premium T-Shirts with Unique Designs",
-    description:
-      "Discover premium T-shirts with unique designs. High-quality materials, comfortable fit, and original artwork. Shop now!",
-    images: ["https://i.ibb.co.com/LtjVBLq/image.png"],
-  },
-
-  // Verification tags (add your actual verification codes)
-  verification: {
-    google: "your-google-site-verification-code",
-    yandex: "your-yandex-verification-code",
-    yahoo: "your-yahoo-verification-code",
-    other: {
-      me: ["your@email.com", "https://esvibes.com"],
-    },
-  },
+  openGraph: siteSettings?.openGraph,
 
   // App links for mobile
-  appLinks: {
-    web: {
-      url: "https://esvibes.com",
-    },
-  },
 
   // Additional metadata
-  category: "E-commerce",
-  classification: "Fashion & Apparel",
+  category: siteSettings?.siteCategory,
+  classification: siteSettings?.classification,
 
   // Structured data hints
-  other: {
-    "business:contact_data:street_address": "Your Street Address",
-    "business:contact_data:locality": "Your City",
-    "business:contact_data:region": "Your State",
-    "business:contact_data:postal_code": "Your ZIP",
-    "business:contact_data:country_name": "Your Country",
-  },
+  other: siteSettings?.other,
 
   // Canonical URL
   alternates: {
-    canonical: "https://esvibes.com",
+    canonical: siteAddres,
     languages: {
-      "en-US": "https://esvibes.com",
+      "en-US": siteAddres,
     },
   },
 
@@ -126,12 +78,6 @@ export const metadata = {
     ],
     apple: [
       { url: "/apple-icon-180x180.png", sizes: "180x180", type: "image/png" },
-    ],
-    other: [
-      {
-        rel: "apple-touch-icon-precomposed",
-        url: "/apple-touch-icon-precomposed.png",
-      },
     ],
   },
 
@@ -165,43 +111,6 @@ export default async function RootLayout({ children }) {
         />
 
         {/* JSON-LD Structured Data */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "ClothingStore",
-              name: "Esvibes",
-              description:
-                "Premium T-shirts with unique designs, high-quality materials and comfortable fit.",
-              url: "https://esvibes.com",
-              logo: "https://esvibes.com/logo.png",
-              image: "https://i.ibb.co.com/LtjVBLq/image.png",
-              sameAs: [
-                "https://facebook.com/esvibes",
-                "https://instagram.com/esvibes",
-                "https://twitter.com/esvibes",
-              ],
-              address: {
-                "@type": "PostalAddress",
-                streetAddress: "Your Street Address",
-                addressLocality: "Your City",
-                addressRegion: "Your State",
-                postalCode: "Your ZIP",
-                addressCountry: "US",
-              },
-              contactPoint: {
-                "@type": "ContactPoint",
-                telephone: "+1-XXX-XXX-XXXX",
-                contactType: "Customer Service",
-                availableLanguage: "English",
-              },
-              paymentAccepted: "Credit Card, PayPal, Apple Pay, Google Pay",
-              priceRange: "$",
-              openingHours: "Mo-Su 00:00-23:59",
-            }),
-          }}
-        />
       </head>
       <body className="bg-[#000] text-white">
         <CommonProviders authenticatedUser={user?.user.id || null}>

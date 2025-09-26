@@ -13,7 +13,6 @@ import delteCartItemById from "../models/delteCartItemById";
 import getDiscount from "../queries/getDiscount";
 import placeOrderQuery from "../queries/placeOrderQuery";
 import updateCartQuery from "../queries/updateCartQuery";
-import AddCommentQuery from "../queries/AddCommentQuery";
 
 export async function createUserAction(userObject) {
   try {
@@ -196,6 +195,7 @@ export async function addTocartAction(cartInfo) {
       cartInfo?.quantity,
       cartInfo?.size
     );
+
     revalidatePath("/");
     return response;
   } catch (err) {

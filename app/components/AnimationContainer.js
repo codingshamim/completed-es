@@ -1,28 +1,32 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 export default function AnimationContainer({ children }) {
-  const [isInView, setIsInView] = useState(false);
   const animRef = useRef(null);
 
   useEffect(() => {
+    const el = animRef.current;
+    if (!el) return;
+
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setIsInView(entry.isIntersecting); // Update state based on visibility
+        if (entry.isIntersecting) {
+          el.style.opacity = "1";
+          el.style.transform = "translateY(-8px)";
+          el.style.filter = "blur(0px)";
+        } else {
+          el.style.opacity = "0.5";
+          el.style.transform = "translateY(20px)";
+          el.style.filter = "blur(2px)";
+        }
       },
       { threshold: 0.1 }
     );
 
-    const currentRef = animRef.current;
-
-    if (currentRef) {
-      observer.observe(currentRef);
-    }
+    observer.observe(el);
 
     return () => {
-      if (currentRef) {
-        observer.unobserve(currentRef);
-      }
+      observer.unobserve(el);
     };
   }, []);
 
@@ -30,10 +34,11 @@ export default function AnimationContainer({ children }) {
     <div
       ref={animRef}
       style={{
-        opacity: isInView ? 1 : 0.5,
-        filter: isInView ? "blur(0px)" : "blur(2px)",
-        transform: `translateY(${isInView ? -8 : 20}px)`,
-        transition: "opacity 0.5s, filter 0.5s, transform 0.5s",
+        opacity: 0.5,
+        transform: "translateY(20px)",
+        filter: "blur(2px)",
+        transition: "opacity 0.5s, transform 0.5s, filter 0.5s",
+        willChange: "opacity, transform, filter", // improves GPU performance
       }}
     >
       {children}

@@ -65,6 +65,7 @@ const getProgressSteps = (
       return [
         {
           title: "Order Confirmed",
+          shortTitle: "Confirmed",
           completed: true,
           timestamp: orderDate,
           icon: "✓",
@@ -72,6 +73,7 @@ const getProgressSteps = (
         },
         {
           title: "Order Cancelled",
+          shortTitle: "Cancelled",
           completed: true,
           cancelled: true,
           timestamp: cancelDate || "Cancelled",
@@ -80,6 +82,7 @@ const getProgressSteps = (
         },
         {
           title: "Refund Processing",
+          shortTitle: "Refund",
           completed: paymentLower === "refunded",
           cancelled: true,
           timestamp: paymentLower === "refunded" ? "Completed" : "Processing",
@@ -93,6 +96,7 @@ const getProgressSteps = (
     return [
       {
         title: "Order Confirmed",
+        shortTitle: "Confirmed",
         completed: true,
         timestamp: orderDate,
         icon: "✓",
@@ -100,6 +104,7 @@ const getProgressSteps = (
       },
       {
         title: "Processing Started",
+        shortTitle: "Processing",
         completed:
           paymentLower === "confirmed" ||
           paymentLower === "paid" ||
@@ -120,6 +125,7 @@ const getProgressSteps = (
       },
       {
         title: "Shipped",
+        shortTitle: "Shipped",
         subtitle: deliveredLower === "shipped" ? "Out for Delivery" : undefined,
         completed:
           deliveredLower === "shipped" || deliveredLower === "delivered",
@@ -138,6 +144,7 @@ const getProgressSteps = (
       },
       {
         title: "Delivered",
+        shortTitle: "Delivered",
         completed: deliveredLower === "delivered",
         timestamp: deliveredLower === "delivered" ? "Completed" : "Pending",
         icon: deliveredLower === "delivered" ? "✓" : "4",
@@ -149,6 +156,7 @@ const getProgressSteps = (
     return [
       {
         title: "Order Confirmed",
+        shortTitle: "Confirmed",
         completed: true,
         timestamp: "Aug 15, 2:30 PM",
         icon: "✓",
@@ -156,6 +164,7 @@ const getProgressSteps = (
       },
       {
         title: "Processing Started",
+        shortTitle: "Processing",
         completed: true,
         timestamp: "Aug 15, 4:45 PM",
         icon: "✓",
@@ -163,6 +172,7 @@ const getProgressSteps = (
       },
       {
         title: "Shipped",
+        shortTitle: "Shipped",
         subtitle: "Out for Delivery",
         completed: false,
         timestamp: "Pending",
@@ -171,6 +181,7 @@ const getProgressSteps = (
       },
       {
         title: "Delivered",
+        shortTitle: "Delivered",
         completed: false,
         timestamp: "Pending",
         icon: "4",
@@ -209,14 +220,16 @@ const getCurrentStatus = (delivered, paymentStatus) => {
 
 // Error component
 const OrderNotFound = () => (
-  <div className="space-y-8 mt-6">
-    <div className="bg-white/[0.02] backdrop-blur-sm border border-red-500/20 rounded-xl p-8 text-center">
-      <div className="text-red-400 text-5xl mb-4">⚠️</div>
-      <h2 className="text-2xl font-bold text-white mb-4">Order Not Found</h2>
-      <p className="text-gray-400 mb-6">
+  <div className="space-y-4 sm:space-y-8 mt-4 sm:mt-6 px-4 sm:px-0">
+    <div className="bg-white/[0.02] backdrop-blur-sm border border-red-500/20 rounded-xl p-4 sm:p-8 text-center">
+      <div className="text-red-400 text-3xl sm:text-5xl mb-2 sm:mb-4">⚠️</div>
+      <h2 className="text-lg sm:text-2xl font-bold text-white mb-2 sm:mb-4">
+        Order Not Found
+      </h2>
+      <p className="text-sm sm:text-base text-gray-400 mb-4 sm:mb-6">
         The order you're looking for doesn't exist or may have been removed.
       </p>
-      <button className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all">
+      <button className="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all">
         Back to Orders
       </button>
     </div>
@@ -286,15 +299,19 @@ export default async function OrderDetails({ params }) {
     // Handle empty orders
     if (orders.length === 0) {
       return (
-        <div className="space-y-8 mt-6">
-          <div className="bg-white/[0.02] backdrop-blur-sm border border-yellow-500/20 rounded-xl p-8 text-center">
-            <div className="text-yellow-400 text-5xl mb-4">📦</div>
-            <h2 className="text-2xl font-bold text-white mb-4">Empty Order</h2>
-            <p className="text-gray-400 mb-6">
+        <div className="space-y-4 sm:space-y-8 mt-4 sm:mt-6 px-4 sm:px-0">
+          <div className="bg-white/[0.02] backdrop-blur-sm border border-yellow-500/20 rounded-xl p-4 sm:p-8 text-center">
+            <div className="text-yellow-400 text-3xl sm:text-5xl mb-2 sm:mb-4">
+              📦
+            </div>
+            <h2 className="text-lg sm:text-2xl font-bold text-white mb-2 sm:mb-4">
+              Empty Order
+            </h2>
+            <p className="text-sm sm:text-base text-gray-400 mb-4 sm:mb-6">
               This order exists but contains no items.
             </p>
-            <div className="text-sm text-gray-500">
-              <p>Order ID: {orderId_display}</p>
+            <div className="text-xs sm:text-sm text-gray-500 space-y-1">
+              <p className="break-all">Order ID: {orderId_display}</p>
               <p>Created: {formatDate(createdAt)}</p>
             </div>
           </div>
@@ -303,35 +320,38 @@ export default async function OrderDetails({ params }) {
     }
 
     return (
-      <div className="space-y-8 mt-6">
+      <div className="space-y-4 sm:space-y-8 mt-4 sm:mt-6 px-4 sm:px-0">
         {/* Order Header */}
         <div
-          className={`bg-white/[0.02] backdrop-blur-sm border rounded-xl p-6 hover:shadow-lg transition-all duration-300 ${
+          className={`bg-white/[0.02] backdrop-blur-sm border rounded-xl p-4 sm:p-6 hover:shadow-lg transition-all duration-300 ${
             isCancelled ? "border-red-500/30 bg-red-500/5" : "border-white/10"
           }`}
         >
-          <div className="flex justify-between items-start mb-6">
-            <div>
-              <div className="flex items-center gap-3 mb-2">
-                <h2 className="text-2xl font-bold text-white">
+          {/* Header Section */}
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-6">
+            <div className="min-w-0 flex-1">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-2">
+                <h2 className="text-xl sm:text-2xl font-bold text-white break-all">
                   Order #{orderId_display.slice(-12)}
                 </h2>
                 {isCancelled && (
-                  <span className="px-3 py-1 bg-red-500/20 border border-red-500/40 text-red-400 text-sm font-medium rounded-full">
+                  <span className="self-start sm:self-auto px-2 sm:px-3 py-1 bg-red-500/20 border border-red-500/40 text-red-400 text-xs sm:text-sm font-medium rounded-full whitespace-nowrap">
                     CANCELLED
                   </span>
                 )}
               </div>
-              <p className="text-gray-400">Placed on {formatDate(createdAt)}</p>
+              <p className="text-sm sm:text-base text-gray-400">
+                Placed on {formatDate(createdAt)}
+              </p>
               {isCancelled && cancelledAt && (
-                <p className="text-red-400 text-sm">
+                <p className="text-red-400 text-xs sm:text-sm">
                   Cancelled on {formatDate(cancelledAt)}
                 </p>
               )}
             </div>
-            <div className="text-right">
+            <div className="text-left sm:text-right shrink-0">
               <div
-                className={`text-2xl font-bold ${
+                className={`text-xl sm:text-2xl font-bold ${
                   isCancelled ? "text-red-400" : "text-green-500"
                 }`}
               >
@@ -342,78 +362,139 @@ export default async function OrderDetails({ params }) {
                 )}
                 {!isCancelled && mainPrice(total.toFixed(2))}
               </div>
-              <div className="text-sm text-gray-400">
+              <div className="text-xs sm:text-sm text-gray-400">
                 {isCancelled ? "Cancelled Amount" : "Total Amount"}
               </div>
             </div>
           </div>
 
-          {/* Progress Tracker */}
-          <div className="relative mb-8">
-            <div className="flex justify-between items-center relative z-10">
-              {progressSteps.map((step, index) => (
-                <div key={index} className="flex flex-col items-center">
-                  <div
-                    className={`w-12 h-12 rounded-full flex items-center justify-center font-bold mb-2 transition-all duration-300 ${
-                      step.cancelled
-                        ? step.completed
-                          ? "bg-red-500 text-white transform scale-110"
-                          : step.status === "processing"
-                          ? "bg-yellow-500 text-white animate-pulse"
+          {/* Progress Tracker - Responsive Design */}
+          <div className="relative mb-6 sm:mb-8">
+            {/* Desktop Progress (4+ steps) */}
+            <div className="hidden sm:block">
+              <div className="flex justify-between items-center relative z-10">
+                {progressSteps.map((step, index) => (
+                  <div key={index} className="flex flex-col items-center">
+                    <div
+                      className={`w-10 lg:w-12 h-10 lg:h-12 rounded-full flex items-center justify-center font-bold mb-2 transition-all duration-300 ${
+                        step.cancelled
+                          ? step.completed
+                            ? "bg-red-500 text-white transform scale-110"
+                            : step.status === "processing"
+                            ? "bg-yellow-500 text-white animate-pulse"
+                            : "bg-gray-700 text-white"
+                          : step.completed
+                          ? "bg-green-500 text-white transform scale-110"
                           : "bg-gray-700 text-white"
-                        : step.completed
-                        ? "bg-green-500 text-white transform scale-110"
-                        : "bg-gray-700 text-white"
-                    }`}
-                  >
-                    {step.icon}
+                      }`}
+                    >
+                      <span className="text-sm lg:text-base">{step.icon}</span>
+                    </div>
+                    <div
+                      className={`text-xs lg:text-sm font-medium text-center max-w-20 lg:max-w-24 ${
+                        step.cancelled ? "text-red-300" : "text-white"
+                      }`}
+                    >
+                      <div className="leading-tight">{step.title}</div>
+                      {step.subtitle && (
+                        <div className="leading-tight">{step.subtitle}</div>
+                      )}
+                    </div>
+                    <div className="text-xs text-gray-500 text-center mt-1 max-w-20 lg:max-w-24">
+                      <span className="leading-tight">{step.timestamp}</span>
+                    </div>
                   </div>
-                  <div
-                    className={`text-sm font-medium text-center ${
-                      step.cancelled ? "text-red-300" : "text-white"
-                    }`}
-                  >
-                    <div>{step.title}</div>
-                    {step.subtitle && <div>{step.subtitle}</div>}
-                  </div>
-                  <div className="text-xs text-gray-500 text-center mt-1">
-                    {step.timestamp}
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
+              <div className="absolute top-5 lg:top-6 left-0 w-full h-0.5 bg-gray-700">
+                <div
+                  className={`h-full transition-all duration-500 ${
+                    isCancelled
+                      ? "bg-gradient-to-r from-red-600 to-red-400"
+                      : "bg-gradient-to-r from-purple-600 to-blue-600"
+                  }`}
+                  style={{
+                    width: `${
+                      (Math.max(
+                        0,
+                        progressSteps.filter((step) => step.completed).length -
+                          1
+                      ) /
+                        Math.max(1, progressSteps.length - 1)) *
+                      100
+                    }%`,
+                  }}
+                ></div>
+              </div>
             </div>
-            <div className="absolute top-6 left-0 w-full h-0.5 bg-gray-700">
-              <div
-                className={`h-full transition-all duration-500 ${
-                  isCancelled
-                    ? "bg-gradient-to-r from-red-600 to-red-400"
-                    : "bg-gradient-to-r from-purple-600 to-blue-600"
-                }`}
-                style={{
-                  width: `${
-                    (Math.max(
-                      0,
-                      progressSteps.filter((step) => step.completed).length - 1
-                    ) /
-                      Math.max(1, progressSteps.length - 1)) *
-                    100
-                  }%`,
-                }}
-              ></div>
+
+            {/* Mobile Progress (Vertical Layout) */}
+            <div className="block sm:hidden">
+              <div className="space-y-4">
+                {progressSteps.map((step, index) => (
+                  <div key={index} className="flex items-center space-x-4">
+                    <div className="relative">
+                      <div
+                        className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all duration-300 ${
+                          step.cancelled
+                            ? step.completed
+                              ? "bg-red-500 text-white"
+                              : step.status === "processing"
+                              ? "bg-yellow-500 text-white animate-pulse"
+                              : "bg-gray-700 text-white"
+                            : step.completed
+                            ? "bg-green-500 text-white"
+                            : "bg-gray-700 text-white"
+                        }`}
+                      >
+                        {step.icon}
+                      </div>
+                      {index < progressSteps.length - 1 && (
+                        <div className="absolute top-10 left-1/2 transform -translate-x-1/2 w-0.5 h-6 bg-gray-700">
+                          {step.completed && (
+                            <div
+                              className={`w-full transition-all duration-500 ${
+                                isCancelled
+                                  ? "bg-red-500"
+                                  : "bg-gradient-to-b from-purple-600 to-blue-600"
+                              } h-full`}
+                            ></div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div
+                        className={`font-medium ${
+                          step.cancelled ? "text-red-300" : "text-white"
+                        }`}
+                      >
+                        {step.title}
+                        {step.subtitle && (
+                          <span className="block text-sm">{step.subtitle}</span>
+                        )}
+                      </div>
+                      <div className="text-xs text-gray-500 mt-1">
+                        {step.timestamp}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
           {/* Current Status */}
           <div
-            className={`rounded-lg p-4 border ${
+            className={`rounded-lg p-3 sm:p-4 border ${
               isCancelled
                 ? "bg-red-900/30 border-red-700/50"
                 : "bg-gray-900/50 border-gray-700"
             }`}
           >
-            <div className="flex items-center space-x-3">
+            <div className="flex items-start sm:items-center space-x-3">
               <div
-                className={`w-3 h-3 rounded-full ${
+                className={`w-3 h-3 rounded-full mt-1 sm:mt-0 flex-shrink-0 ${
                   isCancelled
                     ? paymentStatus?.toLowerCase() === "refunded"
                       ? "bg-green-400"
@@ -425,8 +506,8 @@ export default async function OrderDetails({ params }) {
                     : "bg-yellow-400 animate-pulse"
                 }`}
               ></div>
-              <div>
-                <div className="font-medium text-white">
+              <div className="min-w-0 flex-1">
+                <div className="font-medium text-white text-sm sm:text-base">
                   {isCancelled
                     ? paymentStatus?.toLowerCase() === "refunded"
                       ? "Order Cancelled - Refunded"
@@ -439,7 +520,9 @@ export default async function OrderDetails({ params }) {
                     ? "Payment Pending"
                     : "Currently Processing"}
                 </div>
-                <div className="text-sm text-gray-400">{statusDescription}</div>
+                <div className="text-xs sm:text-sm text-gray-400 mt-1 leading-relaxed">
+                  {statusDescription}
+                </div>
               </div>
             </div>
           </div>
@@ -447,11 +530,11 @@ export default async function OrderDetails({ params }) {
 
         {/* Order Items */}
         <div
-          className={`bg-white/[0.02] backdrop-blur-sm border rounded-xl p-6 hover:shadow-lg transition-all duration-300 ${
+          className={`bg-white/[0.02] backdrop-blur-sm border rounded-xl p-4 sm:p-6 hover:shadow-lg transition-all duration-300 ${
             isCancelled ? "border-red-500/20 opacity-80" : "border-white/10"
           }`}
         >
-          <h3 className="text-xl font-bold mb-4 text-white">
+          <h3 className="text-lg sm:text-xl font-bold mb-4 text-white">
             Order Items{" "}
             {isCancelled && (
               <span className="text-red-400 text-sm font-normal">
@@ -459,7 +542,7 @@ export default async function OrderDetails({ params }) {
               </span>
             )}
           </h3>
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {orders.map((order) => (
               <div key={order._id} className={isCancelled ? "opacity-70" : ""}>
                 <OrderItem order={order} />
@@ -473,7 +556,7 @@ export default async function OrderDetails({ params }) {
           </div>
 
           {/* Order Summary */}
-          <div className="border-t border-gray-700 mt-6 pt-4">
+          <div className="border-t border-gray-700 mt-4 sm:mt-6 pt-4">
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">Subtotal:</span>
@@ -486,11 +569,11 @@ export default async function OrderDetails({ params }) {
                 </span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-400">
+                <span className="text-gray-400 break-words">
                   Shipping ({shippingOption.title || "Standard"}):
                 </span>
                 <span
-                  className={`${
+                  className={`flex-shrink-0 ml-2 ${
                     isCancelled ? "text-red-400 line-through" : "text-white"
                   }`}
                 >
@@ -507,7 +590,7 @@ export default async function OrderDetails({ params }) {
                   BDT 0.00
                 </span>
               </div>
-              <div className="flex justify-between font-bold text-lg border-t border-gray-700 pt-2">
+              <div className="flex justify-between font-bold text-base sm:text-lg border-t border-gray-700 pt-2">
                 <span className="text-white">Total:</span>
                 <span
                   className={`${
@@ -518,7 +601,7 @@ export default async function OrderDetails({ params }) {
                 </span>
               </div>
               {isCancelled && (
-                <div className="flex justify-between font-bold text-lg">
+                <div className="flex justify-between font-bold text-base sm:text-lg">
                   <span className="text-red-300">Amount to Refund:</span>
                   <span className="text-red-300">
                     {mainPrice(total.toFixed(2))}
@@ -530,7 +613,7 @@ export default async function OrderDetails({ params }) {
         </div>
 
         {/* Shipping and Payment Details */}
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           <ShippingAddress address={address} user={user} />
           <PaymentMethod
             paymentMethod={paymentMethod}
@@ -540,16 +623,20 @@ export default async function OrderDetails({ params }) {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex justify-center space-x-4">
+        <div className="flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-3 sm:gap-4">
           <Link
             href="/contact"
-            className="px-6 py-3 border border-gray-600 text-gray-300 rounded-lg hover:bg-secondary transition-colors"
+            className="w-full sm:w-auto text-center px-4 sm:px-6 py-3 border border-gray-600 text-gray-300 rounded-lg hover:bg-secondary transition-colors"
           >
             Contact Support
           </Link>
-          {!isCancelled && <InvoiceDownloadButton order={order} />}
+          {!isCancelled && (
+            <div className="w-full sm:w-auto">
+              <InvoiceDownloadButton order={order} />
+            </div>
+          )}
           {isCancelled && (
-            <button className="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+            <button className="w-full sm:w-auto px-4 sm:px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
               Request Refund Status
             </button>
           )}
@@ -558,16 +645,18 @@ export default async function OrderDetails({ params }) {
     );
   } catch (error) {
     return (
-      <div className="space-y-8 mt-6">
-        <div className="bg-white/[0.02] backdrop-blur-sm border border-red-500/20 rounded-xl p-8 text-center">
-          <div className="text-red-400 text-5xl mb-4">⚠️</div>
-          <h2 className="text-2xl font-bold text-white mb-4">
+      <div className="space-y-4 sm:space-y-8 mt-4 sm:mt-6 px-4 sm:px-0">
+        <div className="bg-white/[0.02] backdrop-blur-sm border border-red-500/20 rounded-xl p-4 sm:p-8 text-center">
+          <div className="text-red-400 text-3xl sm:text-5xl mb-2 sm:mb-4">
+            ⚠️
+          </div>
+          <h2 className="text-lg sm:text-2xl font-bold text-white mb-2 sm:mb-4">
             Something went wrong
           </h2>
-          <p className="text-gray-400 mb-6">
+          <p className="text-sm sm:text-base text-gray-400 mb-4 sm:mb-6">
             Unable to load order details. Please try again later.
           </p>
-          <button className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all">
+          <button className="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all">
             Reload Page
           </button>
         </div>

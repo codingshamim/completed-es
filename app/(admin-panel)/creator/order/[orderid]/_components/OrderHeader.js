@@ -8,7 +8,7 @@ export default function OrderHeader({ transactionId, order }) {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-6">
             <div>
-              <h1 className="text-3xl font-bold text-white">Order Details</h1>
+              <h1 className="text-xl font-bold text-white">Order Details</h1>
               <p className="text-gray-400 mt-1">
                 Transaction ID: {transactionId}
               </p>

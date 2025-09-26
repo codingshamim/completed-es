@@ -115,7 +115,7 @@ export default function ShippingOption() {
   // Auto-detect location on component mount
   useEffect(() => {
     detectLocationAndSetShipping();
-  }, []);
+  }, [detectLocationAndSetShipping]);
 
   // Get current selected index for display
   const getCurrentSelectedIndex = () => {

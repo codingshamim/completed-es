@@ -2,8 +2,8 @@ import { redirect } from "next/navigation";
 import mainPrice from "@/helpers/mainPrice";
 import Link from "next/link";
 
-export default function SuccessPage({ searchParams }) {
-  const { transactionId, totalAmount, name, fee } = searchParams || {};
+export default async function SuccessPage({ searchParams }) {
+  const { transactionId, totalAmount, name, fee } = (await searchParams) || {};
 
   // If any required query parameter is missing, redirect to homepage (or another safe page)
   if (!transactionId || !totalAmount || !name) {
@@ -64,22 +64,19 @@ export default function SuccessPage({ searchParams }) {
         </div>
 
         <div className="flex flex-col space-y-3">
-          <Link
-            href={`/dashboard/order/${transactionId}`}
-            className="w-full bg-white text-black font-semibold py-3 px-6 rounded-lg hover:bg-gray-100 transition-colors duration-200 transform hover:scale-[1.02]"
-          >
-            Track Your Order
-          </Link>
           <div className="flex space-x-3">
             <Link
               href="/shop"
-              className="flex-1 border border-gray-600 text-gray-300 font-medium py-3 px-4 rounded-lg hover:bg-gray-800 hover:border-gray-500 transition-colors duration-200"
+              className="flex-1 border border-gray-600 text-gray-300 font-medium py-3 px-4 rounded-lg hover:bg-secondary hover:border-secondary transition-colors duration-200"
             >
               Continue Shopping
             </Link>
-            <button className="flex-1 border border-gray-600 text-gray-300 font-medium py-3 px-4 rounded-lg hover:bg-gray-800 hover:border-gray-500 transition-colors duration-200">
-              View Receipt
-            </button>
+            <Link
+              href={`/dashboard/order/${transactionId}`}
+              className="flex-1 border border-secondary text-gray-300 font-medium py-3 px-4 rounded-lg hover:bg-secondary hover:border-secondary transition-colors duration-200"
+            >
+              View Order Details
+            </Link>
           </div>
         </div>
 
@@ -88,24 +85,12 @@ export default function SuccessPage({ searchParams }) {
             Need help with your order?
           </p>
           <div className="flex justify-center space-x-6 text-sm">
-            <a
-              href="#"
+            <Link
+              href="/contact"
               className="text-blue-400 hover:text-blue-300 transition-colors"
             >
               Contact Support
-            </a>
-            <a
-              href="#"
-              className="text-blue-400 hover:text-blue-300 transition-colors"
-            >
-              FAQ
-            </a>
-            <a
-              href="#"
-              className="text-blue-400 hover:text-blue-300 transition-colors"
-            >
-              Return Policy
-            </a>
+            </Link>
           </div>
         </div>
       </div>

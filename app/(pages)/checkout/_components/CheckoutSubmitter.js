@@ -8,6 +8,7 @@ import cities from "@/database/cities.json";
 import postcodes from "@/database/postcodes.json";
 import generateTransactionId from "@/helpers/generateTransactionId";
 import { makeCheckout } from "@/app/actions/checkout.action";
+import mainPrice from "@/helpers/mainPrice";
 
 const shippingOptions = [
   {
@@ -558,24 +559,26 @@ export default function CheckoutSubmitter({
               Confirm Cash on Delivery
             </h3>
 
-            <div className="bg-blue-900/20 border border-blue-500 rounded p-4 mb-6">
-              <p className="text-blue-300 mb-3">
+            <div className=" border  rounded p-4 mb-6">
+              <p className="text-white mb-3">
                 <strong>Order Summary:</strong>
               </p>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-300">Product Total:</span>
-                  <span className="text-white">${totalPrice}</span>
+                  <span className="text-white">{mainPrice(totalPrice)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-300">Shipping Fee:</span>
-                  <span className="text-white">${shipOption?.fee}</span>
+                  <span className="text-white">
+                    {mainPrice(shipOption?.fee || 0)}
+                  </span>
                 </div>
                 <hr className="border-gray-600" />
                 <div className="flex justify-between font-medium">
                   <span className="text-white">Total:</span>
                   <span className="text-white">
-                    ${totalPrice + (shipOption?.fee || 0)}
+                    {mainPrice(totalPrice + (shipOption?.fee || 0))}
                   </span>
                 </div>
               </div>
@@ -603,7 +606,7 @@ export default function CheckoutSubmitter({
               <button
                 onClick={() => setShowCODModal(false)}
                 disabled={isSubmitting}
-                className="w-full bg-black border border-gray-600 hover:bg-gray-800 disabled:bg-gray-800 disabled:cursor-not-allowed text-white py-2 px-4 rounded transition-colors"
+                className="w-full bg-black border border-gray-600 hover:bg-secondary disabled:bg-gray-800 disabled:cursor-not-allowed text-white py-2 px-4 rounded transition-colors"
               >
                 Cancel
               </button>

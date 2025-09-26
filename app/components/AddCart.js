@@ -4,9 +4,11 @@ import { useEffect, useState } from "react";
 import { addTocartAction, updateCart } from "../backend/actions";
 import useCommonState from "../src/hooks/useCommonState";
 import SecondaryLoadingBtn from "./SecondaryLoadingBtn";
+import { useRouter } from "next/navigation";
 
 export default function AddCart({ quantity, productId, size }) {
   const { common, setCommon } = useCommonState();
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [localCarts, setLocalCarts] = useState([]);
   useEffect(() => {
@@ -32,6 +34,16 @@ export default function AddCart({ quantity, productId, size }) {
           toastSuccess: true,
           quantity: 1,
         });
+      } else if (response?.message === "User not authenticated.") {
+        setCommon({
+          ...common,
+          toastSuccess: false,
+          toast: true,
+          buyModal: false,
+          quantity: 1,
+          toastMessage: response?.message,
+        });
+        router.push("/login");
       } else {
         const newCartItem = { quantity, productId, size };
         const updatedCarts = [...localCarts, newCartItem]; // Add the new item to the existing cart list

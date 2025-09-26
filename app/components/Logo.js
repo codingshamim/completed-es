@@ -9,11 +9,11 @@ export default function Logo() {
       </div>
 
       {/* Logo Text */}
-      <div className="flex flex-col -space-y-1">
+      <div className=" md:flex flex-col -space-y-1">
         <div className="text-white font-bold text-xl tracking-wide logo-es">
           ES VIBES
         </div>
-        <p className="text-gray-300 text-xs  font-medium tracking-wide logo-font">
+        <p className="text-gray-300 text-[10px] md:text-sm   font-medium tracking-wide  logo-font">
           next level tees
         </p>
       </div>

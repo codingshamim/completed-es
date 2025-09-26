@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function page() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-black text-white">
+    <div className="min-h-[50vh] flex flex-col items-center justify-center bg-black text-white">
       <h1 className="text-4xl font-bold mb-4">Goodbye!</h1>
       <p className="text-lg mb-6">
         Your account has been successfully deleted. We're sad to see you go.

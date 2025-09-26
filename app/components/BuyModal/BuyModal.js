@@ -163,7 +163,7 @@ const BuyModal = React.memo(function BuyModal() {
                   </h1>
 
                   {/* Price Section */}
-                  <div className="flex items-baseline gap-2 mb-2">
+                  <div className="flex flex-col md:flex-row items-baseline gap-2 mb-2">
                     {product?.discount > 0 && (
                       <del className="text-gray-500 text-sm">
                         {mainPrice(product?.price * count)}

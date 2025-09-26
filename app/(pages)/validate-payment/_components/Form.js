@@ -4,6 +4,7 @@
 import { useState } from "react";
 import mainPrice from "@/helpers/mainPrice";
 import { submitPayment } from "@/app/actions/order2.action";
+import { useRouter } from "next/navigation";
 
 export default function Form({
   paymentMethod,
@@ -21,7 +22,7 @@ export default function Form({
   const [isLoading, setIsLoading] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [submitSuccess, setSubmitSuccess] = useState(false);
-
+  const router = useRouter();
   // Validation functions
   const validatePhone = (phone) => {
     const phoneRegex = /^01[3-9]\d{8}$/;
@@ -125,7 +126,12 @@ export default function Form({
       };
 
       const result = await submitPayment(orderTransactionId, paymentData);
-
+      console.log(result);
+      if (!result?.error) {
+        router.push(
+          `/order-success?transactionId=${orderTransactionId}&totalAmount=${totalAmount}&name=Customer&fee=${shippingFee}`
+        );
+      }
       if (result?.error) {
         throw new Error(
           result.message || "Failed to verify payment. Please try again."

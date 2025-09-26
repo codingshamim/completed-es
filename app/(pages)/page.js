@@ -1,12 +1,17 @@
 import HeroContent from "@/app/_components/HeroContent";
-import HeroImage from "@/app/_components/ReusableImage";
-
 import EventQuery from "../backend/queries/EventQuery";
 import AnimationContainer from "../components/AnimationContainer";
 import ProductsSection from "../sections/ProductsSection";
 import ReusableImage from "@/app/_components/ReusableImage";
 
+// This forces the page to be statically generated at build time
+export const dynamic = "force-static";
+
+// Optional: Set revalidation time (in seconds) if you want ISR
+// export const revalidate = 3600; // Revalidate every hour
+
 export default async function HomePage() {
+  // This will run at build time, not at request time
   const events = await EventQuery();
   const event = events?.product;
 

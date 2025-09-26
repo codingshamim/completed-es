@@ -11,7 +11,7 @@ import PaymentModal from "./_components/PaymentMethods";
 
 export default function Websitelayout({ children }) {
   return (
-    <div className="min-h-screen bg-[#000] text-white pb-[100px]  max-w-6xl mx-auto py-6 px-6">
+    <div className="min-h-screen bg-[#000] text-white pb-[100px]  max-w-6xl mx-auto py-6 px-4 md:px-6">
       <PaymentModal />
       <ToastContainer />
       <ModalContainer />

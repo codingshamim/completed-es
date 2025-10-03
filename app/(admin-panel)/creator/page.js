@@ -5,7 +5,7 @@ import LowStockItems from "./_components/Dashboard/LowStockItems";
 import StatsCards from "./_components/Dashboard/StatsCards";
 
 import RecentOrders from "./_components/Dashboard/RecentOrders";
-
+export const dynamic = "force-dynamic";
 export default function page() {
   return (
     <main className="flex-1 p-6">

@@ -3,10 +3,8 @@
 import formateMongo from "@/helpers/formateMongo";
 import { ProductModel } from "../backend/models/ProductModel";
 import { dbConnect } from "../backend/connection/dbConnect";
-
-const { orderModel } = require("../backend/models/orderModel");
-const { checkAdmin } = require("./product.action");
-
+import { checkAdmin } from "./product.action";
+import { orderModel } from "../backend/models/orderModel";
 const dashboardStats = async () => {
   try {
     const isAdmin = await checkAdmin();

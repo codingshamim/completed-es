@@ -1,6 +1,8 @@
 /* eslint-disable react/no-unescaped-entities */
 import Link from "next/link";
-
+export const metadata = {
+  title: "Esvibes - Goodbye",
+};
 export default function page() {
   return (
     <div className="min-h-[50vh] flex flex-col items-center justify-center bg-black text-white">

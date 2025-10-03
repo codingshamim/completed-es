@@ -13,7 +13,9 @@ export async function generateMetadata({ params }) {
   const param = await params;
   const product = await getProductBySlug(param?.slug);
   return {
-    title: `Esvibes - ${product.title}`,
+    title: `Esvibes - ${
+      product?.title?.length > 50 ? product.title.slice(0, 50) : product.title
+    }`,
     description: product.description.slice(0, 150),
   };
 }
@@ -69,7 +71,7 @@ export default async function page({ params }) {
           {rev.ok && <AddComment product={product?._id} />}
           <CommentsContainer reviews={reviews} />
 
-          <AlsoLikes category={product?.category} />
+          <AlsoLikes productId={product?._id} category={product?.category} />
         </div>
       )}
     </AnimationContainer>

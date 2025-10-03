@@ -4,8 +4,8 @@ import React from "react";
 import SectionHeader from "../(profile)/_components/SectionHeader";
 
 export const metadata = {
-  title: "Privacy Policy - ES VIBES",
-  description: "Privacy Policy for ES VIBES - Premium T-shirt Store",
+  title: "Esvibes - Privacy Policy",
+  description: "Privacy Policy for Esvibes - Premium T-shirt Store",
 };
 
 const PrivacyPolicyPage = () => {

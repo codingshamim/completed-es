@@ -3,7 +3,7 @@
 
 import useCommonState from "@/app/src/hooks/useCommonState";
 import mainPrice from "@/helpers/mainPrice";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 export default function ShippingOption() {
   const [shippingOptions] = useState([
@@ -22,7 +22,7 @@ export default function ShippingOption() {
   const [detectionError, setDetectionError] = useState(null);
 
   // Function to check if location is in Dhaka district
-  const isInDhakaDistrict = (lat, lng) => {
+  const isInDhakaDistrict = useCallback((lat, lng) => {
     // Dhaka district approximate boundaries
     const dhakaBounds = {
       north: 24.0,
@@ -37,10 +37,22 @@ export default function ShippingOption() {
       lng >= dhakaBounds.west &&
       lng <= dhakaBounds.east
     );
-  };
+  }, []);
+
+  // Set default shipping option
+  const setDefaultShippingOption = useCallback(
+    (index) => {
+      const selectedOption = shippingOptions[index];
+      setCommon((prev) => ({
+        ...prev,
+        shippingOption: selectedOption,
+      }));
+    },
+    [shippingOptions, setCommon]
+  );
 
   // Function to detect location and set shipping option
-  const detectLocationAndSetShipping = () => {
+  const detectLocationAndSetShipping = useCallback(() => {
     if (!navigator.geolocation) {
       setDetectionError("Geolocation is not supported by this browser");
       setIsDetecting(false);
@@ -90,27 +102,21 @@ export default function ShippingOption() {
         maximumAge: 300000, // 5 minutes
       }
     );
-  };
-
-  // Set default shipping option
-  const setDefaultShippingOption = (index) => {
-    const selectedOption = shippingOptions[index];
-    setCommon((prev) => ({
-      ...prev,
-      shippingOption: selectedOption,
-    }));
-  };
+  }, [isInDhakaDistrict, shippingOptions, setCommon, setDefaultShippingOption]);
 
   // Handle manual shipping option selection
-  const handleShippingChange = (event) => {
-    const selectedIndex = parseInt(event.target.value);
-    const selectedOption = shippingOptions[selectedIndex];
+  const handleShippingChange = useCallback(
+    (event) => {
+      const selectedIndex = parseInt(event.target.value);
+      const selectedOption = shippingOptions[selectedIndex];
 
-    setCommon((prev) => ({
-      ...prev,
-      shippingOption: selectedOption,
-    }));
-  };
+      setCommon((prev) => ({
+        ...prev,
+        shippingOption: selectedOption,
+      }));
+    },
+    [shippingOptions, setCommon]
+  );
 
   // Auto-detect location on component mount
   useEffect(() => {

@@ -1,7 +1,9 @@
 import { redirect } from "next/navigation";
 import mainPrice from "@/helpers/mainPrice";
 import Link from "next/link";
-
+export const metadata = {
+  title: "Esvibes - Order Success",
+};
 export default async function SuccessPage({ searchParams }) {
   const { transactionId, totalAmount, name, fee } = (await searchParams) || {};
 

@@ -1,11 +1,11 @@
 // app/actions/category.action.js
 "use server";
 
+import { dbConnect } from "../backend/connection/dbConnect";
+import { categoryModel } from "../backend/models/cateogryModel";
 import { checkAdmin } from "./product.action";
 
-const { revalidatePath } = require("next/cache");
-const { dbConnect } = require("../backend/connection/dbConnect");
-const { categoryModel } = require("../backend/models/cateogryModel");
+import { revalidatePath } from "next/cache";
 
 const createCategory = async (data) => {
   const category = {

@@ -26,7 +26,9 @@ const getStatusColor = (status) => {
       return "bg-gray-700 text-gray-300 border-gray-600";
   }
 };
-
+export const metadata = {
+  title: "Esvibes - Orders",
+};
 const getPaymentStatusColor = (status) => {
   switch (status.toLowerCase()) {
     case "paid":

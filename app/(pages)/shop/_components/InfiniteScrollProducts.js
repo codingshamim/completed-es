@@ -1,7 +1,7 @@
 "use client";
 import AnimationContainer from "@/app/components/AnimationContainer";
 import ProductItem from "@/app/components/ProductItem";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { getAllProducts } from "@/app/backend/queries/ProductQuery";
 
 export default function InfiniteScrollProducts({ query = "", filter = {} }) {
@@ -33,36 +33,39 @@ export default function InfiniteScrollProducts({ query = "", filter = {} }) {
     }
   }, [query, filter, queryOrFilterChanged]);
 
-  // Fetch products function (not memoized to avoid dependency issues)
-  const fetchProducts = async (pageNum) => {
-    if (loading) return;
+  // Fetch products function wrapped in useCallback
+  const fetchProducts = useCallback(
+    async (pageNum) => {
+      if (loading) return;
 
-    setLoading(true);
-    try {
-      const newProducts = await getAllProducts(query, filter, pageNum, 12);
+      setLoading(true);
+      try {
+        const newProducts = await getAllProducts(query, filter, pageNum, 12);
 
-      if (newProducts.length === 0) {
-        setHasMore(false);
-      } else {
-        setProducts((prev) => {
-          if (pageNum === 1) {
-            return newProducts;
-          }
-          // Prevent duplicates
-          const existingIds = new Set(prev.map((p) => p._id));
-          const uniqueNewProducts = newProducts.filter(
-            (p) => !existingIds.has(p._id)
-          );
-          return [...prev, ...uniqueNewProducts];
-        });
-        setPage(pageNum + 1);
+        if (newProducts.length === 0) {
+          setHasMore(false);
+        } else {
+          setProducts((prev) => {
+            if (pageNum === 1) {
+              return newProducts;
+            }
+            // Prevent duplicates
+            const existingIds = new Set(prev.map((p) => p._id));
+            const uniqueNewProducts = newProducts.filter(
+              (p) => !existingIds.has(p._id)
+            );
+            return [...prev, ...uniqueNewProducts];
+          });
+          setPage(pageNum + 1);
+        }
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("Error fetching products:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+    [query, filter, loading]
+  ); // Only depend on query and filter (loading is checked inside)
 
   // Initial load effect
   useEffect(() => {
@@ -70,7 +73,7 @@ export default function InfiniteScrollProducts({ query = "", filter = {} }) {
       fetchProducts(1);
       isInitialMount.current = false;
     }
-  }, [query, filter, fetchProducts]); // Only depend on query and filter
+  }, [fetchProducts]); // Now fetchProducts has stable reference
 
   // Intersection observer effect
   useEffect(() => {
@@ -98,7 +101,7 @@ export default function InfiniteScrollProducts({ query = "", filter = {} }) {
         observer.unobserve(currentRef);
       }
     };
-  }, [page, hasMore, loading, fetchProducts]); // Simple dependencies
+  }, [page, hasMore, loading, fetchProducts]); // fetchProducts now stable
 
   return (
     <>

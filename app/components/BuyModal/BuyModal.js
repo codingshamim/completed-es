@@ -4,7 +4,7 @@ import { getProductByIdAction } from "@/app/backend/actions";
 import useCommonState from "@/app/src/hooks/useCommonState";
 import formatePrice from "@/helpers/formatePrice";
 import Image from "next/image";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import React from "react";
 import AddCart from "../AddCart";
 import mainPrice from "@/helpers/mainPrice";
@@ -17,6 +17,12 @@ const BuyModal = React.memo(function BuyModal() {
   const [error, setError] = useState(null);
   const [count, setCount] = useState(1);
   const [activeSize, setActiveSize] = useState("");
+  const [translateY, setTranslateY] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const modalRef = useRef(null);
+  const startY = useRef(0);
+  const currentY = useRef(0);
 
   const originalPrice = useMemo(
     () => formatePrice(product?.price * count, product?.discount),
@@ -74,17 +80,69 @@ const BuyModal = React.memo(function BuyModal() {
     });
     setError(null);
     setCount(1);
+    setTranslateY(0);
+  };
+
+  // Touch event handlers for swipe gesture
+  const handleTouchStart = (e) => {
+    const scrollContainer = modalRef.current?.querySelector(".overflow-y-auto");
+    if (scrollContainer && scrollContainer.scrollTop > 0) {
+      return; // Don't handle swipe if content is scrolled
+    }
+
+    startY.current = e.touches[0].clientY;
+    setIsDragging(true);
+  };
+
+  const handleTouchMove = (e) => {
+    if (!isDragging) return;
+
+    const scrollContainer = modalRef.current?.querySelector(".overflow-y-auto");
+    if (scrollContainer && scrollContainer.scrollTop > 0) {
+      return;
+    }
+
+    currentY.current = e.touches[0].clientY;
+    const diff = currentY.current - startY.current;
+
+    // Only allow downward swipes
+    if (diff > 0) {
+      setTranslateY(diff);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+
+    // If swiped down more than 150px, close the modal
+    if (translateY > 150) {
+      handleClose();
+    } else {
+      // Reset position
+      setTranslateY(0);
+    }
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-end md:items-center justify-center">
+    <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-md z-50 flex items-end md:items-center justify-center">
       {/* Desktop backdrop click to close */}
       <div className="absolute inset-0 hidden md:block" onClick={handleClose} />
 
       {/* Modal Container */}
-      <div className="relative bg-black w-full max-w-lg md:max-w-2xl mx-4 md:rounded-2xl overflow-hidden shadow-2xl border border-gray-800 max-h-[90vh] md:max-h-[85vh] flex flex-col">
-        {/* Mobile Handle Bar (YouTube style) */}
-        <div className="md:hidden flex justify-center py-2 bg-black border-b border-gray-800">
+      <div
+        ref={modalRef}
+        className="relative bg-black w-full md:max-w-2xl mx-4 md:rounded-2xl overflow-hidden shadow-2xl border border-gray-800 max-h-[90vh] md:max-h-[85vh] flex flex-col transition-transform duration-200 ease-out"
+        style={{
+          transform: `translateY(${translateY}px)`,
+        }}
+      >
+        {/* Mobile Handle Bar (YouTube style) - Swipeable */}
+        <div
+          className="md:hidden flex justify-center py-2 bg-black border-b border-gray-800 cursor-grab active:cursor-grabbing"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
           <div className="w-10 h-1 bg-gray-600 rounded-full" />
         </div>
 

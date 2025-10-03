@@ -5,7 +5,9 @@ import ShippingAddress from "../_components/ShippingAddress";
 import OrderItem from "../_components/OrderItem";
 import mainPrice from "@/helpers/mainPrice";
 import Link from "next/link";
-
+export const metadata = {
+  title: "Esvibes - Order Details",
+};
 import InvoiceDownloadButton from "./_components/InvoiceDownloadButton";
 
 // Helper function to format date

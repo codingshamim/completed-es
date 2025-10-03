@@ -5,7 +5,9 @@ import Header from "./_components/Header";
 
 import PaymentMethods from "./_components/PaymentMethods";
 import Form from "./_components/Form";
-
+export const metadata = {
+  title: "Esvibes - Validate Payment",
+};
 /* eslint-disable react/no-unescaped-entities */
 const paymentMethodInfo = {
   cod: {

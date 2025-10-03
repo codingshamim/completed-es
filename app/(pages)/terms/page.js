@@ -2,8 +2,8 @@
 /* eslint-disable react/no-unescaped-entities */
 
 export const metadata = {
-  title: "Terms & Conditions - ES VIBES",
-  description: "Terms and Conditions for ES VIBES - Premium T-shirt Store",
+  title: "Esvibes - Terms & Conditions",
+  description: "Terms and Conditions for Esvibes - Premium T-shirt Store",
 };
 
 const TermsAndConditionsPage = () => {

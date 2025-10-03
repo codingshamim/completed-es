@@ -56,7 +56,6 @@ export default function ConfirmationModal() {
         await deleteProductById(common?.deleteProduct?.id);
         closeHandler();
       } catch (error) {
-        console.error("Error deleting product:", error);
         // Handle error appropriately
       } finally {
         setIsDeleting(false);
@@ -69,7 +68,6 @@ export default function ConfirmationModal() {
         await deleteOrder(common?.deleteOrder?.orderId);
         closeHandler();
       } catch (error) {
-        console.error("Error deleting product:", error);
         // Handle error appropriately
       } finally {
         setIsDeleting(false);

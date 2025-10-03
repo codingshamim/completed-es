@@ -8,6 +8,7 @@ import UserCredentials from "../src/UserCredentials";
 export default async function TopNavigation() {
   const loggedAuth = await auth();
   const user = await UserCredentials(loggedAuth?.user?.id);
+
   const role = user ? user?.role : "";
   const isAdmin = role === "admin" ? true : false;
   return (

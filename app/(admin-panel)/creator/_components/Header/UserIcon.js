@@ -67,10 +67,8 @@ export default function UserIcon({
         }
         setHasMore(result.pagination?.hasMore || false);
       } else {
-        console.error("Error loading notifications:", result.message);
       }
     } catch (error) {
-      console.error("Error loading notifications:", error);
     } finally {
       setLoading(false);
       setLoadingMore(false);

@@ -9,14 +9,21 @@ import getReviews from "@/app/backend/queries/getReviews";
 import CommentsContainer from "./_components/CommentsContainer";
 import isReviewd from "@/app/backend/queries/isReviewd";
 import AddComment from "./_components/AddComment";
+import siteSettings from "@/site-setting";
 export async function generateMetadata({ params }) {
   const param = await params;
   const product = await getProductBySlug(param?.slug);
+
   return {
     title: `Esvibes - ${
       product?.title?.length > 50 ? product.title.slice(0, 50) : product.title
     }`,
     description: product.description.slice(0, 150),
+    openGraph: {
+      title: "Esvibes - " + product?.title,
+      description: product?.description.slice(0, 150),
+      images: [product?.thumbnail || siteSettings?.openGraph?.images?.[0]?.url],
+    },
   };
 }
 export default async function page({ params }) {

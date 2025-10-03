@@ -126,7 +126,7 @@ export default function Form({
       };
 
       const result = await submitPayment(orderTransactionId, paymentData);
-      console.log(result);
+
       if (!result?.error) {
         router.push(
           `/order-success?transactionId=${orderTransactionId}&totalAmount=${totalAmount}&name=Customer&fee=${shippingFee}`

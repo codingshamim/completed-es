@@ -114,14 +114,11 @@ export default function RegisterForm({ children }) {
               placeholder="Enter Your Name"
               className={`w-full bg-transparent border !py-[7px] pl-10 pr-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/20 transition-all duration-200 ${
                 error?.error === "name-error"
-                  ? "border-red-500 bg-red-900/10"
+                  ? "!border-red-500 bg-red-900/10"
                   : "border-gray-600 hover:border-gray-500"
               } ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
             />
           </div>
-          {error?.error === "name-error" && (
-            <p className="text-xs mt-2 text-red-600">{error?.message}</p>
-          )}
         </div>
 
         {/* Phone Field */}
@@ -147,15 +144,12 @@ export default function RegisterForm({ children }) {
               disabled={loading}
               className={`w-full bg-transparent border !py-[7px] pl-10 pr-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/20 transition-all duration-200 ${
                 error?.error === "phone-error"
-                  ? "border-red-500 bg-red-900/10"
+                  ? "!border-red-500 bg-red-900/10"
                   : "border-gray-600 hover:border-gray-500"
               } ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
               placeholder="+8801XXXXXXXXX"
             />
           </div>
-          {error?.error === "phone-error" && (
-            <p className="text-xs mt-2 text-red-600">{error?.message}</p>
-          )}
         </div>
 
         {/* Password Field */}
@@ -182,7 +176,7 @@ export default function RegisterForm({ children }) {
               placeholder="password123"
               className={`w-full bg-transparent border !py-[7px] pl-10 pr-12 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/20 transition-all duration-200 ${
                 error?.error === "password-error"
-                  ? "border-red-500 bg-red-900/10"
+                  ? "!border-red-500 bg-red-900/10"
                   : "border-gray-600 hover:border-gray-500"
               } ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
             />
@@ -199,9 +193,6 @@ export default function RegisterForm({ children }) {
               )}
             </button>
           </div>
-          {error?.error === "password-error" && (
-            <p className="text-xs mt-2 text-red-600">{error?.message}</p>
-          )}
         </div>
 
         {/* Children - Additional content */}

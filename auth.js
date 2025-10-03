@@ -1,6 +1,5 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-
 import { UserModel } from "./app/backend/models/UserModel";
 import { dbConnect } from "./app/backend/connection/dbConnect";
 import bcrypt from "bcrypt";
@@ -14,61 +13,58 @@ export const {
 } = NextAuth({
   ...authConfig,
 
+  secret: process.env.AUTH_SECRET,
+
   providers: [
     CredentialsProvider({
       credentials: {
-        phone: { label: "Phone", type: "number" },
+        phone: { label: "Phone", type: "text" },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
         if (!credentials) return null;
-        await dbConnect();
 
         try {
+          await dbConnect();
           const user = await UserModel.findOne({ phone: credentials.phone });
 
-          if (user) {
-            const isMatch = await bcrypt.compare(
-              credentials.password,
-              user.password
-            );
-
-            if (isMatch) {
-              return {
-                id: user._id.toString(),
-                role: user.role, // ✅ include role
-              };
-            } else {
-              throw new Error("Incorrect Password");
-            }
-          } else {
-            throw new Error("User not found.");
+          if (!user) {
+            return null; // Return null instead of throwing
           }
+
+          const isMatch = await bcrypt.compare(
+            credentials.password,
+            user.password
+          );
+
+          if (!isMatch) {
+            return null; // Return null instead of throwing
+          }
+
+          // ✅ Return user data
+          return {
+            id: user._id.toString(),
+          };
         } catch (error) {
-          throw new Error(error);
+          return null;
         }
       },
     }),
   ],
 
-  trustHost: true,
-  trustHostedDomain: true,
-
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        token.role = user.role; // ✅ attach role to JWT
       }
+
       return token;
     },
     async session({ session, token }) {
-      if (token) {
-        session.user = {
-          id: token.id,
-          role: token.role, // ✅ attach role to session
-        };
+      if (token && session.user) {
+        session.user.id = token.id;
       }
+
       return session;
     },
   },

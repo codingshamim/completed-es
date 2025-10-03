@@ -83,7 +83,7 @@ export default function LoginForm({ children }) {
               disabled={loading}
               className={`w-full bg-transparent border !py-[7px]  pl-10 pr-4  text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/20 transition-all duration-200 ${
                 error
-                  ? "border-red-500 bg-red-900/10"
+                  ? "!border-red-500 bg-red-900/10"
                   : "border-gray-600 hover:border-gray-500"
               } ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
               placeholder="+8801XXXXXXXXX"
@@ -115,7 +115,7 @@ export default function LoginForm({ children }) {
               placeholder="password123"
               className={`w-full bg-transparent border  pl-10 pr-12 !py-[7px] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/20 transition-all duration-200 ${
                 error
-                  ? "border-red-500 bg-red-900/10"
+                  ? "!border-red-500 bg-red-900/10"
                   : "border-gray-600 hover:border-gray-500"
               } ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
             />
@@ -132,11 +132,6 @@ export default function LoginForm({ children }) {
               )}
             </button>
           </div>
-
-          {/* Original password error check - keeping your logic */}
-          {error?.error === "password-error" && (
-            <p className="text-xs mt-2 text-red-600">{error?.message}</p>
-          )}
         </div>
 
         {/* Children - Register/Forgot Password links */}

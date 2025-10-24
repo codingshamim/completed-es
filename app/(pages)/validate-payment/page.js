@@ -91,8 +91,8 @@ const paymentMethodInfo = {
     ),
     color: "pink",
     description: "বিকাশ মোবাইল ওয়ালেট ব্যবহার করে পেমেন্ট সম্পন্ন করুন",
-    accountNumber: "01XXXXXXXXX",
-    qrData: "bkash://pay?amount=100&merchant=01XXXXXXXXX&ref=",
+    accountNumber: "01994844761",
+    qrData: "bkash://pay?amount=100&merchant=01994844761&ref=",
   },
   nagad: {
     title: "নগদ",
@@ -145,16 +145,16 @@ const paymentMethodInfo = {
     ),
     color: "orange",
     description: "নগদ মোবাইল ওয়ালেট ব্যবহার করে পেমেন্ট সম্পন্ন করুন",
-    accountNumber: "01XXXXXXXXX",
-    qrData: "nagad://pay?amount=100&merchant=01XXXXXXXXX&ref=",
+    accountNumber: "01994844761",
+    qrData: "nagad://pay?amount=100&merchant=01994844761&ref=",
   },
   rocket: {
     title: "রকেট",
     icon: <span className="text-2xl sm:text-3xl">🚀</span>,
     color: "purple",
     description: "রকেট মোবাইল ওয়ালেট ব্যবহার করে পেমেন্ট সম্পন্ন করুন",
-    accountNumber: "01XXXXXXXXX",
-    qrData: "rocket://pay?amount=100&merchant=01XXXXXXXXX&ref=",
+    accountNumber: "019948447617",
+    qrData: "rocket://pay?amount=100&merchant=019948447617&ref=",
   },
 };
 

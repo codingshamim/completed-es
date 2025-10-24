@@ -8,7 +8,7 @@ export default function ProccedCheckout({ items, carts }) {
   const router = useRouter();
   return (
     <button
-      className="btn w-full !py-2 flex items-center gap-2 justify-center active:scale-[98%] transition-all duration-300"
+      className="btn bangla-font w-full !py-2 flex items-center gap-2 justify-center active:scale-[98%] transition-all duration-300"
       onClick={() => {
         setCheckout(carts);
         router.push("/checkout");
@@ -34,7 +34,7 @@ export default function ProccedCheckout({ items, carts }) {
         <path d="m5 11 4-7" />
         <path d="m9 11 1 9" />
       </svg>
-      Proceed To Checkout ({items})
+      চেকআউটে এগিয়ে যান({items})
     </button>
   );
 }

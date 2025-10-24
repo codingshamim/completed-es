@@ -393,9 +393,9 @@ export default function CheckoutSubmitter({
               <input
                 type="text"
                 name="name"
-                placeholder="Full Name *"
+                placeholder="আপনার নাম *"
                 onChange={handleChange}
-                className={getInputClass("name")}
+                className={`${getInputClass("name")} bangla-font`}
                 maxLength={100}
                 disabled={isSubmitting}
                 required
@@ -418,9 +418,9 @@ export default function CheckoutSubmitter({
               <input
                 type="tel"
                 name="phone"
-                placeholder="Phone Number (01XXXXXXXXX) *"
+                placeholder="ফোন নম্বর (01XXXXXXXXX) *"
                 onChange={handleChange}
-                className={getInputClass("phone")}
+                className={`${getInputClass("phone")} bangla-font`}
                 maxLength={14}
                 disabled={isSubmitting}
                 required
@@ -443,7 +443,7 @@ export default function CheckoutSubmitter({
               <select
                 name="district"
                 onChange={handleChange}
-                className={getInputClass("district")}
+                className={`${getInputClass("district")} bangla-font`}
                 defaultValue=""
                 disabled={isSubmitting}
                 required
@@ -453,7 +453,7 @@ export default function CheckoutSubmitter({
                 }
               >
                 <option value="" disabled>
-                  Select District *
+                  জেলা নির্বাচন করুন *
                 </option>
                 {districts.map((district) => (
                   <option key={district.id} value={district.name}>
@@ -477,17 +477,17 @@ export default function CheckoutSubmitter({
               <select
                 name="city"
                 onChange={handleChange}
-                className={getInputClass("city")}
+                className={`${getInputClass("city")} bangla-font`}
                 defaultValue=""
                 disabled={isSubmitting || filteredCities.length === 0}
                 required
                 aria-invalid={errors.city ? "true" : "false"}
                 aria-describedby={errors.city ? "city-error" : undefined}
               >
-                <option value="" disabled>
+                <option className="!bangla-font" value="" disabled>
                   {filteredCities.length === 0
-                    ? "Select District First"
-                    : "Select City *"}
+                    ? "প্রথমে জেলা নির্বাচন করুন *"
+                    : "উপজেলা নির্বাচন করুন *"}
                 </option>
                 {filteredCities.map((city) => (
                   <option key={city.id} value={city.name}>
@@ -511,10 +511,10 @@ export default function CheckoutSubmitter({
               <input
                 type="text"
                 name="postalCode"
-                placeholder="Postal Code (Optional)"
+                placeholder="পোস্টাল কোড (ঐচ্ছিক)"
                 value={postalCode}
                 onChange={(e) => setPostalCode(e.target.value)}
-                className={getInputClass("postalCode")}
+                className={`${getInputClass("postalCode")} bangla-font`}
                 maxLength={10}
                 disabled={isSubmitting}
               />
@@ -524,11 +524,11 @@ export default function CheckoutSubmitter({
             <div>
               <textarea
                 name="address"
-                placeholder="Detailed Address *"
+                placeholder="বিস্তারিত ঠিকানা *"
                 onChange={handleChange}
                 className={`${getInputClass(
                   "address"
-                )} min-h-[80px] resize-none`}
+                )} min-h-[80px] resize-none bangla-font`}
                 maxLength={500}
                 disabled={isSubmitting}
                 required
@@ -555,60 +555,113 @@ export default function CheckoutSubmitter({
       {showCODModal && (
         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
           <div className="bg-black border border-gray-700 rounded-lg max-w-md w-full p-6">
-            <h3 className="text-xl font-semibold text-white mb-4">
-              Confirm Cash on Delivery
+            <h3 className="text-xl bangla-font font-semibold text-white mb-4">
+              ক্যাশ অন ডেলিভারি নিশ্চিত করুন
             </h3>
 
-            <div className=" border  rounded p-4 mb-6">
-              <p className="text-white mb-3">
-                <strong>Order Summary:</strong>
+            {/* Payment Instructions */}
+            <div className="bg-yellow-900/20 bangla-font border border-yellow-600 rounded p-4 mb-4">
+              <p className="text-yellow-400 bangla-font font-semibold mb-2 text-sm">
+                ⚠️ পেমেন্ট পদ্ধতি সম্পর্কে গুরুত্বপূর্ণ তথ্য:
+              </p>
+              <div className="text-yellow-100 bangla-font text-sm space-y-2">
+                <p>
+                  <strong>১.</strong> অর্ডার কনফার্ম করার সময় আপনাকে শুধুমাত্র{" "}
+                  <strong>ডেলিভারি চার্জ</strong> প্রদান করতে হবে।
+                </p>
+                <p>
+                  <strong>২.</strong> পণ্য হাতে পাওয়ার পর{" "}
+                  <strong>বাকি টাকা</strong> ডেলিভারি ম্যানকে প্রদান করবেন।
+                </p>
+                <p>
+                  <strong>৩.</strong> পণ্য চেক করে সন্তুষ্ট হলেই শুধুমাত্র টাকা
+                  পরিশোধ করবেন।
+                </p>
+              </div>
+            </div>
+
+            {/* Order Details */}
+            <div className="border border-gray-600 rounded p-4 mb-6">
+              <p className="text-white mb-3 bangla-font font-semibold">
+                অর্ডার বিস্তারিত:
               </p>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-300">Product Total:</span>
+                  <span className="text-gray-300 bangla-font">
+                    প্রোডাক্ট মূল্য:
+                  </span>
                   <span className="text-white">{mainPrice(totalPrice)}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-300">Shipping Fee:</span>
-                  <span className="text-white">
-                    {mainPrice(shipOption?.fee || 0)}
+                <div className="flex justify-between items-start">
+                  <span className="text-gray-300 bangla-font">
+                    ডেলিভারি চার্জ:
                   </span>
+                  <div className="text-right">
+                    <span className="text-white block">
+                      {mainPrice(shipOption?.fee || 0)}
+                    </span>
+                    <span className="text-green-400 bangla-font text-xs">
+                      (এখনই প্রদান করতে হবে)
+                    </span>
+                  </div>
                 </div>
                 <hr className="border-gray-600" />
                 <div className="flex justify-between font-medium">
-                  <span className="text-white">Total:</span>
+                  <span className="text-white bangla-font">সর্বমোট:</span>
                   <span className="text-white">
                     {mainPrice(totalPrice + (shipOption?.fee || 0))}
                   </span>
                 </div>
               </div>
-              <p className="text-gray-300 text-sm mt-3">
-                You will pay this amount when you receive your order.
-              </p>
             </div>
 
+            {/* Payment Breakdown */}
+            <div className="bg-gray-800 rounded p-4 mb-6">
+              <div className="space-y-3 text-sm">
+                <div className="flex justify-between items-center pb-3 border-b border-gray-600">
+                  <span className="text-gray-300 bangla-font">
+                    এখন পরিশোধ করুন:
+                  </span>
+                  <span className="text-green-400 font-semibold bangla-font text-lg">
+                    {mainPrice(shipOption?.fee || 0)}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-300 bangla-font">
+                    পণ্য পাওয়ার পর পরিশোধ:
+                  </span>
+                  <span className="text-blue-400 font-semibold bangla-font text-lg">
+                    {mainPrice(totalPrice)}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
             <div className="space-y-3">
               <button
                 onClick={handleCODConfirm}
                 disabled={isSubmitting}
-                className="w-full bg-white hover:bg-gray-200 disabled:bg-gray-600 disabled:cursor-not-allowed text-black py-3 px-4 rounded transition-colors font-medium"
+                className="w-full bg-white hover:bg-gray-200 disabled:bg-gray-600 disabled:cursor-not-allowed text-black py-3 px-4 rounded transition-colors font-medium bangla-font"
               >
                 {isSubmitting ? (
                   <div className="flex items-center justify-center">
                     <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-600 mr-2"></div>
-                    Processing...
+                    প্রসেসিং...
                   </div>
                 ) : (
-                  "Confirm Order"
+                  `অর্ডার কনফার্ম করুন (${mainPrice(
+                    shipOption?.fee || 0
+                  )} পে করুন)`
                 )}
               </button>
 
               <button
                 onClick={() => setShowCODModal(false)}
                 disabled={isSubmitting}
-                className="w-full bg-black border border-gray-600 hover:bg-secondary disabled:bg-gray-800 disabled:cursor-not-allowed text-white py-2 px-4 rounded transition-colors"
+                className="w-full bg-black border border-gray-600 hover:bg-gray-900 disabled:bg-gray-800 disabled:cursor-not-allowed text-white py-2 px-4 rounded transition-colors bangla-font"
               >
-                Cancel
+                বাতিল করুন
               </button>
             </div>
           </div>

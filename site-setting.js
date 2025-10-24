@@ -6,7 +6,7 @@ const siteSettings = {
   siteUrl: siteAddres,
   siteTitle: "Esvibes | Premium T-Shirts & Unique Apparel Designs",
   siteDescription:
-    "Discover Esvibes' collection of premium T-shirts featuring unique, trendy designs. High-quality materials, comfortable fit, and original artwork. Free shipping on orders over $50. Shop now! ",
+    "Discover Esvibes collection of premium T-shirts featuring unique, trendy designs. High-quality materials, comfortable fit, and original artwork.",
   siteKeywords: [
     "premium t-shirts",
     "unique t-shirt designs",

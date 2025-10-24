@@ -21,8 +21,8 @@ export default async function page() {
         {carts.length > 0 && carts ? (
           <>
             {" "}
-            <SectionHeader title="Cart">
-              {carts.length} Item in your Cart
+            <SectionHeader title="আপনার কার্ট">
+              {carts.length}টি আইটেম আপনার কার্টে
             </SectionHeader>
             <CartHeader />
             <div className="mt-4">

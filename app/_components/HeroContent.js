@@ -102,7 +102,7 @@ export default function HeroContent({
         ) : (
           <Link
             href={`/tshirt/${slug}`}
-            className="py-2 bangla-font hover:bg-[#e0e0e0] flex items-center w-[150px] gap-2 px-4 font-medium active:scale-[98%] transition-all duration-300 rounded-sm bg-white text-black text-sm"
+            className="py-2 bangla-font hover:bg-[#e0e0e0] flex items-center w-[160px] gap-2 px-4 font-medium active:scale-[98%] transition-all duration-300 rounded-sm bg-white text-black text-sm"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

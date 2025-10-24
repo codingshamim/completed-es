@@ -2,16 +2,18 @@ import { getOrderTotalAmount, isPay } from "@/app/actions/order2.action";
 import mainPrice from "@/helpers/mainPrice";
 import { redirect } from "next/navigation";
 import Header from "./_components/Header";
-
 import PaymentMethods from "./_components/PaymentMethods";
 import Form from "./_components/Form";
+import Link from "next/link";
+
 export const metadata = {
-  title: "Esvibes - Validate Payment",
+  title: "Esvibes - পেমেন্ট যাচাই করুন",
 };
+
 /* eslint-disable react/no-unescaped-entities */
 const paymentMethodInfo = {
   cod: {
-    title: "Cash on Delivery",
+    title: "ক্যাশ অন ডেলিভারি",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -23,7 +25,7 @@ const paymentMethodInfo = {
         strokeWidth={2}
         strokeLinecap="round"
         strokeLinejoin="round"
-        className="lucide lucide-hand-coins-icon lucide-hand-coins"
+        className="lucide lucide-hand-coins-icon lucide-hand-coins w-6 h-6 sm:w-8 sm:h-8 md:w-9 md:h-9"
       >
         <path d="M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 17" />
         <path d="m7 21 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9" />
@@ -33,17 +35,17 @@ const paymentMethodInfo = {
       </svg>
     ),
     color: "blue",
-    description:
-      "Your order has been confirmed! Pay when you receive your order.",
+    description: "আপনার অর্ডার নিশ্চিত হয়েছে! পণ্য পাওয়ার সময় টাকা দিন।",
   },
   bkash: {
-    title: "bKash",
+    title: "বিকাশ",
     icon: (
       <svg
         width={35}
         height={35}
         viewBox="0 0 48 48"
         xmlns="http://www.w3.org/2000/svg"
+        className="w-6 h-6 sm:w-8 sm:h-8 md:w-9 md:h-9"
       >
         <g id="SVGRepo_bgCarrier" strokeWidth={0} />
         <g
@@ -88,12 +90,12 @@ const paymentMethodInfo = {
       </svg>
     ),
     color: "pink",
-    description: "Complete your payment using bKash mobile wallet",
+    description: "বিকাশ মোবাইল ওয়ালেট ব্যবহার করে পেমেন্ট সম্পন্ন করুন",
     accountNumber: "01XXXXXXXXX",
     qrData: "bkash://pay?amount=100&merchant=01XXXXXXXXX&ref=",
   },
   nagad: {
-    title: "Nagad",
+    title: "নগদ",
     icon: (
       <svg
         width={32}
@@ -101,6 +103,7 @@ const paymentMethodInfo = {
         viewBox="0 0 48 48"
         xmlns="http://www.w3.org/2000/svg"
         fill="#000000"
+        className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8"
       >
         <g id="SVGRepo_bgCarrier" strokeWidth={0} />
         <g
@@ -141,30 +144,27 @@ const paymentMethodInfo = {
       </svg>
     ),
     color: "orange",
-    description: "Complete your payment using Nagad mobile wallet",
+    description: "নগদ মোবাইল ওয়ালেট ব্যবহার করে পেমেন্ট সম্পন্ন করুন",
     accountNumber: "01XXXXXXXXX",
     qrData: "nagad://pay?amount=100&merchant=01XXXXXXXXX&ref=",
   },
   rocket: {
-    title: "Rocket",
-    icon: "🚀",
+    title: "রকেট",
+    icon: <span className="text-2xl sm:text-3xl">🚀</span>,
     color: "purple",
-    description: "Complete your payment using Rocket mobile wallet",
+    description: "রকেট মোবাইল ওয়ালেট ব্যবহার করে পেমেন্ট সম্পন্ন করুন",
     accountNumber: "01XXXXXXXXX",
     qrData: "rocket://pay?amount=100&merchant=01XXXXXXXXX&ref=",
   },
 };
 
-// Simple QR Code generator component (using a basic pattern approach)
-const QRCode = ({ value, size = 200 }) => {
-  // In a real implementation, you'd use a proper QR code library like 'qrcode' or 'react-qr-code'
-  // For demonstration, we'll create a placeholder QR pattern
+// Simple QR Code generator component
+const QRCode = ({ value, size = 180 }) => {
   const createQRPattern = () => {
     const cells = [];
     const gridSize = 25;
 
     for (let i = 0; i < gridSize * gridSize; i++) {
-      // Create a pseudo-random pattern based on the value
       const hash = value.split("").reduce((a, b) => {
         a = (a << 5) - a + b.charCodeAt(0);
         return a & a;
@@ -181,8 +181,13 @@ const QRCode = ({ value, size = 200 }) => {
   const cellSize = size / 25;
 
   return (
-    <div className="bg-white p-4 rounded-lg inline-block">
-      <svg width={size} height={size} className="border">
+    <div className="bg-white p-2 sm:p-3 md:p-4 rounded-lg inline-block">
+      <svg
+        width={size}
+        height={size}
+        className="border max-w-full h-auto"
+        viewBox={`0 0 ${size} ${size}`}
+      >
         {pattern.map((filled, index) => {
           const row = Math.floor(index / 25);
           const col = index % 25;
@@ -275,6 +280,7 @@ export default async function ValidatePaymentPage({ searchParams }) {
 
   const currentPaymentInfo =
     paymentMethodInfo[paymentMethod] || paymentMethodInfo.bkash;
+
   // check if already paid
   const isAlreadyPaid = await isPay(orderTransactionId);
   if (isAlreadyPaid?.isPayThisOrder) {
@@ -308,42 +314,52 @@ export default async function ValidatePaymentPage({ searchParams }) {
     return colors[color] || colors.blue;
   };
 
-  // Redirect case - in real implementation, use Next.js redirect()
+  // Redirect case
   if (!orderTransactionId) {
     redirect("/");
   }
 
   return (
-    <div className="min-h-screen bg-black py-8 px-4">
+    <div className="min-h-screen bg-black py-4 sm:py-6 md:py-8 px-3 sm:px-4 md:px-6">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <Header orderTransactionId={orderTransactionId} />
 
         {/* Payment Amount Summary */}
-        <div className="bg-black border border-gray-700 rounded-lg p-6 mb-6">
-          <h3 className="text-lg font-semibold text-white mb-4">
-            Payment Summary
+        <div className="bg-black border border-gray-700 rounded-lg p-4 sm:p-5 md:p-6 mb-4 sm:mb-5 md:mb-6">
+          <h3 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4 bangla-font">
+            পেমেন্ট সারাংশ
           </h3>
           <div className="space-y-2">
-            <div className="flex justify-between text-gray-300">
-              <span>Product Amount:</span>
-              <span>{mainPrice(totalAmount)}</span>
+            <div className="flex justify-between text-gray-300 text-sm sm:text-base">
+              <span className="break-words pr-2 bangla-font">
+                পণ্যের মূল্য:
+              </span>
+              <span className="whitespace-nowrap font-medium">
+                {mainPrice(totalAmount)}
+              </span>
             </div>
-            <div className="flex justify-between text-gray-300">
-              <span>Shipping Fee (Pay on Delivery):</span>
-              <span>{mainPrice(shippingFee) || 0}</span>
+            <div className="flex justify-between text-gray-300 text-sm sm:text-base">
+              <span className="break-words pr-2 bangla-font">
+                ডেলিভারি চার্জ (পণ্য পাওয়ার আগে):
+              </span>
+              <span className="whitespace-nowrap font-medium">
+                {mainPrice(shippingFee) || 0}
+              </span>
             </div>
             <div className="border-t border-gray-600 pt-2 mt-2">
-              <div className="flex justify-between text-white font-semibold text-lg">
-                <span>Total Amount:</span>
-                <span>{mainPrice(totalAmount + shippingFee) || 0}</span>
+              <div className="flex justify-between text-white font-semibold text-base sm:text-lg">
+                <span className="bangla-font">মোট টাকা:</span>
+                <span className="whitespace-nowrap">
+                  {mainPrice(totalAmount + shippingFee) || 0}
+                </span>
               </div>
             </div>
             {orderPaymentMethod === "cod" && (
-              <p className="text-sm text-gray-400 mt-2">
-                💡 You'll pay{" "}
+              <p className="text-xs sm:text-sm text-gray-400 mt-2 leading-relaxed bangla-font">
+                💡 আপনি পণ্য পাওয়ার সময়{" "}
                 <span className="font-bold">{mainPrice(shippingFee) || 0}</span>{" "}
-                shipping fee when you receive your order
+                টাকা ডেলিভারি চার্জ দিবেন
               </p>
             )}
           </div>
@@ -355,85 +371,92 @@ export default async function ValidatePaymentPage({ searchParams }) {
             currentPaymentInfo.color
           )} ${getBorderColorClasses(
             currentPaymentInfo.color
-          )} border rounded-lg p-6 mb-6`}
+          )} border rounded-lg p-4 sm:p-5 md:p-6 mb-4 sm:mb-5 md:mb-6`}
         >
-          <div className="flex items-center gap-3 mb-4">
-            <span className="text-3xl">{currentPaymentInfo.icon}</span>
-            <div>
-              <h2 className="text-xl font-semibold text-white">
+          <div className="flex items-start sm:items-center gap-3 mb-4">
+            <span className="flex-shrink-0 mt-1 sm:mt-0">
+              {currentPaymentInfo.icon}
+            </span>
+            <div className="flex-1 min-w-0">
+              <h2 className="text-lg sm:text-xl font-semibold text-white break-words bangla-font">
                 {currentPaymentInfo.title}
               </h2>
-              <p className="text-gray-300 text-sm">
+              <p className="text-gray-300 text-xs sm:text-sm leading-relaxed break-words bangla-font">
                 {currentPaymentInfo.description}
               </p>
             </div>
           </div>
 
           {currentPaymentInfo.accountNumber && (
-            <div className="bg-black/50 rounded p-4 mb-4">
+            <div className="bg-black/50 rounded p-3 sm:p-4 mb-4">
               {/* QR Code Section */}
               {currentPaymentInfo.qrData && (
-                <div className="text-center mb-6">
-                  <p className="text-sm text-gray-300 mb-3">
-                    📱 Scan QR Code to Pay Instantly
+                <div className="text-center mb-4 sm:mb-6">
+                  <p className="text-xs sm:text-sm text-gray-300 mb-3 px-2 bangla-font">
+                    📱 তাৎক্ষণিক পেমেন্ট করতে QR কোড স্ক্যান করুন
                   </p>
-                  <div className="flex justify-center mb-3">
+                  <div className="flex justify-center mb-3 overflow-hidden">
                     <QRCode
                       value={`${currentPaymentInfo.qrData}${orderTransactionId}`}
                       size={180}
                     />
                   </div>
-                  <p className="text-xs text-gray-400 mb-4">
-                    Open your {currentPaymentInfo.title} app and scan this QR
-                    code
+                  <p className="text-xs text-gray-400 mb-4 px-2 leading-relaxed bangla-font">
+                    আপনার {currentPaymentInfo.title} অ্যাপ খুলুন এবং এই QR কোডটি
+                    স্ক্যান করুন
                   </p>
 
-                  <div className="border-t border-gray-600 pt-4 mt-4">
-                    <p className="text-xs text-gray-300 mb-2">
-                      OR Send Money Manually:
+                  <div className="border-t border-gray-600 pt-3 sm:pt-4 mt-3 sm:mt-4">
+                    <p className="text-xs text-gray-300 mb-2 bangla-font">
+                      অথবা ম্যানুয়ালি টাকা পাঠান:
                     </p>
                   </div>
                 </div>
               )}
 
               {/* Manual Payment Info */}
-              <div className="flex justify-between items-center mb-2">
-                <div>
-                  <p className="text-sm text-gray-300 mb-1">Send money to:</p>
-                  <p className="text-lg font-mono text-white">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-4 mb-2">
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs sm:text-sm text-gray-300 mb-1 bangla-font">
+                    এই নাম্বারে টাকা পাঠান:
+                  </p>
+                  <p className="text-base sm:text-lg font-mono text-white break-all">
                     {currentPaymentInfo.accountNumber}
                   </p>
                 </div>
-                <div className="text-right">
-                  <p className="text-lg font-bold text-green-400">
+                <div className="text-left sm:text-right flex-shrink-0">
+                  <p className="text-lg sm:text-xl font-bold text-green-400">
                     {mainPrice(
                       orderPaymentMethod === "cod"
                         ? shippingFee
                         : totalAmount + shippingFee
                     ) || 0}
                   </p>
-                  <p className="text-xs text-gray-400">Amount</p>
+                  <p className="text-xs text-gray-400 bangla-font">টাকা</p>
                 </div>
               </div>
-              <p className="text-xs text-gray-400 mt-1">
-                Use "Send Money" option in your {currentPaymentInfo.title} app
+              <p className="text-xs text-gray-400 mt-2 leading-relaxed bangla-font">
+                আপনার {currentPaymentInfo.title} অ্যাপে "সেন্ড মানি" অপশন
+                ব্যবহার করুন
               </p>
             </div>
           )}
         </div>
+
         {paymentMethod === "cod" && (
-          <div className="bg-black border border-gray-700 rounded-lg p-6 mb-6">
-            <h3 className="text-lg font-semibold text-white mb-4">
-              Pay Shipping Fee Online
+          <div className="bg-black border border-gray-700 rounded-lg p-4 sm:p-5 md:p-6 mb-4 sm:mb-5 md:mb-6">
+            <h3 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4 bangla-font">
+              ডেলিভারি চার্জ অনলাইনে পরিশোধ করুন
             </h3>
-            <p className="text-sm text-gray-400 mb-6">
-              You can pay the shipping fee {mainPrice(shippingFee)} in advance
-              using your preferred mobile wallet:
+            <p className="text-xs sm:text-sm text-gray-400 mb-4 sm:mb-6 leading-relaxed bangla-font">
+              আপনি চাইলে আগেই ডেলিভারি চার্জ {mainPrice(shippingFee)} টাকা আপনার
+              পছন্দের মোবাইল ওয়ালেট দিয়ে পরিশোধ করতে পারেন:
             </p>
 
             <PaymentMethods orderTransactionId={orderTransactionId} />
           </div>
         )}
+
         {/* Form */}
         {paymentMethod !== "cod" && (
           <Form
@@ -446,12 +469,15 @@ export default async function ValidatePaymentPage({ searchParams }) {
         )}
 
         {/* Help Section */}
-        <div className="mt-6 text-center">
-          <p className="text-gray-400 text-sm">
-            Having trouble? Contact us at{" "}
-            <a href="tel:+8801XXXXXXXXX" className="text-white hover:underline">
-              +880 1XXX-XXXXXX
-            </a>
+        <div className="mt-4 sm:mt-6 text-center px-3">
+          <p className="text-gray-400 text-xs sm:text-sm leading-relaxed bangla-font">
+            সমস্যা হচ্ছে? আমাদের সাথে যোগাযোগ করুন{" "}
+            <Link
+              href="tel:+8801XXXXXXXXX"
+              className="text-white hover:underline break-all inline-block"
+            >
+              +৮৮০ ১XXX-XXXXXX
+            </Link>
           </p>
         </div>
       </div>

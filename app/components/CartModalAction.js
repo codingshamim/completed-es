@@ -53,7 +53,9 @@ export default function CartModalAction({ id, stock }) {
           </div>
         </div>
 
-        <span className="font-semibold tracking-wide">Add to Cart</span>
+        <span className="font-semibold tracking-wide bangla-font">
+          কার্টে যোগ করুন
+        </span>
       </div>
 
       {/* Subtle shine effect on hover */}

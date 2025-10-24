@@ -84,9 +84,10 @@ export default function ContactForm() {
   return (
     <div className="w-full md:w-1/2 min-h-[70vh] py-[50px] flex flex-col justify-center items-center">
       {/* Header */}
-      <SectionHeader title={"Contact Us"}>
+      <SectionHeader title={"যোগাযোগ করুন"}>
         {" "}
-        Reach us instantly through WhatsApp, Messenger, or Phone Call.
+        হোয়াটসঅ্যাপ, মেসেঞ্জার, অথবা ফোন কলের মাধ্যমে তাৎক্ষণিকভাবে আমাদের সাথে
+        যোগাযোগ করুন।
       </SectionHeader>
 
       {/* Buttons */}

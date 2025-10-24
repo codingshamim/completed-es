@@ -4,6 +4,7 @@ import CartItem from "./_components/CartItem";
 import OrderSummary from "./_components/OrderSummary";
 import getCartById from "@/app/backend/queries/getCartById";
 import Link from "next/link";
+import SectionHeader from "../(profile)/_components/SectionHeader";
 export const metadata = {
   title: "Esvibes - Cart",
 };
@@ -20,30 +21,9 @@ export default async function page() {
         {carts.length > 0 && carts ? (
           <>
             {" "}
-            <div className="text-center mb-12">
-              <h1 className="text-4xl font-bold text-white mb-4 tracking-tight">
-                Shopping Cart
-              </h1>
-              <div className="inline-flex items-center gap-3 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full px-6 py-2">
-                <svg
-                  className="size-5 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6 0v6a2 2 0 11-4 0v-6m6 0a2 2 0 11-4 0"
-                  />
-                </svg>
-                <span className="text-white font-medium">
-                  {carts?.length} {carts?.length === 1 ? "Item" : "Items"} in
-                  Cart
-                </span>
-              </div>
-            </div>
+            <SectionHeader title="Cart">
+              {carts.length} Item in your Cart
+            </SectionHeader>
             <CartHeader />
             <div className="mt-4">
               {carts.length > 0 &&

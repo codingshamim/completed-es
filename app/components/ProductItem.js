@@ -56,7 +56,7 @@ export default function ProductItem({
 
         <div className="p-5">
           <Link href={`/tshirt/${slug}`} className="block">
-            <h1 className="font-semibold text-white hover:text-green-400 transition-colors duration-200 line-clamp-2 mb-2">
+            <h1 className="font-semibold text-white hover:underline transition-colors duration-200 line-clamp-2 mb-2">
               {title || "Title"}
             </h1>
             <p className="text-gray-400 text-sm leading-relaxed line-clamp-2 mb-3">

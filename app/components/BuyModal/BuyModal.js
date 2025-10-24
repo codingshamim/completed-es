@@ -148,7 +148,9 @@ const BuyModal = React.memo(function BuyModal() {
 
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-800 bg-black">
-          <h2 className="text-lg font-semibold text-white">Product Details</h2>
+          <h2 className="text-lg font-semibold text-white bangla-font">
+            প্রোডাক্ট বিস্তারিত
+          </h2>
           <button
             onClick={handleClose}
             className="p-2 hover:bg-gray-800 rounded-full transition-colors duration-200"
@@ -254,7 +256,9 @@ const BuyModal = React.memo(function BuyModal() {
 
               {/* Quantity Selector */}
               <div className="bg-black bg-opacity-50 rounded-xl p-4 border border-gray-700">
-                <h3 className="text-white font-medium mb-3">Quantity</h3>
+                <h3 className="text-white font-medium mb-3 bangla-font">
+                  পরিমাণ
+                </h3>
                 <div className="flex items-center gap-3">
                   <button
                     className="w-10 h-10 bg-black hover:bg-gray-800 border border-gray-600 rounded-lg flex items-center justify-center text-white font-semibold transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -284,7 +288,9 @@ const BuyModal = React.memo(function BuyModal() {
               {/* Size Selection */}
               {product?.sizes && product.sizes.length > 0 && (
                 <div className="bg-black bg-opacity-50 rounded-xl p-4 border border-gray-700">
-                  <h3 className="text-white font-medium mb-3">Size</h3>
+                  <h3 className="text-white font-medium mb-3 bangla-font">
+                    সাইজ
+                  </h3>
                   <div className="flex flex-wrap gap-2">
                     {product.sizes.map((size, index) => (
                       <button

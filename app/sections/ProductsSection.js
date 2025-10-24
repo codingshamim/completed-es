@@ -11,10 +11,10 @@ export default async function ProductsSection() {
   return (
     <>
       {products && products.length > 0 ? (
-        <section className="min-h-screen py-[50px]">
-          <SectionHeader title="Handpicked for You">
-            Elevate your lifestyle with ES Vibes – where timeless design meets
-            lasting quality.
+        <section className=" py-[50px]">
+          <SectionHeader title="শুধু আপনার জন্য">
+            ES Vibes-এর সাথে উন্নত করুন আপনার স্টাইল — যেখানে প্রতিটি ডিজাইন
+            স্থায়িত্বের প্রতিশ্রুতি বহন করে।
           </SectionHeader>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
             {products.length > 0 && products

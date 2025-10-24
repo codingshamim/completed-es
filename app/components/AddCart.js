@@ -100,7 +100,7 @@ export default function AddCart({ quantity, productId, size }) {
     <SecondaryLoadingBtn
       loading={loading}
       onClick={handler}
-      className="py-2 hover:bg-[#e0e0e0]  justify-center flex items-center w-[140px] gap-1 px-4 font-medium active:scale-[98%] transition-all duration-300 rounded-sm bg-white text-black text-sm"
+      className="py-2 hover:bg-[#e0e0e0]  justify-center flex items-center  gap-1 px-4 font-medium active:scale-[98%] transition-all duration-300 rounded-sm bg-white text-black text-sm"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -118,8 +118,8 @@ export default function AddCart({ quantity, productId, size }) {
         <circle cx={19} cy={21} r={1} />
         <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12" />
       </svg>
-      <span>
-        {common?.mode === "update" ? "Update to Cart" : " Add to cart"}
+      <span className="bangla-font">
+        {common?.mode === "update" ? "আপডেট করুন" : "কার্টে যোগ করুন"}
       </span>
     </SecondaryLoadingBtn>
   );

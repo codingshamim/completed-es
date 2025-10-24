@@ -25,10 +25,10 @@ export default function Searchbox() {
   return (
     <div className="relative col-span-3 md:col-span-3 ">
       <input
-        className="outline-none focus:border-white py-3 px-12 pr-16 rounded-lg w-full bg-transparent nav-border transition-all duration-300 ease-in-out focus:shadow-lg hover:shadow-md placeholder:text-opacity-70 text-sm font-medium"
+        className="outline-none bangla-font focus:border-white py-3 px-12 pr-16 rounded-lg w-full bg-transparent nav-border transition-all duration-300 ease-in-out focus:shadow-lg hover:shadow-md placeholder:text-opacity-70 text-sm font-medium"
         type="text"
         name="search"
-        placeholder="Search your exciting tshirt..."
+        placeholder="আপনার পছন্দের টি-শার্টটি খুঁজে নিন..."
         onChange={(e) => {
           handleSearch(e.target.value);
         }}

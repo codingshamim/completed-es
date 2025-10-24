@@ -104,9 +104,9 @@ export default function LoggedNavigationAction({ children, isAdmin }) {
         <div className="bg-black border border-gray-700 rounded-xl shadow-2xl overflow-hidden backdrop-blur-lg">
           {/* Modal Header */}
           <div className="bg-black p-4 border-b border-gray-600">
-            <h3 className="text-white font-semibold text-sm flex items-center gap-2">
+            <h3 className="text-white bangla-font font-semibold text-sm flex items-center gap-2">
               <User className="h-4 w-4" />
-              Account Menu
+              অ্যাকাউন্ট মেনু
             </h3>
           </div>
 
@@ -124,7 +124,7 @@ export default function LoggedNavigationAction({ children, isAdmin }) {
                         <div className="text-gray-400 group-hover:text-white transition-colors">
                           {item.icon}
                         </div>
-                        <span className="text-sm font-medium">
+                        <span className="text-sm font-medium bangla-font">
                           {item.title}
                         </span>
                       </div>

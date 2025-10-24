@@ -17,8 +17,8 @@ export default function HeroContent({
     <div className="hero-content w-full md:w-[60%] p-6 bg-black text-white">
       {/* Discount Badge */}
       <div className="inline-flex items-center">
-        <span className="bg-white text-black text-sm font-medium px-4 py-2 rounded-sm shadow-lg">
-          {discount}% Discount
+        <span className="bg-white  bangla-font text-black text-sm font-medium px-4 py-2 rounded-sm shadow-lg">
+          {discount}% ডিসকাউন্ট
         </span>
       </div>
 
@@ -102,7 +102,7 @@ export default function HeroContent({
         ) : (
           <Link
             href={`/tshirt/${slug}`}
-            className="py-2 hover:bg-[#e0e0e0] flex items-center w-[140px] gap-2 px-4 font-medium active:scale-[98%] transition-all duration-300 rounded-sm bg-white text-black text-sm"
+            className="py-2 bangla-font hover:bg-[#e0e0e0] flex items-center w-[150px] gap-2 px-4 font-medium active:scale-[98%] transition-all duration-300 rounded-sm bg-white text-black text-sm"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -120,7 +120,7 @@ export default function HeroContent({
               <path d="M3.103 6.034h17.794" />
               <path d="M3.4 5.467a2 2 0 0 0-.4 1.2V20a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6.667a2 2 0 0 0-.4-1.2l-2-2.667A2 2 0 0 0 17 2H7a2 2 0 0 0-1.6.8z" />
             </svg>
-            Add to cart
+            কার্টে যোগ করুন
           </Link>
         )}
       </div>
@@ -129,16 +129,12 @@ export default function HeroContent({
       <div className="mt-8 pt-6 border-t border-gray-700">
         <div className="flex flex-wrap gap-6 text-sm text-gray-300">
           <div className="flex items-center gap-2">
-            <span className="w-3 h-3 bg-green-500 rounded-full"></span>
-            <span>Premium Quality</span>
+            <span className="w-3 h-3 bg-green-500 rounded-full "></span>
+            <span className="bangla-font">প্রিমিয়াম কোয়ালিটি</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="w-3 h-3 bg-blue-500 rounded-full"></span>
-            <span>Fast Delivery</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="w-3 h-3 bg-purple-500 rounded-full"></span>
-            <span>Easy Returns</span>
+            <span className="w-3 h-3 bg-blue-500 rounded-full "></span>
+            <span className="bangla-font">দ্রুত ডেলিভারি</span>
           </div>
         </div>
       </div>

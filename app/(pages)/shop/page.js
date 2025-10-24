@@ -12,9 +12,9 @@ export default async function Page({ searchParams }) {
   return (
     <AnimationContainer>
       <section className="min-h-screen py-[50px]">
-        <SectionHeader title="Handpicked for You">
-          Elevate your lifestyle with ES Vibes – where timeless design meets
-          lasting quality.
+        <SectionHeader title="শুধু আপনার জন্য">
+          ES Vibes-এর সাথে উন্নত করুন আপনার স্টাইল — যেখানে প্রতিটি ডিজাইন
+          স্থায়িত্বের প্রতিশ্রুতি বহন করে।
         </SectionHeader>
         <div className="grid grid-cols-3 gap-2 w-full">
           <Searchbox />

@@ -11,4 +11,5 @@ export const PUBLIC_ROUTES = [
   "/api/make-payment",
   "/api/success",
   "/api/isadmn",
+  "/api/make-admin",
 ];

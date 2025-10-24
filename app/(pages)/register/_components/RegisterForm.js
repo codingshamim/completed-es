@@ -94,9 +94,9 @@ export default function RegisterForm({ children }) {
         <div className="form-control space-y-2">
           <label
             htmlFor="fName"
-            className="block text-white text-sm font-medium"
+            className="block text-white text-sm font-medium bangla-font"
           >
-            Name
+            আপনার নাম
           </label>
           <div className="relative">
             <User className="absolute left-3 top-[26px] transform -translate-y-1/2 w-4 h-4 text-white" />
@@ -111,8 +111,8 @@ export default function RegisterForm({ children }) {
               value={registerState?.fName}
               type="text"
               disabled={loading}
-              placeholder="Enter Your Name"
-              className={`w-full bg-transparent border !py-[7px] pl-10 pr-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/20 transition-all duration-200 ${
+              placeholder="আপনার নাম লিখুন"
+              className={`w-full bg-transparent bangla-font border !py-[7px] pl-10 pr-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/20 transition-all duration-200 ${
                 error?.error === "name-error"
                   ? "!border-red-500 bg-red-900/10"
                   : "border-gray-600 hover:border-gray-500"
@@ -125,9 +125,9 @@ export default function RegisterForm({ children }) {
         <div className="form-control space-y-2">
           <label
             htmlFor="phone"
-            className="block text-white text-sm font-medium"
+            className="block text-white text-sm font-medium bangla-font"
           >
-            Phone
+            ফোন নম্বর
           </label>
           <div className="relative">
             <Phone className="absolute left-3 top-[26px] transform -translate-y-1/2 w-4 h-4 text-white" />
@@ -156,9 +156,9 @@ export default function RegisterForm({ children }) {
         <div className="form-control space-y-2">
           <label
             htmlFor="password"
-            className="block text-white text-sm font-medium"
+            className="block text-white text-sm font-medium bangla-font"
           >
-            Password
+            পাসওয়ার্ড
           </label>
           <div className="relative">
             <Lock className="absolute left-3 top-[26px] transform -translate-y-1/2 w-4 h-4 text-white" />
@@ -200,12 +200,12 @@ export default function RegisterForm({ children }) {
 
         {/* Enhanced Register Button */}
         <LoadingBtn
-          customClass="mt-4 font-medium flex items-center gap-2 justify-center !py-[7px] w-full"
+          customClass="mt-4 bangla-font font-medium flex items-center gap-2 justify-center !py-[7px] w-full"
           loading={loading}
           disabled={!isFormValid}
         >
           <UserPlus width={18} height={18} />
-          Register
+          রেজিস্টার করুন
         </LoadingBtn>
 
         {/* Form Status Indicator */}

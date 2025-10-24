@@ -1,7 +1,7 @@
 export const TopbarActionDat = [
   {
     id: 1,
-    title: "Profile",
+    title: "প্রোফাইল",
     link: "/dashboard",
     icon: (
       <svg
@@ -23,7 +23,7 @@ export const TopbarActionDat = [
   },
   {
     id: 2,
-    title: "Orders",
+    title: "অর্ডারসমূহ",
     link: "/dashboard/orders",
     icon: (
       <svg

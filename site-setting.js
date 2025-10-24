@@ -56,14 +56,14 @@ const siteSettings = {
     siteName: "Esvibes",
     images: [
       {
-        url: "https://i.ibb.co.com/LtjVBLq/image.png",
+        url: "/og/og.png",
         width: 1200,
         height: 600,
         alt: "Esvibes - Premium T-Shirts Collection",
         type: "image/png",
       },
       {
-        url: "https://esvibes.com/og-square.jpg", // Add a square image for better compatibility
+        url: "/og/og2.png", // Add a square image for better compatibility
         width: 600,
         height: 600,
         alt: "Esvibes Logo",

@@ -64,9 +64,9 @@ export default function LoginForm({ children }) {
         <div className="form-control space-y-2">
           <label
             htmlFor="phone"
-            className="block text-white text-sm font-medium"
+            className="block bangla-font text-white text-sm font-medium"
           >
-            Phone
+            ফোন নম্বর
           </label>
           <div className="relative">
             <Phone className="absolute left-3 top-[26px] transform -translate-y-1/2 w-4 h-4 text-white" />
@@ -95,9 +95,9 @@ export default function LoginForm({ children }) {
         <div className="form-control space-y-2">
           <label
             htmlFor="password"
-            className="block text-white text-sm font-medium"
+            className="block text-white text-sm font-medium bangla-font"
           >
-            Password
+            পাসওয়ার্ড
           </label>
           <div className="relative">
             <Lock className="absolute left-3 top-[26px] transform -translate-y-1/2 w-4 h-4 text-white" />
@@ -141,10 +141,10 @@ export default function LoginForm({ children }) {
         <LoadingBtn
           loading={loading}
           disabled={!isFormValid}
-          customClass="mt-2 font-medium flex items-center justify-center gap-2 !py-[7px] w-full"
+          customClass="mt-2 bangla-font font-medium flex items-center justify-center gap-2 !py-[7px] w-full"
         >
           <LogIn width={18} height={18} />
-          Login
+          লগিন করুন
         </LoadingBtn>
 
         {/* Form Status Indicator */}

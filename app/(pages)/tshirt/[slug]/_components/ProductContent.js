@@ -12,7 +12,9 @@ export default function ProductContent({
 }) {
   return (
     <div className="hero-content w-full md:w-[60%]">
-      <button className="new-btn !text-black ">{discount} % Discount</button>
+      {discount > 0 && (
+        <button className="new-btn !text-black ">{discount} % Discount</button>
+      )}
       <h1 className="mt-2 mb-2 text-2xl font-bold">{title}</h1>
       <p className="text-sm text-gray-300 mb-2">{description}</p>
 

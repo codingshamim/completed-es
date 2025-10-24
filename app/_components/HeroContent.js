@@ -16,11 +16,13 @@ export default function HeroContent({
   return (
     <div className="hero-content w-full md:w-[60%] p-6 bg-black text-white">
       {/* Discount Badge */}
-      <div className="inline-flex items-center">
-        <span className="bg-white  bangla-font text-black text-sm font-medium px-4 py-2 rounded-sm shadow-lg">
-          {discount}% ডিসকাউন্ট
-        </span>
-      </div>
+      {discount > 0 && (
+        <div className="inline-flex items-center">
+          <span className="bg-white  bangla-font text-black text-sm font-medium px-4 py-2 rounded-sm shadow-lg">
+            {discount}% ডিসকাউন্ট
+          </span>
+        </div>
+      )}
 
       {/* Product Title */}
       <h1 className="mt-4 mb-3 text-3xl md:text-4xl font-bold text-white leading-tight">

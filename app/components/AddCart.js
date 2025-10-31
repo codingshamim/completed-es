@@ -100,7 +100,7 @@ export default function AddCart({ quantity, productId, size }) {
     <SecondaryLoadingBtn
       loading={loading}
       onClick={handler}
-      className="py-2 hover:bg-[#e0e0e0]  justify-center flex items-center  gap-1 px-4 font-medium active:scale-[98%] transition-all duration-300 rounded-sm bg-white text-black text-sm"
+      className="py-2   justify-center flex items-center  gap-1 px-4 font-medium active:scale-[98%] transition-all duration-300 rounded-sm new-variable-btn hover:border-transparent nav-border text-white text-sm"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"

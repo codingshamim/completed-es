@@ -2,7 +2,7 @@
 
 import useCommonState from "../src/hooks/useCommonState";
 
-export default function CartModalAction({ id, stock }) {
+export default function CartModalAction({ id, stock, title, buyNowStyle }) {
   const { common, setCommon } = useCommonState();
   const handleAdd = () => {
     setCommon({
@@ -17,7 +17,11 @@ export default function CartModalAction({ id, stock }) {
   return (
     <button
       onClick={handleAdd}
-      className="w-full group relative overflow-hidden  hover:bg-secondary border border-gray-600 hover:border-gray-500 text-white py-3 px-6 rounded-lg font-medium transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl"
+      className={`${
+        buyNowStyle
+          ? "new-btn w-full border mb-2 flex justify-center items-center !py-3"
+          : "new-variable-btn w-full border nav-border hover:border-transparent flex justify-center items-center !py-3"
+      }`}
     >
       <div className="flex items-center justify-center gap-3">
         <div className="relative">
@@ -54,12 +58,9 @@ export default function CartModalAction({ id, stock }) {
         </div>
 
         <span className="font-semibold tracking-wide bangla-font">
-          কার্টে যোগ করুন
+          {title ? title : "কার্টে যোগ করুন"}
         </span>
       </div>
-
-      {/* Subtle shine effect on hover */}
-      <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/5 to-transparent skew-x-12"></div>
     </button>
   );
 }

@@ -36,15 +36,15 @@ export default async function SuccessPage({ searchParams }) {
         </div>
 
         <div className="space-y-4">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
-            Order Confirmed!
+          <h1 className="text-3xl font-bold  bangla-font bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
+            অর্ডার নিশ্চিত!
           </h1>
-          <p className="text-gray-300 text-lg">
-            Thank you for your purchase, {name}
+          <p className="text-gray-300 text-lg bangla-font ">
+            আপনার অর্ডারটি সফলভাবে গ্রহণ করা হয়েছে। ধন্যবাদ!, {name}
           </p>
-          <p className="text-gray-400 text-sm leading-relaxed">
-            Your order has been successfully processed and will be shipped soon.
-            You’ll receive a confirmation email with tracking details.
+          <p className="text-gray-400 text-sm leading-relaxed bangla-font">
+            আপনার অর্ডারটি প্রস্তুত হচ্ছে! শীঘ্রই কুরিয়ারের মাধ্যমে পাঠানো হবে
+            এবং ট্র্যাকিং লিংক ইমেইলে পাঠানো হবে।
           </p>
         </div>
 

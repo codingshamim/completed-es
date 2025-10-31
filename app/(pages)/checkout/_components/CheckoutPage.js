@@ -14,7 +14,12 @@ import VoucherInput from "./VoucherInput";
 import CheckoutButton from "./CheckoutButton";
 import SectionHeader from "../../(profile)/_components/SectionHeader";
 
-export default async function CheckoutPage() {
+export default async function CheckoutPage({
+  isBuyNow,
+  productId,
+  size,
+  quantity,
+}) {
   const carts = await getCartById();
 
   let totalPrice = carts.reduce((total, item) => {

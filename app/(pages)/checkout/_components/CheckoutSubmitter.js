@@ -175,7 +175,9 @@ export default function CheckoutSubmitter({
         checkoutResponse?.data?.transactionId
       ) {
         const transactionId =
-          checkoutResponse.transactionId || formData.transactionId;
+          checkoutResponse?.data?.transactionId ||
+          checkoutResponse?.transactionId ||
+          formData.transactionId;
 
         // Redirect to validate-payment page with transaction ID
         router.push(
@@ -279,14 +281,14 @@ export default function CheckoutSubmitter({
           checkoutResponse?.data?.orderId ||
           checkoutResponse?.data?.transactionId
         ) {
+          // Get transaction ID from response (check multiple possible locations)
           const transactionIdToUse =
-            checkoutResponse.transactionId || transactionId;
+            checkoutResponse?.data?.transactionId ||
+            checkoutResponse?.transactionId ||
+            transactionId;
 
-          // Get payment method for URL parameter
-          let methodParam = "";
-          if (paymentMethod === "bKash") methodParam = "bkash";
-          else if (paymentMethod === "Nagad") methodParam = "nagad";
-          else if (paymentMethod === "Rocket") methodParam = "rocket";
+          // Get payment method for URL parameter - normalize to lowercase
+          const methodParam = paymentMethod.toLowerCase();
 
           // Redirect to validate-payment page
           router.push(
@@ -559,7 +561,7 @@ export default function CheckoutSubmitter({
               ক্যাশ অন ডেলিভারি নিশ্চিত করুন
             </h3>
 
-            {/* Payment Instructions */}
+            {/* PaPayment method must be one of: bKash, Nagad, Rocketyment Instructions */}
             <div className="bg-yellow-900/20 bangla-font border border-yellow-600 rounded p-4 mb-4">
               <p className="text-yellow-400 bangla-font font-semibold mb-2 text-sm">
                 ⚠️ পেমেন্ট পদ্ধতি সম্পর্কে গুরুত্বপূর্ণ তথ্য:

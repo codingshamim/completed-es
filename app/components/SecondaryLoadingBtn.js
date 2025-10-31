@@ -14,11 +14,7 @@ export default function SecondaryLoadingBtn({
       whileTap={{ scale: 0.97 }}
       disabled={loading}
       className={`relative flex items-center justify-center gap-2 rounded-sm px-4 py-2 font-medium text-sm transition-all duration-300 active:scale-[98%] 
-        ${
-          loading
-            ? "opacity-70 cursor-not-allowed"
-            : "hover:bg-[#e0e0e0] bg-white text-black"
-        } 
+        ${loading ? "opacity-70 cursor-not-allowed" : ""} 
         ${className}`}
       {...props}
     >

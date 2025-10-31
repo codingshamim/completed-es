@@ -9,6 +9,7 @@ export const metadata = {
   title: "Esvibes - Order Details",
 };
 import InvoiceDownloadButton from "./_components/InvoiceDownloadButton";
+import { ReceiptIcon } from "lucide-react";
 
 // Helper function to format date
 const formatDate = (dateString) => {
@@ -628,13 +629,18 @@ export default async function OrderDetails({ params }) {
         <div className="flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-3 sm:gap-4">
           <Link
             href="/contact"
-            className="w-full sm:w-auto text-center px-4 sm:px-6 py-3 border border-gray-600 text-gray-300 rounded-lg hover:bg-secondary transition-colors"
+            className="w-full bangla-font sm:w-auto text-center px-4 sm:px-6 py-3 border border-gray-600 text-gray-300 rounded-lg hover:bg-secondary transition-colors"
           >
-            Contact Support
+            যোগাযোগ করুন
           </Link>
           {!isCancelled && (
             <div className="w-full sm:w-auto">
-              <InvoiceDownloadButton order={order} />
+              <InvoiceDownloadButton
+                customClass="!px-4 flex justify-center items-center sm:!px-6 bangla-font !py-3 w-full text-center"
+                order={order}
+              >
+                চালান ডাউনলোড করুন
+              </InvoiceDownloadButton>
             </div>
           )}
           {isCancelled && (

@@ -13,7 +13,7 @@ export const metadata = {
 /* eslint-disable react/no-unescaped-entities */
 const paymentMethodInfo = {
   cod: {
-    title: "ক্যাশ অন ডেলিভারি",
+    title: "Cash On Delivery",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -38,7 +38,7 @@ const paymentMethodInfo = {
     description: "আপনার অর্ডার নিশ্চিত হয়েছে! পণ্য পাওয়ার সময় টাকা দিন।",
   },
   bkash: {
-    title: "বিকাশ",
+    title: "bkash",
     icon: (
       <svg
         width={35}
@@ -95,7 +95,7 @@ const paymentMethodInfo = {
     qrData: "bkash://pay?amount=100&merchant=01994844761&ref=",
   },
   nagad: {
-    title: "নগদ",
+    title: "Nagad",
     icon: (
       <svg
         width={32}
@@ -149,7 +149,7 @@ const paymentMethodInfo = {
     qrData: "nagad://pay?amount=100&merchant=01994844761&ref=",
   },
   rocket: {
-    title: "রকেট",
+    title: "Rocket",
     icon: <span className="text-2xl sm:text-3xl">🚀</span>,
     color: "purple",
     description: "রকেট মোবাইল ওয়ালেট ব্যবহার করে পেমেন্ট সম্পন্ন করুন",

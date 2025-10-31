@@ -4,6 +4,7 @@ import { useEffect } from "react";
 
 import formatePrice from "@/helpers/formatePrice";
 import { printInvoice } from "@/app/_components/printInvoice";
+import { Printer } from "lucide-react";
 
 const InvoiceDownloadButton = ({ order, customClass = "", children }) => {
   // Destructure order data properly
@@ -95,7 +96,22 @@ const InvoiceDownloadButton = ({ order, customClass = "", children }) => {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Invoice - ${transactionId}</title>
      <style>
-         @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+       @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+     @media print {
+    body {
+      -webkit-print-color-adjust: exact !important; /* Chrome, Safari */
+      print-color-adjust: exact !important; /* Firefox */
+      color-adjust: exact !important;
+      background: inherit !important;
+    }
+
+    * {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+      color-adjust: exact !important;
+    }
+  }
+       
      @page{
      margin : 0}
      *{
@@ -523,9 +539,9 @@ const InvoiceDownloadButton = ({ order, customClass = "", children }) => {
   return (
     <button
       onClick={handlePrintInvoice}
-      className={`new-btn bangla-font ${customClass}`}
+      className={`new-btn bangla-font text-center ${customClass}`}
     >
-      {children || "Print Invoice"}
+      <Printer width={20} height={20} /> {children || "Print Invoice"}
     </button>
   );
 };

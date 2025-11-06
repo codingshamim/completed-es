@@ -7,7 +7,9 @@ export default async function AlsoLikes({ category, productId }) {
   return (
     <section>
       {likedProducts.length > 0 && (
-        <h2 className="text-2xl font-medium mb-4">You may also like</h2>
+        <h2 className="text-2xl font-bold mb-4 bangla-font">
+          আপনার জন্য আরও কিছু পছন্দের পণ্য
+        </h2>
       )}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">
         {likedProducts.length > 0 &&

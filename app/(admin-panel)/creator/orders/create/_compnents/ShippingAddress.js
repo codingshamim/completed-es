@@ -49,7 +49,9 @@ export default function ShippingAddress() {
   return (
     <div className="bg-black border border-gray-700 rounded-lg">
       <div className="bg-black px-6 py-3 border-b border-gray-700">
-        <h2 className="text-lg font-semibold text-white">Shipping Address</h2>
+        <h2 className="text-lg font-semibold text-white bangla-font">
+          ডেলিভারি ঠিকানা
+        </h2>
       </div>
       <div className="p-6 space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

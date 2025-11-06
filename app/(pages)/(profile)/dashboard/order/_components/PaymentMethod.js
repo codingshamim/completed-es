@@ -32,7 +32,9 @@ export function PaymentMethod({ paymentMethod, paymentStatus, transactionId }) {
 
   return (
     <div className="bg-white/[0.02] backdrop-blur-sm border border-white/10 rounded-xl p-6 hover:shadow-lg  transition-all duration-300">
-      <h3 className="text-xl font-bold mb-4 text-white">Payment Method</h3>
+      <h3 className="text-xl font-bold mb-4 text-white bangla-font">
+        পেমেন্ট মেথড
+      </h3>
       <div className="text-gray-300">
         <div className="flex items-center space-x-2 mb-2">
           <div

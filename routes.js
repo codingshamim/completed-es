@@ -12,4 +12,9 @@ export const PUBLIC_ROUTES = [
   "/api/success",
   "/api/isadmn",
   "/api/make-admin",
+  "/checkout",
+  "/validate-payment",
+  "/order-success",
+  "/privacy",
+  "/terms",
 ];

@@ -2,7 +2,13 @@
 
 import useCommonState from "../src/hooks/useCommonState";
 
-export default function CartModalAction({ id, stock, title, buyNowStyle }) {
+export default function CartModalAction({
+  id,
+  stock,
+  title,
+  buyNowStyle,
+  customClass,
+}) {
   const { common, setCommon } = useCommonState();
   const handleAdd = () => {
     setCommon({
@@ -21,7 +27,7 @@ export default function CartModalAction({ id, stock, title, buyNowStyle }) {
         buyNowStyle
           ? "new-btn w-full border mb-2 flex justify-center items-center !py-3"
           : "new-variable-btn w-full border nav-border hover:border-transparent flex justify-center items-center !py-3"
-      }`}
+      } ${customClass}`}
     >
       <div className="flex items-center justify-center gap-3">
         <div className="relative">

@@ -159,16 +159,16 @@ export default function Form({
     <div className="bg-black border border-gray-700 rounded-lg p-6">
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <h3 className="text-lg font-semibold text-white mb-4">
-            Payment Verification
+          <h3 className="text-lg bangla-font font-semibold text-white mb-4">
+            পেমেন্ট যাচাইকরণ
           </h3>
-          <p className="text-sm text-gray-400 mb-6">
-            After paying{" "}
+          <p className="text-sm text-gray-400 mb-6 bangla-font">
+            কিউআর কোড বা ম্যানুয়াল ট্রান্সফারের মাধ্যমে{" "}
             {mainPrice(
               paymentMethod === "cod" ? shippingFee : totalAmount + shippingFee
             )}{" "}
-            (via QR code or manual transfer), please provide your transaction
-            details below:
+            টাকা পাঠানোর পর, নিচে আপনার লেনদেনের তথ্যটি দিন, যাতে আমরা দ্রুত
+            অর্ডারটি নিশ্চিত করতে পারি।
           </p>
         </div>
 
@@ -238,7 +238,7 @@ export default function Form({
               htmlFor="customerPhone"
               className="block text-sm font-medium text-white mb-2"
             >
-              Your {currentPaymentInfo.title} Number *
+              আপনার {currentPaymentInfo.title} নাম্বার *
             </label>
             <input
               type="tel"
@@ -276,9 +276,9 @@ export default function Form({
               </p>
             )}
             {!errors.customerPhone && (
-              <p className="text-xs text-gray-400 mt-1">
-                Enter the {currentPaymentInfo.title} number you used to send
-                money
+              <p className="text-xs bangla-font text-gray-400 mt-1">
+                আপনি যেই {currentPaymentInfo.title} নাম্বার ব্যবহার করে টাকা
+                পাঠিয়েছেন, অনুগ্রহ করে সেই নাম্বারটি এখানে লিখুন।
               </p>
             )}
           </div>
@@ -297,8 +297,8 @@ export default function Form({
               name="customerTransactionId"
               value={formData.customerTransactionId}
               onChange={handleInputChange}
-              placeholder="Enter transaction ID from SMS"
-              className={`w-full bg-black border ${
+              placeholder="আপনার এসএমএস থেকে ট্রান্স্যাকশন আইডি লিখুন"
+              className={`w-full bangla-font bg-black border ${
                 errors.customerTransactionId
                   ? "border-red-500 focus:border-red-500"
                   : "border-gray-600 focus:border-white"
@@ -327,8 +327,9 @@ export default function Form({
               </p>
             )}
             {!errors.customerTransactionId && (
-              <p className="text-xs text-gray-400 mt-1">
-                You'll receive this in SMS after successful money transfer
+              <p className="text-xs bangla-font text-gray-400 mt-1">
+                আপনি সফলভাবে টাকা ট্রান্সফার সম্পন্ন করলে, আপনার মোবাইলে একটি
+                SMS আসবে যেখানে ট্রান্স্যাকশন সংক্রান্ত তথ্য থাকবে।
               </p>
             )}
           </div>

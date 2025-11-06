@@ -221,7 +221,7 @@ export default function PaymentOptions() {
 
   return (
     <div className="border border-gray-700 p-4 space-y-4">
-      <h2 className="font-semibold text-lg mb-2">Payment Method</h2>
+      <h2 className="font-semibold text-lg mb-2 bangla-font">পেমেন্ট মেথড</h2>
 
       <div className="space-y-3">
         <input

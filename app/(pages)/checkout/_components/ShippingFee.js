@@ -1,15 +1,15 @@
-"use client"
+"use client";
 
-import useCommonState from "@/app/src/hooks/useCommonState"
+import useCommonState from "@/app/src/hooks/useCommonState";
 
-import mainPrice from "@/helpers/mainPrice"
+import mainPrice from "@/helpers/mainPrice";
 
 export default function ShippingFee() {
-    const {common} = useCommonState()
+  const { common } = useCommonState();
   return (
-       <div className="flex justify-between">
-            <span>Shipping Fee</span>
-            <span>{mainPrice(common?.shippingOption?.fee)}</span>
-          </div>
-  )
+    <div className="flex justify-between">
+      <span className="bangla-font">ডেলিভারি চার্জ</span>
+      <span>{mainPrice(common?.shippingOption?.fee)}</span>
+    </div>
+  );
 }

@@ -65,7 +65,7 @@ export default function ProductOrder({
             Out Of Stock
           </button>
         ) : (
-          <>
+          <div className="flex flex-col md:flex-row gap-4">
             <Link
               href={`/checkout?product=${productId}&quantity=${count}&size=${activeSize}`}
               className="py-2 justify-center flex items-center gap-1 px-4 font-medium active:scale-[98%] transition-all duration-300 rounded-sm new-btn hover:border-transparent nav-border text-black text-sm"
@@ -90,7 +90,7 @@ export default function ProductOrder({
             </Link>
 
             <AddCart size={activeSize} quantity={count} productId={productId} />
-          </>
+          </div>
         )}
       </div>
     </>

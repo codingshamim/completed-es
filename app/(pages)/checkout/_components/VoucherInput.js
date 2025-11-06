@@ -8,7 +8,8 @@ import ShippingFee from "./ShippingFee";
 
 export default function VoucherInput({ totalPrice }) {
   const [voucherCode, setVoucherCode] = useState("");
-  const { discountPercentage, setDiscountPercentage ,common,setCommon} = useCommonState();
+  const { discountPercentage, setDiscountPercentage, common, setCommon } =
+    useCommonState();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
@@ -35,7 +36,7 @@ export default function VoucherInput({ totalPrice }) {
       setDiscountPercentage(discount);
       setCommon({
         ...common,
-        discountApplied: discount
+        discountApplied: discount,
       });
       setSuccess(`Discount applied: ${discount}% off`);
     } catch (err) {
@@ -44,7 +45,7 @@ export default function VoucherInput({ totalPrice }) {
       setLoading(false);
     }
   }
- 
+
   return (
     <>
       {discountPercentage && (
@@ -57,8 +58,8 @@ export default function VoucherInput({ totalPrice }) {
           </span>
         </div>
       )}
-      <ShippingFee/>
-      <div className="flex flex-col mt-4 space-y-2">
+      <ShippingFee />
+      <div className="flex  flex-col mt-4 space-y-2">
         <div className="flex">
           <input
             onChange={(e) => {
@@ -76,7 +77,7 @@ export default function VoucherInput({ totalPrice }) {
           <button
             onClick={handleCoupon}
             type="button"
-            className="ml-2 px-4 py-2 bg-white text-black font-medium disabled:opacity-50"
+            className="ml-2 px-2 md:px-4 py-2 bg-white text-black font-medium disabled:opacity-50"
             disabled={loading}
           >
             {loading ? "Applying..." : "Apply"}

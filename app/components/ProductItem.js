@@ -123,11 +123,9 @@ export default function ProductItem({
             <div className="w-full">
               <CartModalAction
                 title="এখনই কিনুন"
-                buyNowStyle={true}
                 stock={stock || 0}
                 id={id || ""}
               />
-              <CartModalAction stock={stock || 0} id={id || ""} />
             </div>
           )}
         </div>

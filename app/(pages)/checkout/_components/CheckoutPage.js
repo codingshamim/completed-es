@@ -13,6 +13,8 @@ import CheckoutSubmitter from "./CheckoutSubmitter";
 import VoucherInput from "./VoucherInput";
 import CheckoutButton from "./CheckoutButton";
 import SectionHeader from "../../(profile)/_components/SectionHeader";
+import { getBuyProductById } from "@/app/actions/buynow.action";
+import minusDiscount from "@/helpers/minusDiscount";
 
 export default async function CheckoutPage({
   isBuyNow,
@@ -20,7 +22,19 @@ export default async function CheckoutPage({
   size,
   quantity,
 }) {
-  const carts = await getCartById();
+  let carts = [];
+  const cart = await getCartById();
+  const product = await getBuyProductById(productId);
+  carts = isBuyNow
+    ? [
+        {
+          productId: product,
+          price: minusDiscount(product?.price, product?.discount),
+          quantity,
+          size,
+        },
+      ]
+    : cart;
 
   let totalPrice = carts.reduce((total, item) => {
     return total + item.price * item.quantity;
@@ -35,10 +49,10 @@ export default async function CheckoutPage({
             {carts.length} Item in Checkout
           </SectionHeader>
           <CartHeader mode="checkout" />
-          <div className="mt-4">
+          <div className="mt-6">
             {carts.length > 0 &&
               carts &&
-              carts.map((cartItem) => (
+              carts.map((cartItem, index) => (
                 <CartItem
                   mode="checkout"
                   productId={cartItem?.productId}
@@ -49,7 +63,7 @@ export default async function CheckoutPage({
                   thumbnail={cartItem?.productId?.thumbnail}
                   price={cartItem?.price}
                   quantity={cartItem?.quantity}
-                  key={cartItem?._id}
+                  key={index}
                 />
               ))}
           </div>
@@ -87,17 +101,25 @@ export default async function CheckoutPage({
       )}
 
       {carts.length > 0 && (
-        <CheckoutSubmitter totalPrice={totalPrice} cartItems={carts}>
+        <CheckoutSubmitter
+          publicBuy={isBuyNow}
+          totalPrice={totalPrice}
+          cartItems={carts}
+        >
           {/* Shipping Option */}
           <ShippingOption />
           {/* Delivery Option */}
           <DeliveryOption />
           {/* Summary */}
           <div className="border border-gray-700 mt-4 p-6 bg-black h-fit">
-            <h2 className="text-xl font-semibold mb-6">Order Summary</h2>
+            <h2 className="text-xl font-semibold mb-6 bangla-font">
+              অর্ডার বিস্তারিত
+            </h2>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span>Subtotal ({carts?.length} items)</span>
+                <span className="bangla-font">
+                  সর্বমোট ({carts?.length} আইটেম)
+                </span>
                 <span>{mainPrice(totalPrice)}</span>
               </div>
 

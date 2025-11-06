@@ -204,25 +204,30 @@ const getCheckoutItemById = async (productId) => {
   }
 };
 
-const makeCheckout = async (checkout) => {
+const makeCheckout = async (checkout, publicBuy) => {
   try {
-    // Authentication check
-    const loggedAuth = await auth();
-    if (!loggedAuth?.user?.id) {
-      return {
-        error: true,
-        message: "Authentication required. Please log in to continue.",
-      };
-    }
+    let userId = null;
 
-    const userId = loggedAuth.user.id;
+    // Skip authentication check if publicBuy is true
+    if (!publicBuy) {
+      // Authentication check for regular purchases
+      const loggedAuth = await auth();
+      if (!loggedAuth?.user?.id) {
+        return {
+          error: true,
+          message: "Authentication required. Please log in to continue.",
+        };
+      }
 
-    // Validate ObjectId format for user
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return {
-        error: true,
-        message: "Invalid user session. Please log in again.",
-      };
+      userId = loggedAuth.user.id;
+
+      // Validate ObjectId format for user
+      if (!mongoose.Types.ObjectId.isValid(userId)) {
+        return {
+          error: true,
+          message: "Invalid user session. Please log in again.",
+        };
+      }
     }
 
     // Input sanitization
@@ -348,7 +353,7 @@ const makeCheckout = async (checkout) => {
     // Prepare order data
     const orderData = {
       orders: orders.map((order) => ({
-        productId: order.productId._id || order.productId, // Fixed: Ensure consistent productId
+        productId: order.productId._id || order.productId,
         quantity: parseInt(order.quantity),
         price: parseFloat(order.price),
         size: order.size,
@@ -365,7 +370,8 @@ const makeCheckout = async (checkout) => {
       transactionId,
       paymentMethod,
       shippingOption,
-      user: new mongoose.Types.ObjectId(userId),
+      // Only include user field if userId exists (not publicBuy)
+      ...(userId && { user: new mongoose.Types.ObjectId(userId) }),
     };
 
     // Create order with transaction and stock management
@@ -379,12 +385,10 @@ const makeCheckout = async (checkout) => {
 
       // Update product stock for each ordered item
       const stockUpdatePromises = orders.map(async (order, index) => {
-        // Fixed: Extract productId consistently
         const productId = order.productId._id || order.productId;
         const quantity = parseInt(order.quantity);
 
         try {
-          // Fixed: Use findOneAndUpdate with better error handling
           const updateResult = await ProductModel.findOneAndUpdate(
             {
               _id: new mongoose.Types.ObjectId(productId),
@@ -401,7 +405,6 @@ const makeCheckout = async (checkout) => {
           );
 
           if (!updateResult) {
-            // Fixed: Better error message for stock update failure
             const currentProduct = await ProductModel.findById(
               productId
             ).session(session);
@@ -415,8 +418,6 @@ const makeCheckout = async (checkout) => {
               );
             }
           }
-
-          // Log successful stock update
 
           return updateResult;
         } catch (error) {
@@ -436,10 +437,12 @@ const makeCheckout = async (checkout) => {
       // Commit the transaction
       await session.commitTransaction();
 
-      // Clear user's cart after successful order
-      await cartModel.deleteMany({
-        userId: userId,
-      });
+      // Clear user's cart after successful order (only if userId exists)
+      if (userId) {
+        await cartModel.deleteMany({
+          userId: userId,
+        });
+      }
 
       // Revalidate relevant pages
       revalidatePath("/");
@@ -476,7 +479,7 @@ const makeCheckout = async (checkout) => {
       session.endSession();
     }
   } catch (err) {
-    console.error("❌ Checkout error:", err);
+    console.error(err?.message);
 
     // Handle specific error types
     if (err.name === "ValidationError") {

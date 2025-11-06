@@ -2,8 +2,8 @@ export default function ShippingAddress({ address }) {
   return (
     <div className=" rounded-lg border border-gray-800">
       <div className="p-6 border-b border-gray-800 ">
-        <h3 className="text-xl font-semibold text-white flex items-center">
-          <div className="w-8 h-8 rounded-lg bg-green-600 flex items-center justify-center mr-3">
+        <h3 className="text-xl bangla-font font-semibold text-white flex items-center">
+          <span className="w-8 h-8 rounded-lg bg-green-600 flex items-center justify-center mr-3">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width={24}
@@ -19,8 +19,8 @@ export default function ShippingAddress({ address }) {
               <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2Z" />
               <path d="m9 10 2 2 4-4" />
             </svg>
-          </div>
-          Shipping Address
+          </span>
+          ডেলিভারি ঠিকানা
         </h3>
       </div>
       <div className="p-6">

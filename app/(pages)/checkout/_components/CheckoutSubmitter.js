@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import districts from "@/database/districts.json";
 import cities from "@/database/cities.json";
@@ -9,6 +9,7 @@ import postcodes from "@/database/postcodes.json";
 import generateTransactionId from "@/helpers/generateTransactionId";
 import { makeCheckout } from "@/app/actions/checkout.action";
 import mainPrice from "@/helpers/mainPrice";
+import useCommonState from "@/app/src/hooks/useCommonState";
 
 const shippingOptions = [
   {
@@ -50,6 +51,7 @@ export default function CheckoutSubmitter({
   children,
   cartItems = [],
   totalPrice,
+  publicBuy,
 }) {
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -61,9 +63,26 @@ export default function CheckoutSubmitter({
   const [showCODModal, setShowCODModal] = useState(false);
   const [shipOption, setShipOption] = useState(null);
   const [formData, setFormData] = useState(null);
+  const { common, setCommon } = useCommonState();
 
   const router = useRouter();
   const formRef = useRef(null);
+
+  // Initialize district from common state
+  useEffect(() => {
+    if (common?.deliveryDistrict) {
+      const selected = districts.find(
+        (d) => d.name === common.deliveryDistrict
+      );
+      if (selected) {
+        setSelectedDistrictId(selected.id);
+        const matchedCities = cities.filter(
+          (city) => city.district_id === selected.id
+        );
+        setFilteredCities(matchedCities);
+      }
+    }
+  }, [common?.deliveryDistrict]);
 
   // Validation function
   const validateField = useCallback((name, value) => {
@@ -149,7 +168,7 @@ export default function CheckoutSubmitter({
 
   // Process order creation
   const processOrder = async (orderData) => {
-    const checkoutResponse = await makeCheckout(orderData);
+    const checkoutResponse = await makeCheckout(orderData, publicBuy);
 
     if (checkoutResponse?.error) {
       throw new Error(
@@ -336,6 +355,12 @@ export default function CheckoutSubmitter({
           setFilteredCities(matchedCities);
           setPostalCode("");
 
+          // Update common state with selected district
+          setCommon((prev) => ({
+            ...prev,
+            deliveryDistrict: value,
+          }));
+
           // Clear city error if district is selected
           setErrors((prev) => {
             const updated = { ...prev };
@@ -346,6 +371,12 @@ export default function CheckoutSubmitter({
           setFilteredCities([]);
           setSelectedDistrictId(null);
           setPostalCode("");
+
+          // Clear delivery district from common state
+          setCommon((prev) => ({
+            ...prev,
+            deliveryDistrict: null,
+          }));
         }
       }
 
@@ -359,7 +390,7 @@ export default function CheckoutSubmitter({
         setPostalCode(matchedPostcode?.postCode || "");
       }
     },
-    [errors, validateField, selectedDistrictId]
+    [errors, validateField, selectedDistrictId, setCommon]
   );
 
   const inputBaseClass =
@@ -388,7 +419,7 @@ export default function CheckoutSubmitter({
         )}
 
         <div className="border border-gray-700 p-4 space-y-4 mt-4">
-          <h2 className="font-semibold text-lg">Shipping Address</h2>
+          <h2 className="font-semibold text-lg bangla-font">ডেলিভারি ঠিকানা</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Name */}
             <div>
@@ -446,7 +477,7 @@ export default function CheckoutSubmitter({
                 name="district"
                 onChange={handleChange}
                 className={`${getInputClass("district")} bangla-font`}
-                defaultValue=""
+                value={common?.deliveryDistrict || ""}
                 disabled={isSubmitting}
                 required
                 aria-invalid={errors.district ? "true" : "false"}
@@ -561,7 +592,7 @@ export default function CheckoutSubmitter({
               ক্যাশ অন ডেলিভারি নিশ্চিত করুন
             </h3>
 
-            {/* PaPayment method must be one of: bKash, Nagad, Rocketyment Instructions */}
+            {/* Payment Instructions */}
             <div className="bg-yellow-900/20 bangla-font border border-yellow-600 rounded p-4 mb-4">
               <p className="text-yellow-400 bangla-font font-semibold mb-2 text-sm">
                 ⚠️ পেমেন্ট পদ্ধতি সম্পর্কে গুরুত্বপূর্ণ তথ্য:
@@ -618,7 +649,7 @@ export default function CheckoutSubmitter({
             </div>
 
             {/* Payment Breakdown */}
-            <div className="bg-gray-800 rounded p-4 mb-6">
+            <div className="bg-secondary rounded p-4 mb-6">
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between items-center pb-3 border-b border-gray-600">
                   <span className="text-gray-300 bangla-font">
@@ -661,7 +692,7 @@ export default function CheckoutSubmitter({
               <button
                 onClick={() => setShowCODModal(false)}
                 disabled={isSubmitting}
-                className="w-full bg-black border border-gray-600 hover:bg-gray-900 disabled:bg-gray-800 disabled:cursor-not-allowed text-white py-2 px-4 rounded transition-colors bangla-font"
+                className="w-full  flex justify-center items-center hover:border-transparent !py-3 !px-4 nav-border new-variable-btn dis  bangla-font"
               >
                 বাতিল করুন
               </button>

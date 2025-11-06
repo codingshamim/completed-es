@@ -30,7 +30,11 @@ export default function AlsoLikeItem({
         </button>
       </Link>
       <div className="mt-2">
-        <CartModalAction stock={stock} id={productId}></CartModalAction>
+        <CartModalAction
+          title="এখনই কিনুন"
+          stock={stock || 0}
+          id={productId || ""}
+        />
       </div>
     </div>
   );

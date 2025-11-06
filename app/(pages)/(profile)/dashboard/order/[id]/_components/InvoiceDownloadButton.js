@@ -499,7 +499,7 @@ const InvoiceDownloadButton = ({ order, customClass = "", children }) => {
 </table>
 
       <!-- Signature Section -->
-      <div class="signature-section">
+      <div class="signature-section" style="position:absolute; bottom:50px; width:90%">
         <div class="signature-box">
           <div class="signature-line">
           

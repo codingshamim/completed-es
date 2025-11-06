@@ -341,7 +341,8 @@ export default async function ValidatePaymentPage({ searchParams }) {
             </div>
             <div className="flex justify-between text-gray-300 text-sm sm:text-base">
               <span className="break-words pr-2 bangla-font">
-                ডেলিভারি চার্জ (পণ্য পাওয়ার আগে):
+                ডেলিভারি চার্জ{" "}
+                {orderPaymentMethod === "cod" ? "(পণ্য পাওয়ার আগে)" : ""}:
               </span>
               <span className="whitespace-nowrap font-medium">
                 {mainPrice(shippingFee) || 0}
@@ -358,8 +359,8 @@ export default async function ValidatePaymentPage({ searchParams }) {
             {orderPaymentMethod === "cod" && (
               <p className="text-xs sm:text-sm text-gray-400 mt-2 leading-relaxed bangla-font">
                 💡 আপনি পণ্য পাওয়ার সময়{" "}
-                <span className="font-bold">{mainPrice(shippingFee) || 0}</span>{" "}
-                টাকা ডেলিভারি চার্জ দিবেন
+                <span className="font-bold">{mainPrice(totalAmount) || 0}</span>{" "}
+                টাকা পণ্যের মূল্য দিবেন
               </p>
             )}
           </div>
@@ -449,8 +450,8 @@ export default async function ValidatePaymentPage({ searchParams }) {
               ডেলিভারি চার্জ অনলাইনে পরিশোধ করুন
             </h3>
             <p className="text-xs sm:text-sm text-gray-400 mb-4 sm:mb-6 leading-relaxed bangla-font">
-              আপনি চাইলে আগেই ডেলিভারি চার্জ {mainPrice(shippingFee)} টাকা আপনার
-              পছন্দের মোবাইল ওয়ালেট দিয়ে পরিশোধ করতে পারেন:
+              অনুগ্রহ করে {mainPrice(shippingFee)} টাকা ডেলিভারি চার্জ আপনার
+              পছন্দের মোবাইল ওয়ালেটের মাধ্যমে আগে পরিশোধ করুন।
             </p>
 
             <PaymentMethods orderTransactionId={orderTransactionId} />

@@ -71,7 +71,6 @@ const validateTransactionId = (transactionId) => {
 };
 
 const validatePaymentMethod = (paymentMethod) => {
-  console.log(paymentMethod);
   const validMethods = ["bkash", "nagad", "rocket"];
   if (!paymentMethod) return "Payment method is required";
   if (!validMethods.includes(paymentMethod.toLowerCase())) {

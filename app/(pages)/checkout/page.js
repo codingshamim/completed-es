@@ -10,7 +10,7 @@ export default async function page({ searchParams }) {
   const isBuyNow = productId && size && quantity ? true : false;
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="max-w-7xl mx-auto mt-6">
       <CheckoutPage
         isBuyNow={isBuyNow}
         productId={productId}

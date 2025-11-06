@@ -43,7 +43,7 @@ const orderSchema = new Schema(
       required: false,
     },
 
-    user: { type: Schema.Types.ObjectId, ref: "users", required: true },
+    user: { type: Schema.Types.ObjectId, ref: "users", required: false },
   },
 
   { timestamps: true }

@@ -7,7 +7,7 @@ import Form from "./_components/Form";
 import Link from "next/link";
 
 export const metadata = {
-  title: "Esvibes - পেমেন্ট যাচাই করুন",
+  title: "Esvibes - Validate Payment",
 };
 
 /* eslint-disable react/no-unescaped-entities */
@@ -328,7 +328,7 @@ export default async function ValidatePaymentPage({ searchParams }) {
         {/* Payment Amount Summary */}
         <div className="bg-black border border-gray-700 rounded-lg p-4 sm:p-5 md:p-6 mb-4 sm:mb-5 md:mb-6">
           <h3 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4 bangla-font">
-            পেমেন্ট সারাংশ
+            পেমেন্ট বিস্তারিত
           </h3>
           <div className="space-y-2">
             <div className="flex justify-between text-gray-300 text-sm sm:text-base">

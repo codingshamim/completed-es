@@ -17,4 +17,5 @@ export const PUBLIC_ROUTES = [
   "/order-success",
   "/privacy",
   "/terms",
+  "/dashboard/order/",
 ];

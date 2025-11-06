@@ -21,6 +21,7 @@ export default async function CheckoutPage({
   productId,
   size,
   quantity,
+  isPublicbuy,
 }) {
   let carts = [];
   const cart = await getCartById();
@@ -102,7 +103,7 @@ export default async function CheckoutPage({
 
       {carts.length > 0 && (
         <CheckoutSubmitter
-          publicBuy={isBuyNow}
+          publicBuy={isPublicbuy}
           totalPrice={totalPrice}
           cartItems={carts}
         >

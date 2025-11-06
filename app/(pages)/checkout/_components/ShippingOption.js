@@ -40,7 +40,12 @@ export default function ShippingOption() {
         }));
       }
     }
-  }, [common?.deliveryDistrict, setCommon, shippingOptions]);
+  }, [
+    common?.deliveryDistrict,
+    setCommon,
+    shippingOptions,
+    common?.shippingOption,
+  ]);
 
   // Handle manual shipping option selection (only works when district not selected)
   const handleShippingChange = useCallback(

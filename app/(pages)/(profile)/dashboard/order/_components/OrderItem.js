@@ -7,34 +7,58 @@ export default async function OrderItem({ order }) {
   const product = await getProductByIdAction(order?.productId);
 
   return (
-    <div className="flex flex-col xs:flex-row items-start xs:items-center gap-3 xs:gap-4 p-3 xs:p-4 bg-gray-900/30 rounded-lg">
-      <ReusableImage
-        width={100}
-        className="size-[60px] xs:size-[70px] sm:size-[80px] flex-shrink-0"
-        height={100}
-        src={product?.thumbnail}
-        alt={product?.title || "Unknown title"}
-      />
-      <div className="flex-1 min-w-0 w-full xs:w-auto">
-        <div className="font-medium text-white text-sm sm:text-base break-words">
-          {product?.title || "Unknown Title"}
+    <div className=" border border-zinc-800 rounded-xl p-4 hover:border-zinc-700 transition-all">
+      <div className="flex gap-4">
+        {/* Product Image */}
+        <div className="flex-shrink-0">
+          <ReusableImage
+            width={100}
+            height={100}
+            className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg object-cover bg-zinc-800"
+            src={product?.thumbnail}
+            alt={product?.title || "Product"}
+          />
         </div>
-        <div className="text-xs sm:text-sm text-gray-400">
-          Size:{order?.size || "S"}
-        </div>
-        <div className="text-xs sm:text-sm text-gray-400">
-          Quantity: {order?.quantity || 0}
+
+        {/* Product Details */}
+        <div className="flex-1 min-w-0">
+          <h3 className="text-white font-medium text-sm sm:text-base mb-2 line-clamp-2">
+            {product?.title || "Unknown Title"}
+          </h3>
+
+          <div className="space-y-1">
+            <div className="flex items-center gap-4 text-xs sm:text-sm text-zinc-400">
+              <span>
+                Size:{" "}
+                <span className="text-white font-medium">
+                  {order?.size || "M"}
+                </span>
+              </span>
+              <span>
+                Qty:{" "}
+                <span className="text-white font-medium">
+                  {order?.quantity || 1}
+                </span>
+              </span>
+            </div>
+          </div>
         </div>
       </div>
-      <div className="text-left xs:text-right w-full xs:w-auto flex-shrink-0">
-        <div className="font-medium text-white text-sm sm:text-base">
-          {formatePrice(product?.price, product?.discount)}
+
+      {/* Price Section */}
+      <div className="mt-4 pt-4 border-t border-zinc-800">
+        <div className="flex justify-between items-center">
+          <span className="text-zinc-400 text-sm">Unit Price:</span>
+          <span className="text-white font-semibold">
+            {formatePrice(product?.price, product?.discount)}
+          </span>
         </div>
-        {order?.quantity > 1 && (
-          <div className="text-xs text-gray-400">
-            {mainPrice((order?.price * order?.quantity).toFixed(2))} total
-          </div>
-        )}
+        <div className="flex justify-between items-center mt-2">
+          <span className="text-white font-semibold">Total Price:</span>
+          <span className="text-white font-bold text-lg">
+            {mainPrice((order?.price * order?.quantity).toFixed(2))}
+          </span>
+        </div>
       </div>
     </div>
   );

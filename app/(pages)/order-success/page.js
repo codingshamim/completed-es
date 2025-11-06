@@ -44,11 +44,11 @@ export default async function SuccessPage({ searchParams }) {
           </p>
           <p className="text-gray-400 text-sm leading-relaxed bangla-font">
             আপনার অর্ডারটি প্রস্তুত হচ্ছে! শীঘ্রই কুরিয়ারের মাধ্যমে পাঠানো হবে
-            এবং ট্র্যাকিং লিংক ইমেইলে পাঠানো হবে।
+            এবং ট্র্যাকিং লিংক মোবাইলে পাঠানো হবে।
           </p>
         </div>
 
-        <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 space-y-4">
+        <div className=" backdrop-blur-sm border border-gray-800 rounded-xl p-6 space-y-4">
           <div className="flex items-center justify-between">
             <span className="text-gray-400">Order Number</span>
             <span className="font-mono text-green-400">{transactionId}</span>
@@ -69,7 +69,7 @@ export default async function SuccessPage({ searchParams }) {
           <div className="flex space-x-3">
             <Link
               href="/shop"
-              className="flex-1 border border-gray-600 text-gray-300 font-medium py-3 px-4 rounded-lg hover:bg-secondary hover:border-secondary transition-colors duration-200"
+              className="flex-1 border border-secondary text-gray-300 font-medium py-3 px-4 rounded-lg hover:bg-secondary hover:border-secondary transition-colors duration-200"
             >
               Continue Shopping
             </Link>

@@ -1,5 +1,6 @@
 import CartModalAction from "@/app/components/CartModalAction";
 import formatePrice from "@/helpers/formatePrice";
+import mainPrice from "@/helpers/mainPrice";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -25,8 +26,8 @@ export default function AlsoLikeItem({
       </Link>
       <Link href={`/tshirt/${slug}`} className="flex justify-center">
         <button className="variable-btn !text-sm bg-black nav-border absolute top-[-10px]">
-          <del className="text-gray-500 !text-xs">৳ BDT {price}</del> ৳{" "}
-          {originalPrice}
+          <del className="text-gray-500 !text-xs">  {mainPrice(price)}</del>{" "}
+          {mainPrice(originalPrice)}
         </button>
       </Link>
       <div className="mt-2">

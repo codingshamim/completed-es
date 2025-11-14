@@ -65,10 +65,11 @@ export default function ProductOrder({
             Out Of Stock
           </button>
         ) : (
-          <div className="flex flex-col md:flex-row gap-4">
+          <div className="flex md:w-max w-full flex-col md:flex-row gap-4">
+            {/* First Button */}
             <Link
               href={`/checkout?product=${productId}&quantity=${count}&size=${activeSize}`}
-              className="py-2 justify-center flex items-center gap-1 px-4 font-medium active:scale-[98%] transition-all duration-300 rounded-sm new-btn hover:border-transparent nav-border text-black text-sm"
+              className="py-2 w-full md:w-max justify-center flex items-center gap-1 px-4 font-medium active:scale-[98%] transition-all duration-300 rounded-sm new-btn hover:border-transparent nav-border text-black text-sm"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -89,7 +90,14 @@ export default function ProductOrder({
               এখনই কিনুন
             </Link>
 
-            <AddCart size={activeSize} quantity={count} productId={productId} />
+            {/* Second Button */}
+            <div className="w-full md:w-max">
+              <AddCart
+                size={activeSize}
+                quantity={count}
+                productId={productId}
+              />
+            </div>
           </div>
         )}
       </div>

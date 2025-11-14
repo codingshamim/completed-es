@@ -118,7 +118,7 @@ export default async function OrderCreationPage({ searchParams }) {
               </div>
 
               {/* Table Header */}
-              <div className="bg-black px-6 py-3 border-b border-gray-700">
+              <div className="bg-black hidden md:block px-6 py-3 border-b border-gray-700">
                 <div className="grid grid-cols-12 gap-4 text-sm font-medium text-gray-300">
                   <div className="col-span-1">Thumbnail</div>
                   <div className="col-span-4">Info</div>

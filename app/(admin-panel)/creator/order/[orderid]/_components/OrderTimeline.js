@@ -8,21 +8,21 @@ export default function OrderTimeline({ status = "Pending", createdAt }) {
   // If order is cancelled, show different UI
   if (status === "Cancelled") {
     return (
-      <div className="mb-8">
-        <div className="bg-black rounded-lg p-8 border border-red-800">
-          <h3 className="text-xl font-semibold text-white mb-8 flex items-center">
-            <div className="w-8 h-8 rounded-lg bg-red-600 flex items-center justify-center mr-3">
+      <div className="mb-6 sm:mb-8">
+        <div className="bg-black rounded-lg p-4 sm:p-6 md:p-8 border border-red-800">
+          <h3 className="text-lg sm:text-xl font-semibold text-white mb-6 sm:mb-8 flex items-center">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-red-600 flex items-center justify-center mr-2 sm:mr-3 flex-shrink-0">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width={20}
-                height={20}
+                width={18}
+                height={18}
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth={2}
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="lucide lucide-x-circle"
+                className="lucide lucide-x-circle sm:w-5 sm:h-5"
               >
                 <circle cx={12} cy={12} r={10} />
                 <path d="m15 9-6 6" />
@@ -33,56 +33,56 @@ export default function OrderTimeline({ status = "Pending", createdAt }) {
           </h3>
 
           <div className="text-center">
-            <div className="w-24 h-24 rounded-full bg-red-600 flex items-center justify-center mx-auto mb-6">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-red-600 flex items-center justify-center mx-auto mb-4 sm:mb-6">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width={40}
-                height={40}
+                width={32}
+                height={32}
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth={2}
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="lucide lucide-x text-white"
+                className="lucide lucide-x text-white sm:w-10 sm:h-10"
               >
                 <path d="m18 6-12 12" />
                 <path d="m6 6 12 12" />
               </svg>
             </div>
 
-            <h4 className="text-2xl font-bold text-red-400 mb-2">
+            <h4 className="text-xl sm:text-2xl font-bold text-red-400 mb-2">
               Order Cancelled
             </h4>
-            <p className="text-gray-400 mb-6">
+            <p className="text-sm sm:text-base text-gray-400 mb-4 sm:mb-6 px-4">
               Your order has been cancelled and will not be processed.
             </p>
 
-            <div className="bg-red-900/30 border border-white rounded-lg p-4 text-left">
-              <div className="flex items-start space-x-3">
+            <div className="bg-red-900/30 border border-white rounded-lg p-3 sm:p-4 text-left">
+              <div className="flex items-start space-x-2 sm:space-x-3">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  width={20}
-                  height={20}
+                  width={18}
+                  height={18}
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth={2}
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  className="lucide lucide-info text-red-400 mt-0.5 flex-shrink-0"
+                  className="lucide lucide-info text-red-400 mt-0.5 flex-shrink-0 sm:w-5 sm:h-5"
                 >
                   <circle cx={12} cy={12} r={10} />
                   <path d="m9 9 3 3 3-3" />
                 </svg>
                 <div>
-                  <p className="text-red-300 font-medium mb-1">
+                  <p className="text-red-300 font-medium mb-1 text-sm sm:text-base">
                     Cancellation Details:
                   </p>
-                  <p className="text-gray-300 text-sm">
+                  <p className="text-gray-300 text-xs sm:text-sm">
                     Order placed on {formattedDate}
                   </p>
-                  <p className="text-gray-400 text-sm mt-1">
+                  <p className="text-gray-400 text-xs sm:text-sm mt-1">
                     If you were charged for this order, the refund will be
                     processed within 3-5 business days.
                   </p>
@@ -107,21 +107,21 @@ export default function OrderTimeline({ status = "Pending", createdAt }) {
   const currentStepIndex = steps.findIndex((s) => s.key === status);
 
   return (
-    <div className="mb-8">
-      <div className="bg-black rounded-lg p-8 border border-gray-800">
-        <h3 className="text-xl font-semibold text-white mb-8 flex items-center">
-          <div className="w-8 h-8 rounded-lg bg-secondary text-white flex items-center justify-center mr-3">
+    <div className="mb-6 sm:mb-8">
+      <div className="bg-black rounded-lg p-4 sm:p-6 md:p-8 border border-gray-800">
+        <h3 className="text-lg sm:text-xl font-semibold text-white mb-6 sm:mb-8 flex items-center">
+          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-secondary text-white flex items-center justify-center mr-2 sm:mr-3 flex-shrink-0">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width={18}
-              height={18}
+              width={16}
+              height={16}
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
               strokeWidth={1.5}
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="lucide lucide-clock"
+              className="lucide lucide-clock sm:w-[18px] sm:h-[18px]"
             >
               <path d="M12 6v6l4 2" />
               <circle cx={12} cy={12} r={10} />
@@ -130,7 +130,8 @@ export default function OrderTimeline({ status = "Pending", createdAt }) {
           Order Timeline
         </h3>
 
-        <div className="relative">
+        {/* Desktop Timeline - Hidden on mobile */}
+        <div className="relative hidden md:block">
           {/* Progress Line */}
           <div className="absolute top-8 left-12 right-12 h-1 bg-gray-700" />
           <div
@@ -259,6 +260,142 @@ export default function OrderTimeline({ status = "Pending", createdAt }) {
               );
             })}
           </div>
+        </div>
+
+        {/* Mobile Timeline - Vertical Layout */}
+        <div className="relative md:hidden">
+          {steps.map((step, index) => {
+            const isCompleted = index < currentStepIndex;
+            const isActive = index === currentStepIndex;
+            const isLast = index === steps.length - 1;
+
+            let bgColor = "bg-gray-700";
+            let textColor = "text-gray-400";
+            let subText = "Pending";
+            let lineColor = "bg-gray-700";
+
+            if (isCompleted) {
+              bgColor = "bg-green-600";
+              textColor = "text-white";
+              subText = "Completed";
+              lineColor = "bg-green-600";
+            } else if (isActive) {
+              bgColor = "bg-green-600";
+              textColor = "text-white";
+              subText = "In Progress";
+            }
+
+            return (
+              <div key={step.key} className="relative">
+                {/* Vertical connecting line */}
+                {!isLast && (
+                  <div
+                    className={`absolute left-6 top-12 w-0.5 h-12 ${lineColor} transition-all duration-500`}
+                  />
+                )}
+
+                <div className="flex items-start space-x-4 pb-6">
+                  {/* Icon */}
+                  <div
+                    className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-300 ${bgColor}`}
+                  >
+                    {step.icon === "check" && (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width={20}
+                        height={20}
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="lucide lucide-check"
+                      >
+                        <path d="M20 6 9 17l-5-5" />
+                      </svg>
+                    )}
+                    {step.icon === "cog" && (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width={20}
+                        height={20}
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="lucide lucide-cog"
+                      >
+                        <circle cx={12} cy={12} r={3} />
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06c.46-.46.59-1.14.33-1.82a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09c.7 0 1.3-.4 1.51-1a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06c.46.46 1.14.59 1.82.33h.06c.6-.2 1-.8 1-1.51V3a2 2 0 1 1 4 0v.09c0 .7.4 1.3 1 1.51.68.26 1.36.13 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06c-.46.46-.59 1.14-.33 1.82.21.6.81 1 1.51 1H21a2 2 0 0 1 0 4h-.09c-.7 0-1.3.4-1.51 1z" />
+                      </svg>
+                    )}
+                    {step.icon === "truck" && (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width={20}
+                        height={20}
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="lucide lucide-truck"
+                      >
+                        <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2" />
+                        <path d="M15 18H9" />
+                        <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14" />
+                        <circle cx={17} cy={18} r={2} />
+                        <circle cx={7} cy={18} r={2} />
+                      </svg>
+                    )}
+                    {step.icon === "house" && (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width={20}
+                        height={20}
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="lucide lucide-house"
+                      >
+                        <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" />
+                        <path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                      </svg>
+                    )}
+                  </div>
+
+                  {/* Content */}
+                  <div className="flex-1 pt-2">
+                    <span
+                      className={`${textColor} font-semibold block mb-1 text-sm sm:text-base`}
+                    >
+                      {step.label}
+                    </span>
+                    {index === 0 ? (
+                      <span className="text-xs sm:text-sm text-gray-400">
+                        {formattedDate}
+                      </span>
+                    ) : (
+                      <span
+                        className={`text-xs sm:text-sm ${
+                          isActive ? "text-green-400" : "text-gray-500"
+                        }`}
+                      >
+                        {subText}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

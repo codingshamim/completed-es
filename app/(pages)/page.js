@@ -14,7 +14,11 @@ export default async function HomePage() {
 
   return (
     <AnimationContainer>
-      <section className="flex justify-between flex-col md:flex-row items-center gap-4 py-[50px]">
+      <section
+        className={`flex justify-between flex-col md:flex-row items-center gap-4 ${
+          event && "py-[50px]"
+        }`}
+      >
         {event && (
           <>
             <HeroContent

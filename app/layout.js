@@ -11,6 +11,7 @@ export const metadata = {
   description:
     siteSettings?.siteDescription ||
     "Discover Esvibes' collection of premium T-shirts featuring unique, trendy designs. High-quality materials, comfortable fit, and original artwork. Free shipping on orders over $50. Shop now!",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL),
   // Open Graph image
   image:
     siteSettings?.openGraph?.images?.[0]?.url ||

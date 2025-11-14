@@ -136,7 +136,7 @@ export default function CheckoutSubmitter({
       }
 
       // Validate shipping option
-      if (data.shippingOption === undefined || data.shippingOption === "") {
+      if (!data.shippingOption) {
         newErrors.shippingOption = "Shipping option is required";
       }
 
@@ -206,7 +206,6 @@ export default function CheckoutSubmitter({
         throw new Error("Failed to create order");
       }
     } catch (error) {
-      console.error("COD processing error:", error);
       setSubmitError(
         error.message || "Failed to process order. Please try again."
       );
@@ -236,14 +235,15 @@ export default function CheckoutSubmitter({
       };
 
       const paymentMethod = sanitizedData?.paymentMethod || "";
-      const shippingOptionIndex = parseInt(sanitizedData?.shippingOption) || 0;
-      const shippingOption = shippingOptions[shippingOptionIndex];
+
+      // FIX: Get shipping option from common state instead of form data
+      const shippingOption = common?.shippingOption || shippingOptions[0];
 
       // Validate form
       const validationData = {
         ...address,
         paymentMethod,
-        shippingOption: shippingOptionIndex,
+        shippingOption: shippingOption, // Pass the entire object
       };
 
       const validationErrors = validateForm(validationData);

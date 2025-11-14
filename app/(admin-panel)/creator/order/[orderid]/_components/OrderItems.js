@@ -3,7 +3,7 @@ import OrderItem from "./OrderItem";
 export default function OrderItems({ orders }) {
   return (
     <div className=" rounded-lg border border-gray-800">
-      <div className="p-6 border-b border-gray-800 ">
+      <div className="p-2 border-b border-gray-800 ">
         <h3 className="text-xl font-semibold text-white flex items-center">
           <div className="w-8 h-8 rounded-lg bg-secondary text-white flex items-center justify-center mr-3">
             <svg
@@ -26,8 +26,8 @@ export default function OrderItems({ orders }) {
           Order Items
         </h3>
       </div>
-      <div className="p-6">
-        <div className=" rounded-lg p-6 border border-gray-700">
+      <div>
+        <div className=" rounded-sm  md:p-4 ">
           {orders.map((order) => (
             <OrderItem key={order._id} order={order} />
           ))}

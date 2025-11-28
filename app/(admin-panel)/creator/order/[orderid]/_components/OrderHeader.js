@@ -16,7 +16,6 @@ export default function OrderHeader({ transactionId, order }) {
           </div>
           <div className="flex items-center space-x-3">
             <InvoiceDownloadButton order={order}>
-              <ArrowDownToLine />
               <span className="hidden md:block"> Download Invoice</span>
             </InvoiceDownloadButton>
           </div>

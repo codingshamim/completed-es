@@ -73,9 +73,10 @@ export const metadata = {
   // Icons
   icons: {
     icon: [
-      { url: "/favicon.ico" },
-      { url: "/icon-16x16.png", sizes: "16x16", type: "image/png" },
-      { url: "/icon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon.png", type: "image/png" }, // GOOGLE REQUIRED
+      { url: "/icon-32x32.png", sizes: "32x32" },
+      { url: "/icon-16x16.png", sizes: "16x16" },
+      { url: "/favicon.ico", type: "image/x-icon" }, // For browsers
     ],
     apple: [
       { url: "/apple-icon-180x180.png", sizes: "180x180", type: "image/png" },

@@ -1,13 +1,13 @@
-import Image from "next/image";
+import ReusableImage from "@/app/_components/ReusableImage";
 
 export default function DeleteProductModalContent({ thumbnail, sku, title }) {
   return (
     <>
       {/* Product Info */}
-      <div className="bg-gradient-to-r from-gray-800/50 to-gray-700/50 rounded-2xl p-4 mb-6 border border-gray-600/30">
+      <div className="bg-gradient-to-r bg-black rounded-2xl p-4 mb-6 border border-gray-600/30">
         <div className="flex items-center space-x-3">
           <div className="w-12 h-12  rounded-xl ">
-            <Image
+            <ReusableImage
               src={thumbnail}
               alt={title}
               width={48}

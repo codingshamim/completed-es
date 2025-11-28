@@ -6,7 +6,7 @@ import { useState } from "react";
 export default function ProductImage({ thumbnail, title, gallery }) {
   const [image, setImage] = useState(thumbnail);
   return (
-    <div className="w-full md:w-[40%]">
+    <div className="w-full md:w-[45%]">
       <ReusableImage
         width={1200}
         height={1200}

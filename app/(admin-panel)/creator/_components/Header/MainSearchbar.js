@@ -20,7 +20,7 @@ export default function MainSearchbar() {
         <input
           type="text"
           placeholder="Search..."
-          className="w-full bg-dark-700 border border-gray-600 rounded-lg px-4 py-2 pl-10 text-sm text-white placeholder:text-gray-400 focus:outline-none focus:border-white cursor-pointer"
+          className="w-full bg-transparent border border-gray-600 rounded-lg px-4 py-2 pl-10 text-sm text-white placeholder:text-gray-400 focus:outline-none focus:border-white cursor-pointer"
           onClick={handleInputClick}
           readOnly
         />

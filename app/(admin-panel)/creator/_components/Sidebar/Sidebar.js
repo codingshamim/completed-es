@@ -3,6 +3,7 @@ import SidebarItem from "./SidebarItem";
 import SidebarContainer from "./SidebarContainer";
 import CloseSidebar from "./CloseSidebar";
 import Link from "next/link";
+import Logo from "@/app/components/Logo";
 export const sidebarList = [
   {
     title: "Dashboard",
@@ -137,9 +138,7 @@ export default function Sidebar() {
     <SidebarContainer>
       <div className="flex items-center justify-between h-16 px-6 border-b border-gray-700">
         <div className="flex items-center">
-          <Link href="/" className="text-xl font-bold text-white">
-            ESVIBES
-          </Link>
+          <Logo />
         </div>
         <CloseSidebar />
       </div>

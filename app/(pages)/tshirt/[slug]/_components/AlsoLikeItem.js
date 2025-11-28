@@ -13,6 +13,7 @@ export default function AlsoLikeItem({
   stock,
 }) {
   const originalPrice = formatePrice(price, discount);
+
   return (
     <div className="relative mt-4">
       <Link href={`/tshirt/${slug}`} className="cursor-pointer">
@@ -26,8 +27,8 @@ export default function AlsoLikeItem({
       </Link>
       <Link href={`/tshirt/${slug}`} className="flex justify-center">
         <button className="variable-btn !text-sm bg-black nav-border absolute top-[-10px]">
-          <del className="text-gray-500 !text-xs">  {mainPrice(price)}</del>{" "}
-          {mainPrice(originalPrice)}
+          <del className="text-gray-500 !text-xs"> {mainPrice(price)}</del>{" "}
+          {originalPrice}
         </button>
       </Link>
       <div className="mt-2">

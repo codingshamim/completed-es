@@ -95,7 +95,7 @@ export default function ConfirmationModal() {
           {/* Modal Container */}
           <div
             id="modalContainer"
-            className={`relative bg-gradient-to-br from-gray-800/95 to-gray-900/95 backdrop-blur-xl rounded-3xl border border-gray-700/50 shadow-2xl max-w-md w-full mx-4 transition-all duration-300 ease-out ${
+            className={`relative bg-gradient-to-br bg-black backdrop-blur-xl rounded-3xl border border-gray-700/50 shadow-2xl max-w-md w-full mx-4 transition-all duration-300 ease-out ${
               common?.isOpenModal
                 ? "transform scale-100 translate-y-0 opacity-100"
                 : "transform scale-90 translate-y-4 opacity-0"
@@ -143,7 +143,7 @@ export default function ConfirmationModal() {
                 <button
                   onClick={closeHandler}
                   disabled={isDeleting}
-                  className="flex-1 px-6 py-3 bg-gradient-to-r from-gray-700 to-gray-600 hover:from-gray-600 hover:to-gray-500 text-white font-semibold rounded-xl transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] border border-gray-600/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                  className="flex-1 px-6 py-3 bg-gradient-to-r nav-border hover:bg-secondary  text-white font-semibold rounded-xl transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] border border-gray-600/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                 >
                   Cancel
                 </button>

@@ -120,7 +120,7 @@ export default function LoggedNavigationAction({ children, isAdmin }) {
                 return (
                   <li key={item.id} onClick={() => setIsOpen(false)}>
                     <Link href={item.link}>
-                      <div className="flex items-center gap-3 px-3 py-3 text-gray-300 hover:bg-gray-800/50 hover:text-white rounded-lg transition-all duration-200 cursor-pointer group">
+                      <div className="flex items-center gap-3 px-3 py-3 text-gray-300 hover:bg-secondary hover:text-white rounded-lg transition-all duration-200 cursor-pointer group">
                         <div className="text-gray-400 group-hover:text-white transition-colors">
                           {item.icon}
                         </div>

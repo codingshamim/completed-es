@@ -8,7 +8,7 @@ export default async function TopHeader() {
   const loggedAuth = await auth();
   const user = await UserCredentials(loggedAuth?.user?.id);
   return (
-    <header className="bg-[#1a1a1a] border-b border-gray-700">
+    <header className=" border-b border-gray-700">
       <div className="flex flex-wrap lg:flex-nowrap items-center justify-between gap-3 h-auto min-h-16 px-4 py-3">
         {/* Sidebar toggle for small screens */}
         <HamburgerButton />

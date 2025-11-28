@@ -10,7 +10,7 @@ export default function SidebarContainer({ children }) {
     <div
       className={`
         fixed inset-y-0 left-0 z-40 w-64
-        bg-secondary border-r border-gray-700
+         border-r border-gray-700
         transition-all duration-300 ease-in-out
         transform
         ${isHamburgerOpen ? "translate-x-0" : "-translate-x-full"}

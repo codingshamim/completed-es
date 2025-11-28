@@ -147,12 +147,7 @@ export default function ProductEditPage({ params }) {
           delete newErrors.price;
         }
         break;
-      case "stock":
-        if (!value || parseInt(value) < 0) {
-          newErrors.stock = "Valid stock quantity is required";
-        } else {
-          delete newErrors.stock;
-        }
+
         break;
       case "thumbnail":
         if (!value.trim()) {

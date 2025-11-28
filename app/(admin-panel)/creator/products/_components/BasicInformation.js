@@ -90,26 +90,6 @@ export default function BasicInformation({
               <p className="text-red-400 text-sm mt-1">{errors.discount}</p>
             )}
           </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-3">
-              Stock *
-            </label>
-            <input
-              type="number"
-              value={formData.stock}
-              onChange={(e) => handleInputChange("stock", e.target.value)}
-              className={`w-full bg-transparent border ${
-                errors.stock ? "border-red-500" : "border-gray-600"
-              } rounded-sm px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all duration-200`}
-              placeholder="0"
-              required
-              min="0"
-            />
-            {errors.stock && (
-              <p className="text-red-400 text-sm mt-1">{errors.stock}</p>
-            )}
-          </div>
         </div>
       </div>
     </div>

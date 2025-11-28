@@ -100,67 +100,59 @@ const deleteProductById = async (productId) => {
 };
 
 const createProduct = async (formData) => {
+  console.log(formData?.sizes);
   try {
-    // Check authentication and admin status
+    // 1️⃣ Authentication
     const loggedUser = await auth();
     if (!loggedUser?.user?.id) {
-      return {
-        error: true,
-        message: "Authentication required",
-      };
+      return { error: true, message: "Authentication required" };
     }
 
     const isAdmin = await checkAdmin();
     if (!isAdmin) {
-      return {
-        error: true,
-        message: "Unauthorized access",
-      };
+      return { error: true, message: "Unauthorized access" };
     }
 
-    // Validate input data
+    // 2️⃣ Validate data
     const validationErrors = validateProductData(formData);
     if (validationErrors.length > 0) {
-      return {
-        error: true,
-        message: validationErrors.join(", "),
-      };
+      return { error: true, message: validationErrors.join(", ") };
     }
 
     await dbConnect();
 
-    // Generate slug if not provided or ensure uniqueness
+    // 3️⃣ Generate unique slug
     let slug = formData.slug?.trim() || generateSlug(formData.title);
-
-    // Check if slug already exists
     const existingProduct = await ProductModel.findOne({ slug });
-    if (existingProduct) {
-      const timestamp = Date.now();
-      slug = `${slug}-${timestamp}`;
-    }
+    if (existingProduct) slug = `${slug}-${Date.now()}`;
 
-    // Prepare product data
-    // Fix 1: Update the createProduct function (around line 145)
+    // 4️⃣ Prepare sizes array without overwriting existing schema
+    const sizes = formData?.sizes || [];
+
+    // 5️⃣ Calculate total stock
+    const totalStock = sizes.reduce((acc, s) => acc + s.stock, 0);
+
+    // 6️⃣ Product data
     const productData = {
       title: formData.title.trim(),
       description: formData.description.trim(),
       price: Number(formData.price),
       discount: Number(formData.discount) || 0,
-      stock: Number(formData.stock),
+      stock: totalStock,
       thumbnail: formData.thumbnail.trim(),
       gallery: formData.gallery?.filter((url) => url.trim()) || [],
       category: formData.category || [],
-      sizes: formData.sizes || [],
-      ability: formData.ability?.filter((ability) => ability.trim()) || [], // Fix: Remove .title
+      sizes: sizes,
+      ability: formData.ability?.filter((a) => a.trim()) || [],
       status: formData.status || "active",
       slug: slug,
       user: loggedUser.user.id,
     };
 
-    // Create the product
+    // 7️⃣ Create product
     const newProduct = await ProductModel.create(productData);
 
-    // Revalidate paths
+    // 8️⃣ Revalidate paths
     revalidatePath("/");
     revalidatePath("/products");
 
@@ -173,7 +165,6 @@ const createProduct = async (formData) => {
   } catch (err) {
     console.error("Error creating product:", err);
 
-    // Handle specific MongoDB errors
     if (err.code === 11000) {
       const field = Object.keys(err.keyPattern)[0];
       return {
@@ -184,10 +175,7 @@ const createProduct = async (formData) => {
 
     if (err.name === "ValidationError") {
       const validationErrors = Object.values(err.errors).map((e) => e.message);
-      return {
-        error: true,
-        message: validationErrors.join(", "),
-      };
+      return { error: true, message: validationErrors.join(", ") };
     }
 
     return {

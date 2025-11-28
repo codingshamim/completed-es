@@ -4,23 +4,24 @@ import { createProduct } from "@/app/actions/product.action";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import ReusableImage from "@/app/_components/ReusableImage";
-
+import Image from "next/image";
 import BasicInformation from "../_components/BasicInformation";
 import Categories from "./_components/Categories";
 
 export default function ProductCreatePage() {
   const router = useRouter();
 
+  const sizeOptions = ["XS", "S", "M", "L", "XL", "2XL", "3XL"];
+
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     price: "",
     discount: "",
-    stock: "",
     slug: "",
     thumbnail: "",
     category: [],
-    sizes: [],
+    sizeDetails: [], // NEW
     ability: [""],
     gallery: [""],
     status: "active",
@@ -32,8 +33,6 @@ export default function ProductCreatePage() {
   const [errors, setErrors] = useState({});
   const [submitError, setSubmitError] = useState("");
 
-  const sizeOptions = ["XS", "S", "M", "L", "XL", "2XL", "3XL"];
-
   const validateField = (field, value) => {
     const newErrors = { ...errors };
 
@@ -41,49 +40,29 @@ export default function ProductCreatePage() {
       case "title":
         if (!value.trim()) {
           newErrors.title = "Product title is required";
-        } else if (value.length > 200) {
-          newErrors.title = "Title must be less than 200 characters";
-        } else {
-          delete newErrors.title;
-        }
+        } else delete newErrors.title;
         break;
       case "description":
         if (!value.trim()) {
           newErrors.description = "Description is required";
-        } else if (value.length > 2000) {
-          newErrors.description =
-            "Description must be less than 2000 characters";
-        } else {
-          delete newErrors.description;
-        }
+        } else delete newErrors.description;
         break;
       case "price":
         if (!value || parseFloat(value) <= 0) {
           newErrors.price = "Valid price is required";
-        } else {
-          delete newErrors.price;
-        }
-        break;
-      case "stock":
-        if (!value || parseInt(value) < 0) {
-          newErrors.stock = "Valid stock quantity is required";
-        } else {
-          delete newErrors.stock;
-        }
+        } else delete newErrors.price;
         break;
       case "thumbnail":
         if (!value.trim()) {
-          newErrors.thumbnail = "Product thumbnail is required";
-        } else {
-          delete newErrors.thumbnail;
-        }
+          newErrors.thumbnail = "Thumbnail is required";
+        } else delete newErrors.thumbnail;
         break;
       case "discount":
-        if (value && (parseFloat(value) < 0 || parseFloat(value) > 100)) {
-          newErrors.discount = "Discount must be between 0 and 100";
-        } else {
-          delete newErrors.discount;
-        }
+        if (value && (value < 0 || value > 100)) {
+          newErrors.discount = "Discount must be 0-100";
+        } else delete newErrors.discount;
+        break;
+      default:
         break;
     }
 
@@ -91,15 +70,9 @@ export default function ProductCreatePage() {
   };
 
   const handleInputChange = (field, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-
-    // Validate field
+    setFormData((p) => ({ ...p, [field]: value }));
     validateField(field, value);
 
-    // Auto-generate slug from title
     if (field === "title") {
       const slug = value
         .toLowerCase()
@@ -108,48 +81,69 @@ export default function ProductCreatePage() {
         .replace(/\s+/g, "-")
         .replace(/-+/g, "-")
         .replace(/^-+|-+$/g, "");
-      setFormData((prev) => ({
-        ...prev,
-        slug: slug,
-      }));
+
+      setFormData((prev) => ({ ...prev, slug }));
     }
   };
 
+  const addSizeDetail = () => {
+    setFormData((p) => ({
+      ...p,
+      sizeDetails: [
+        ...p.sizeDetails,
+        {
+          size: "",
+          stock: "",
+          measurements: { chest: "", length: "", sleeve: "" },
+        },
+      ],
+    }));
+  };
+
+  const updateSizeDetail = (index, field, value) => {
+    const updated = [...formData.sizeDetails];
+    updated[index][field] = value;
+    setFormData((p) => ({ ...p, sizeDetails: updated }));
+  };
+
+  const updateMeasurement = (index, field, value) => {
+    const updated = [...formData.sizeDetails];
+    updated[index].measurements[field] = value;
+    setFormData((p) => ({ ...p, sizeDetails: updated }));
+  };
+
+  const removeSizeDetail = (index) => {
+    const updated = formData.sizeDetails.filter((_, i) => i !== index);
+    setFormData((p) => ({ ...p, sizeDetails: updated }));
+  };
+
   const handleArrayChange = (field, index, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: prev[field].map((item, i) => (i === index ? value : item)),
+    setFormData((p) => ({
+      ...p,
+      [field]: p[field].map((item, i) => (i === index ? value : item)),
     }));
   };
 
   const addArrayItem = (field) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: [...prev[field], ""],
-    }));
-
-    if (field === "gallery") {
-      setGalleryPreviews((prev) => [...prev, ""]);
-    }
+    setFormData((p) => ({ ...p, [field]: [...p[field], ""] }));
+    if (field === "gallery") setGalleryPreviews((prev) => [...prev, ""]);
   };
 
   const removeArrayItem = (field, index) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: prev[field].filter((_, i) => i !== index),
+    setFormData((p) => ({
+      ...p,
+      [field]: p[field].filter((_, i) => i !== index),
     }));
-
-    if (field === "gallery") {
+    if (field === "gallery")
       setGalleryPreviews((prev) => prev.filter((_, i) => i !== index));
-    }
   };
 
   const handleCheckboxChange = (field, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: prev[field].includes(value)
-        ? prev[field].filter((item) => item !== value)
-        : [...prev[field], value],
+    setFormData((p) => ({
+      ...p,
+      [field]: p[field].includes(value)
+        ? p[field].filter((i) => i !== value)
+        : [...p[field], value],
     }));
   };
 
@@ -157,96 +151,77 @@ export default function ProductCreatePage() {
     try {
       new URL(string);
       return true;
-    } catch (_) {
-      // Check if it's a relative path starting with /
+    } catch {
       return string.startsWith("/");
     }
   };
 
   const handleThumbnailChange = (value) => {
     handleInputChange("thumbnail", value);
-    if (isValidUrl(value) && value.trim()) {
-      setThumbnailPreview(value);
-    } else {
-      setThumbnailPreview("");
-    }
+    setThumbnailPreview(isValidUrl(value) ? value : "");
   };
 
   const handleGalleryChange = (index, value) => {
     handleArrayChange("gallery", index, value);
-    if (isValidUrl(value) && value.trim()) {
-      const newPreviews = [...galleryPreviews];
-      newPreviews[index] = value;
-      setGalleryPreviews(newPreviews);
-    } else {
-      const newPreviews = [...galleryPreviews];
-      newPreviews[index] = "";
-      setGalleryPreviews(newPreviews);
-    }
+
+    const previews = [...galleryPreviews];
+    previews[index] = isValidUrl(value) ? value : "";
+    setGalleryPreviews(previews);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitError("");
 
-    // Validate required fields
-    const requiredFields = [
-      "title",
-      "description",
-      "price",
-      "stock",
-      "thumbnail",
-    ];
-    const fieldErrors = {};
+    if (!formData.title || !formData.description || !formData.price) {
+      setSubmitError("Please fill all required fields.");
+      return;
+    }
 
-    requiredFields.forEach((field) => {
-      if (!formData[field]?.toString().trim()) {
-        fieldErrors[field] = `${
-          field.charAt(0).toUpperCase() + field.slice(1)
-        } is required`;
-      }
-    });
-
-    if (Object.keys(fieldErrors).length > 0) {
-      setErrors(fieldErrors);
+    if (formData.sizeDetails.some((s) => !s.size || !s.stock)) {
+      setSubmitError("All size rows must have a size and stock.");
       return;
     }
 
     setIsSaving(true);
 
     try {
-      // Clean and prepare data
-      const cleanedData = {
+      const cleaned = {
         title: formData.title.trim(),
         description: formData.description.trim(),
-        price: parseFloat(formData.price),
-        discount: parseFloat(formData.discount) || 0,
-        stock: parseInt(formData.stock),
+        price: Number(formData.price),
+        discount: Number(formData.discount) || 0,
         slug: formData.slug.trim(),
         thumbnail: formData.thumbnail.trim(),
+        gallery: formData.gallery.filter((x) => x.trim()),
         category: formData.category,
-        sizes: formData.sizes,
-        ability: formData.ability.filter((ability) => ability.trim()),
-        gallery: formData.gallery.filter((url) => url.trim()),
+        ability: formData.ability.filter((x) => x.trim()),
         status: formData.status,
+        stock: formData.sizeDetails.reduce(
+          (acc, s) => acc + Number(s.stock),
+          100
+        ),
+        sizes: formData.sizeDetails.map((s) => ({
+          size: s.size,
+          stock: Number(s.stock),
+          measurements: {
+            chest: Number(s.measurements.chest),
+            length: Number(s.measurements.length),
+            sleeve: Number(s.measurements.sleeve),
+          },
+        })),
       };
 
-      const result = await createProduct(cleanedData);
+      const result = await createProduct(cleaned);
 
       if (result.error) {
         setSubmitError(result.message);
         return;
       }
 
-      // Success - redirect to product page
-      if (result.slug) {
-        router.push(`/tshirt/${result.slug}`);
-      } else {
-        // Fallback redirect
-        router.push("/shop");
-      }
-    } catch (error) {
-      setSubmitError("An unexpected error occurred. Please try again.");
+      router.push(`/tshirt/${result.slug}`);
+    } catch (err) {
+      setSubmitError("Something went wrong.");
     } finally {
       setIsSaving(false);
     }
@@ -255,7 +230,6 @@ export default function ProductCreatePage() {
   return (
     <div className="min-h-screen">
       <div className="container mx-auto px-4 py-8">
-        {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold text-white mb-2">
@@ -265,7 +239,6 @@ export default function ProductCreatePage() {
           </div>
         </div>
 
-        {/* Error Message */}
         {submitError && (
           <div className="mb-6 p-4 bg-red-500/10 border border-red-500 rounded-xl">
             <p className="text-red-400">{submitError}</p>
@@ -274,387 +247,300 @@ export default function ProductCreatePage() {
 
         <form onSubmit={handleSubmit} className="space-y-8">
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
-            {/* Left Column - Product Information */}
             <div className="xl:col-span-2 space-y-6">
-              {/* Basic Information */}
               <BasicInformation
                 handleInputChange={handleInputChange}
                 formData={formData}
                 errors={errors}
               />
 
-              {/* Product Variants */}
+              {/* --------------------------- SIZE DETAILS UI ---------------------------- */}
               <div className="backdrop-blur-xl rounded-2xl p-6 border border-gray-700/50 shadow-xl">
-                <h3 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  Product Variants
+                <h3 className="text-xl font-semibold text-white mb-6">
+                  Product Sizes (Dynamic)
                 </h3>
 
-                <div className="space-y-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-3">
-                      Sizes
-                    </label>
-                    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-7 gap-3">
-                      {sizeOptions.map((size) => (
-                        <label
-                          key={size}
-                          className="flex items-center justify-center"
-                        >
-                          <input
-                            type="checkbox"
-                            checked={formData.sizes.includes(size)}
-                            onChange={() => handleCheckboxChange("sizes", size)}
-                            className="sr-only"
-                          />
-                          <div
-                            className={`w-full py-2 px-3 rounded-lg border-2 text-center cursor-pointer transition-all duration-200 ${
-                              formData.sizes.includes(size)
-                                ? "border-blue-500 bg-transparent text-blue-400"
-                                : "border-gray-600 bg-transparent text-gray-300 hover:border-gray-500"
-                            }`}
-                          >
-                            {size}
-                          </div>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                  <Categories
-                    formData={formData}
-                    handleCheckboxChange={handleCheckboxChange}
-                  />
-                </div>
-              </div>
-
-              {/* Product Features */}
-              <div className="bg-transparent backdrop-blur-xl rounded-2xl p-6 border border-gray-700/50 shadow-xl">
-                <h3 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
-                  <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                  Product Features
-                </h3>
-
-                <div className="space-y-3">
-                  {formData.ability.map((ability, index) => (
-                    <div key={index} className="flex items-center gap-3">
-                      <input
-                        type="text"
-                        value={ability}
-                        onChange={(e) =>
-                          handleArrayChange("ability", index, e.target.value)
-                        }
-                        placeholder="Enter product feature"
-                        className="flex-1 bg-transparent border border-gray-600 rounded-sm px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                      />
-                      {formData.ability.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => removeArrayItem("ability", index)}
-                          className="p-2 text-red-400 hover:text-red-300 hover:bg-red-400/10 rounded-lg transition-all duration-200"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width={18}
-                            height={18}
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth={2}
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            className="lucide lucide-trash2-icon lucide-trash-2"
-                          >
-                            <path d="M10 11v6" />
-                            <path d="M14 11v6" />
-                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
-                            <path d="M3 6h18" />
-                            <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                          </svg>
-                        </button>
-                      )}
-                    </div>
-                  ))}
-
-                  <button
-                    type="button"
-                    onClick={() => addArrayItem("ability")}
-                    className="flex items-center gap-2 text-blue-400 hover:text-blue-300 py-2 transition-colors duration-200"
+                {formData.sizeDetails.map((item, index) => (
+                  <div
+                    key={index}
+                    className="border border-gray-700 p-4 rounded-xl mb-4"
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width={18}
-                      height={18}
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="lucide lucide-plus-icon lucide-plus"
-                    >
-                      <path d="M5 12h14" />
-                      <path d="M12 5v14" />
-                    </svg>
-                    Add Feature
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Right Column - Images & Settings */}
-            <div className="space-y-6">
-              {/* Product Images */}
-              <div className="bg-transparent backdrop-blur-xl p-6 border border-gray-700/50 shadow-xl">
-                <h3 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
-                  <div className="w-2 h-2 bg-pink-500 rounded-full"></div>
-                  Product Images
-                </h3>
-
-                <div className="space-y-6">
-                  {/* Thumbnail URL Input */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-3">
-                      Thumbnail Image URL *
+                    {/* Size dropdown */}
+                    <label className="block text-sm text-gray-300 mb-1">
+                      Size
                     </label>
+                    <select
+                      value={item.size}
+                      onChange={(e) =>
+                        updateSizeDetail(index, "size", e.target.value)
+                      }
+                      className="w-full bg-transparent border border-gray-600 text-white p-2 rounded mb-3"
+                    >
+                      <option className="bg-black" value="">
+                        Select Size
+                      </option>
+                      {sizeOptions.map((s) => (
+                        <option className="bg-black" key={s} value={s}>
+                          {s}
+                        </option>
+                      ))}
+                    </select>
 
+                    {/* Stock */}
+                    <label className="block text-sm text-gray-300 mb-1">
+                      Stock
+                    </label>
                     <input
-                      type="text"
-                      value={formData.thumbnail}
-                      onChange={(e) => handleThumbnailChange(e.target.value)}
-                      placeholder="Paste image URL or /preview/tshirts/tshirt.jpg"
-                      className={`w-full bg-transparent border ${
-                        errors.thumbnail ? "border-red-500" : "border-gray-600"
-                      } rounded-sm px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all duration-200`}
+                      type="number"
+                      value={item.stock}
+                      onChange={(e) =>
+                        updateSizeDetail(index, "stock", e.target.value)
+                      }
+                      className="w-full bg-transparent border border-gray-600 text-white p-2 rounded mb-3"
                     />
 
-                    {errors.thumbnail && (
-                      <p className="text-red-400 text-sm mt-1">
-                        {errors.thumbnail}
-                      </p>
-                    )}
-
-                    {/* Thumbnail Preview */}
-                    {thumbnailPreview && (
-                      <div className="mt-3 relative group">
-                        <ReusableImage
-                          width={192}
-                          height={192}
-                          src={thumbnailPreview}
-                          alt="Thumbnail preview"
-                          imageClassName="w-full h-full object-cover"
-                          className="border border-gray-600 rounded-lg overflow-hidden"
+                    {/* Measurements */}
+                    <div className="grid grid-cols-3 gap-3">
+                      <div>
+                        <label className="text-sm text-gray-300 mb-1 block">
+                          Chest
+                        </label>
+                        <input
+                          type="number"
+                          value={item.measurements.chest}
+                          onChange={(e) =>
+                            updateMeasurement(index, "chest", e.target.value)
+                          }
+                          className="w-full bg-transparent border border-gray-600 text-white p-2 rounded"
                         />
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setThumbnailPreview("");
-                            handleInputChange("thumbnail", "");
-                          }}
-                          className="absolute top-2 right-2 p-2 bg-red-500 hover:bg-red-600 rounded-full text-white transition-colors duration-200 opacity-0 group-hover:opacity-100"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width={20}
-                            height={20}
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth={2}
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            className="lucide lucide-x-icon lucide-x"
-                          >
-                            <path d="M18 6 6 18" />
-                            <path d="m6 6 12 12" />
-                          </svg>
-                        </button>
                       </div>
-                    )}
-                  </div>
 
-                  {/* Gallery URL Inputs */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-3">
-                      Gallery Image URLs
-                    </label>
+                      <div>
+                        <label className="text-sm text-gray-300 mb-1 block">
+                          Length
+                        </label>
+                        <input
+                          type="number"
+                          value={item.measurements.length}
+                          onChange={(e) =>
+                            updateMeasurement(index, "length", e.target.value)
+                          }
+                          className="w-full bg-transparent border border-gray-600 text-white p-2 rounded"
+                        />
+                      </div>
 
-                    <div className="space-y-3">
-                      {formData.gallery.map((url, index) => (
-                        <div key={index} className="space-y-2">
-                          <div className="flex items-center gap-2">
-                            <input
-                              type="text"
-                              value={url}
-                              onChange={(e) =>
-                                handleGalleryChange(index, e.target.value)
-                              }
-                              placeholder="Paste image URL or /preview/tshirts/tshirt.jpg"
-                              className="flex-1 bg-transparent border border-gray-600 rounded-sm px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm"
-                            />
-                            {formData.gallery.length > 1 && (
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  removeArrayItem("gallery", index)
-                                }
-                                className="p-2 text-red-400 hover:text-red-300 hover:bg-red-400/10 rounded-lg transition-all duration-200"
-                              >
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  width={16}
-                                  height={16}
-                                  viewBox="0 0 24 24"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  strokeWidth={2}
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                >
-                                  <path d="M18 6 6 18" />
-                                  <path d="m6 6 12 12" />
-                                </svg>
-                              </button>
-                            )}
-                          </div>
-
-                          {/* Gallery Preview */}
-                          {galleryPreviews[index] && (
-                            <div className=" w-full">
-                              <ReusableImage
-                                width={192}
-                                height={192}
-                                src={galleryPreviews[index]}
-                                alt={`Gallery ${index + 1}`}
-                                imageClassName="!w-full h-full "
-                              />
-                            </div>
-                          )}
-                        </div>
-                      ))}
+                      <div>
+                        <label className="text-sm text-gray-300 mb-1 block">
+                          Sleeve
+                        </label>
+                        <input
+                          type="number"
+                          value={item.measurements.sleeve}
+                          onChange={(e) =>
+                            updateMeasurement(index, "sleeve", e.target.value)
+                          }
+                          className="w-full bg-transparent border border-gray-600 text-white p-2 rounded"
+                        />
+                      </div>
                     </div>
 
                     <button
                       type="button"
-                      onClick={() => addArrayItem("gallery")}
-                      className="mt-3 flex items-center gap-2 text-blue-400 hover:text-blue-300 py-2 transition-colors duration-200"
+                      onClick={() => removeSizeDetail(index)}
+                      className="mt-4 text-red-400 hover:text-red-300"
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width={18}
-                        height={18}
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="lucide lucide-plus-icon lucide-plus"
-                      >
-                        <path d="M5 12h14" />
-                        <path d="M12 5v14" />
-                      </svg>
-                      Add More Images
+                      Remove Size
                     </button>
                   </div>
-                </div>
+                ))}
+
+                <button
+                  type="button"
+                  onClick={addSizeDetail}
+                  className="text-blue-400 hover:text-blue-300 flex items-center gap-2"
+                >
+                  + Add Size
+                </button>
               </div>
 
-              {/* SEO Settings */}
-              <div className="backdrop-blur-xl rounded-2xl p-6 border border-gray-700/50 shadow-xl">
-                <h3 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
-                  <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+              {/* CATEGORIES + FEATURES */}
+              <Categories
+                formData={formData}
+                handleCheckboxChange={handleCheckboxChange}
+              />
+
+              {/* FEATURES */}
+              <div className="bg-transparent backdrop-blur-xl rounded-2xl p-6 border border-gray-700/50 shadow-xl">
+                <h3 className="text-xl font-semibold text-white mb-6">
+                  Product Features
+                </h3>
+
+                {formData.ability.map((item, index) => (
+                  <div key={index} className="flex items-center gap-3 mb-3">
+                    <input
+                      type="text"
+                      value={item}
+                      onChange={(e) =>
+                        handleArrayChange("ability", index, e.target.value)
+                      }
+                      className="flex-1 bg-transparent border border-gray-600 rounded px-4 py-3 text-white"
+                      placeholder="Enter feature"
+                    />
+                    {formData.ability.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeArrayItem("ability", index)}
+                        className="text-red-400"
+                      >
+                        ✕
+                      </button>
+                    )}
+                  </div>
+                ))}
+
+                <button
+                  type="button"
+                  onClick={() => addArrayItem("ability")}
+                  className="text-blue-400"
+                >
+                  + Add Feature
+                </button>
+              </div>
+            </div>
+
+            {/* -------------------- IMAGES + SETTINGS -------------------- */}
+            <div className="space-y-6">
+              {/* THUMBNAIL */}
+              <div className="backdrop-blur-xl p-6 border border-gray-700/50 rounded-2xl">
+                <h3 className="text-xl font-semibold text-white mb-6">
+                  Product Images
+                </h3>
+
+                <label className="block text-sm text-gray-300 mb-2">
+                  Thumbnail Image URL *
+                </label>
+                <input
+                  type="text"
+                  value={formData.thumbnail}
+                  onChange={(e) => handleThumbnailChange(e.target.value)}
+                  className="w-full bg-transparent border border-gray-600 text-white p-3 rounded"
+                />
+
+                {thumbnailPreview && (
+                  <div className="mt-3">
+                    <ReusableImage
+                      src={thumbnailPreview}
+                      width={200}
+                      height={200}
+                      alt="Thumbnail"
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* GALLERY */}
+              <div className="backdrop-blur-xl p-6 border border-gray-700/50 rounded-2xl">
+                <h3 className="text-xl font-semibold text-white mb-6">
+                  Gallery Images
+                </h3>
+
+                {formData.gallery.map((url, index) => (
+                  <div key={index} className="mb-3">
+                    <input
+                      type="text"
+                      value={url}
+                      onChange={(e) =>
+                        handleGalleryChange(index, e.target.value)
+                      }
+                      className="w-full bg-transparent border border-gray-600 text-white p-2 rounded"
+                      placeholder="Image URL"
+                    />
+
+                    {galleryPreviews[index] && (
+                      <div className="mt-2">
+                        <ReusableImage
+                          src={galleryPreviews[index]}
+                          width={200}
+                          height={200}
+                          alt="Gallery"
+                        />
+                      </div>
+                    )}
+
+                    {formData.gallery.length > 1 && (
+                      <button
+                        type="button"
+                        className="text-red-400 mt-1"
+                        onClick={() => removeArrayItem("gallery", index)}
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
+                ))}
+
+                <button
+                  type="button"
+                  onClick={() => addArrayItem("gallery")}
+                  className="text-blue-400"
+                >
+                  + Add More Images
+                </button>
+              </div>
+
+              {/* SEO */}
+              <div className="backdrop-blur-xl p-6 border border-gray-700/50 rounded-2xl">
+                <h3 className="text-xl font-semibold text-white mb-6">
                   SEO Settings
                 </h3>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-3">
-                    URL Slug
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.slug}
-                    name="slug"
-                    onChange={(e) => handleInputChange("slug", e.target.value)}
-                    className="w-full bg-transparent border border-gray-600 rounded-sm px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                    placeholder="product-slug"
-                  />
-                  <p className="text-xs text-gray-500 mt-2">
-                    URL: /product/{formData.slug || "product-slug"}
-                  </p>
-                </div>
+                <label className="block text-sm text-gray-300 mb-2">
+                  URL Slug
+                </label>
+                <input
+                  type="text"
+                  value={formData.slug}
+                  onChange={(e) => handleInputChange("slug", e.target.value)}
+                  className="w-full bg-transparent border border-gray-600 text-white p-3 rounded"
+                />
+
+                <p className="text-gray-500 mt-2 text-sm">
+                  URL: /product/{formData.slug || "product-slug"}
+                </p>
               </div>
 
-              {/* Product Status */}
-              <div className="backdrop-blur-xl rounded-2xl p-6 border border-gray-700/50 shadow-xl">
-                <h3 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
-                  <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+              {/* STATUS */}
+              <div className="backdrop-blur-xl p-6 border border-gray-700/50 rounded-2xl">
+                <h3 className="text-xl font-semibold text-white mb-6">
                   Product Status
                 </h3>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-3">
-                    Status
-                  </label>
-                  <select
-                    value={formData.status}
-                    onChange={(e) =>
-                      handleInputChange("status", e.target.value)
-                    }
-                    className="w-full bg-transparent border border-gray-600 rounded-sm px-4 py-3 text-white focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                  >
-                    <option value="active" className="bg-gray-800">
-                      Active
-                    </option>
-                    <option value="inactive" className="bg-gray-800">
-                      Inactive
-                    </option>
-                    <option value="draft" className="bg-gray-800">
-                      Draft
-                    </option>
-                  </select>
-                </div>
+                <select
+                  value={formData.status}
+                  onChange={(e) => handleInputChange("status", e.target.value)}
+                  className="w-full bg-transparent border border-gray-600 text-white p-3 rounded"
+                >
+                  <option className="bg-black" value="active">
+                    Active
+                  </option>
+                  <option className="bg-black" value="inactive">
+                    Inactive
+                  </option>
+                  <option className="bg-black" value="draft">
+                    Draft
+                  </option>
+                </select>
               </div>
 
-              {/* Save Button */}
-              <div className="bg-transparent backdrop-blur-xl rounded-2xl p-6 border border-gray-700/50 shadow-xl">
+              {/* SAVE BUTTON */}
+              <div className="backdrop-blur-xl p-6 border border-gray-700/50 rounded-2xl">
                 <button
                   type="submit"
-                  disabled={isSaving || Object.keys(errors).length > 0}
-                  className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 disabled:transform-none flex items-center justify-center gap-3 shadow-lg"
+                  disabled={isSaving}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-xl"
                 >
-                  {isSaving ? (
-                    <>
-                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      Creating Product...
-                    </>
-                  ) : (
-                    <>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width={20}
-                        height={20}
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="lucide lucide-save-icon lucide-save"
-                      >
-                        <path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" />
-                        <path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7" />
-                        <path d="M7 3v4a1 1 0 0 0 1 1h7" />
-                      </svg>
-                      Create Product
-                    </>
-                  )}
+                  {isSaving ? "Creating..." : "Create Product"}
                 </button>
-
-                {Object.keys(errors).length > 0 && (
-                  <p className="text-red-400 text-sm mt-2 text-center">
-                    Please fix the errors above before submitting
-                  </p>
-                )}
               </div>
             </div>
           </div>

@@ -3,18 +3,17 @@
 import AddCart from "@/app/components/AddCart";
 import formatePrice from "@/helpers/formatePrice";
 import mainPrice from "@/helpers/mainPrice";
-import Link from "next/link"; // ✅ Correct import
-
+import Link from "next/link";
 import { useState } from "react";
 
 export default function ProductOrder({
   stock,
-  sizes,
+  sizes = [],
   productId,
   originalPrice,
   discount,
 }) {
-  const [activeSize, setActiveSize] = useState(sizes[0]);
+  const [activeSize, setActiveSize] = useState(sizes[0] || null);
   const [count, setCount] = useState(1);
   const price = formatePrice(originalPrice, discount, count);
 
@@ -25,21 +24,21 @@ export default function ProductOrder({
     <>
       <p className="mt-2">
         <del className="text-gray-300 text-sm mr-2">
-          {mainPrice(originalPrice * count)}{" "}
+          {mainPrice(originalPrice * count)}
         </del>{" "}
         {price}
       </p>
 
       <div className="mt-4 text-sm flex items-center gap-2">
-        {sizes?.map((size, index) => (
+        {sizes?.map((sizeObj, index) => (
           <button
             key={index}
             className={`nav-border ${
-              activeSize === size ? "btn" : "variable-btn"
+              activeSize === sizeObj ? "btn" : "variable-btn"
             }`}
-            onClick={() => setActiveSize(size)}
+            onClick={() => setActiveSize(sizeObj)}
           >
-            {size}
+            {sizeObj.size} {/* ✅ display only the size string */}
           </button>
         ))}
       </div>
@@ -66,31 +65,13 @@ export default function ProductOrder({
           </button>
         ) : (
           <div className="flex md:w-max w-full flex-col md:flex-row gap-4">
-            {/* First Button */}
             <Link
-              href={`/checkout?product=${productId}&quantity=${count}&size=${activeSize}`}
+              href={`/checkout?product=${productId}&quantity=${count}&size=${activeSize?.size}`}
               className="py-2 w-full md:w-max justify-center flex items-center gap-1 px-4 font-medium active:scale-[98%] transition-all duration-300 rounded-sm new-btn hover:border-transparent nav-border text-black text-sm"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width={18}
-                height={18}
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="lucide lucide-shopping-cart transition-transform duration-200"
-              >
-                <circle cx={8} cy={21} r={1} />
-                <circle cx={19} cy={21} r={1} />
-                <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12" />
-              </svg>
               এখনই কিনুন
             </Link>
 
-            {/* Second Button */}
             <div className="w-full md:w-max">
               <AddCart
                 size={activeSize}

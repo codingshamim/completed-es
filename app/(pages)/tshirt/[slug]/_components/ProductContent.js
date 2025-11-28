@@ -5,28 +5,30 @@ export default function ProductContent({
   title,
   description,
   discount,
-  ability,
-  sizes,
+  ability = [],
+  sizes = [],
   stock,
   id,
-  measurements,
 }) {
-  const defaultMeasurements = [
-    { size: "M", chest: "39", length: "27.5", sleeve: "8.5" },
-    { size: "L", chest: "40.5", length: "28", sleeve: "8.75" },
-    { size: "XL", chest: "43", length: "29", sleeve: "9" },
-    { size: "2XL", chest: "45", length: "30", sleeve: "9.25" },
-  ];
-
-  const sizeMeasurements = measurements || defaultMeasurements;
+  // sizes now has objects like: { size: "M", stock: 10, measurements: { chest, length, sleeve } }
+  const sizeMeasurements = sizes.length
+    ? sizes.map((s) => ({
+        size: s.size,
+        stock: s.stock,
+        chest: s.measurements?.chest ?? "",
+        length: s.measurements?.length ?? "",
+        sleeve: s.measurements?.sleeve ?? "",
+      }))
+    : [];
 
   return (
     <div className="hero-content w-full md:w-[55%]">
       {discount > 0 && (
-        <button className="new-btn !text-black ">{discount} % Discount</button>
+        <button className="new-btn !text-black">{discount} % Discount</button>
       )}
       <h1 className="mt-2 mb-2 text-2xl font-bold">{title}</h1>
       <p className="text-sm text-gray-300 mb-2">{description}</p>
+
       <ProductOrder
         originalPrice={originalPrice}
         stock={stock}
@@ -34,7 +36,8 @@ export default function ProductContent({
         discount={discount}
         productId={id}
       />
-      {ability.length > 0 && ability && (
+
+      {ability.length > 0 && (
         <div className="mt-4">
           <h2 className="text-2xl font-bold">Fabric</h2>
           <ul className="list-disc text-sm text-gray-300 ml-6">
@@ -46,100 +49,113 @@ export default function ProductContent({
       )}
 
       {/* Size Chart Section */}
-      <div className="mt-6 mb-6">
-        <h2 className="text-lg font-bold mb-3">
-          Size chart - In inches (Expected Deviation &lt; 3%)
-        </h2>
+      {sizeMeasurements.length > 0 && (
+        <div className="mt-6 mb-6">
+          <h2 className="text-lg font-bold mb-3">
+            Size chart - In inches (Expected Deviation &lt; 3%)
+          </h2>
 
-        {/* Desktop Table */}
-        <div className="hidden md:block overflow-x-auto">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="bg-black">
-                <th className="px-4 py-3 text-left text-sm font-semibold text-white border border-gray-800">
-                  Size
-                </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-white border border-gray-800">
-                  Chest (round)
-                </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-white border border-gray-800">
-                  Length
-                </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-white border border-gray-800">
-                  Sleeve
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {sizeMeasurements.map((size, index) => (
-                <tr
-                  key={index}
-                  className="bg-black border-b border-gray-800 hover:bg-gray-900 transition-colors"
-                >
-                  <td className="px-4 py-3 text-sm font-medium text-white border border-gray-800">
-                    {size.size}
-                  </td>
-                  <td className="px-4 py-3 text-sm text-white border border-gray-800">
-                    {size.chest}
-                  </td>
-                  <td className="px-4 py-3 text-sm text-white border border-gray-800">
-                    {size.length}
-                  </td>
-                  <td className="px-4 py-3 text-sm text-white border border-gray-800">
-                    {size.sleeve}
-                  </td>
+          {/* Desktop Table */}
+          <div className="hidden md:block overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="bg-black">
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-white border border-gray-800">
+                    Size
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-white border border-gray-800">
+                    Chest (round)
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-white border border-gray-800">
+                    Length
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-white border border-gray-800">
+                    Sleeve
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-white border border-gray-800">
+                    Stock
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {sizeMeasurements.map((s, index) => (
+                  <tr
+                    key={index}
+                    className="bg-black border-b border-gray-800 hover:bg-gray-900 transition-colors"
+                  >
+                    <td className="px-4 py-3 text-sm font-medium text-white border border-gray-800">
+                      {s.size}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-white border border-gray-800">
+                      {s.chest}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-white border border-gray-800">
+                      {s.length}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-white border border-gray-800">
+                      {s.sleeve}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-white border border-gray-800">
+                      {s.stock}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
-        {/* Mobile Table */}
-        <div className="md:hidden overflow-x-auto">
-          <table className="w-full border-collapse min-w-[400px]">
-            <thead>
-              <tr className="bg-black">
-                <th className="px-3 py-2 text-left text-xs font-semibold text-white border border-gray-800">
-                  Size
-                </th>
-                <th className="px-3 py-2 text-left text-xs font-semibold text-white border border-gray-800">
-                  Chest (round)
-                </th>
-                <th className="px-3 py-2 text-left text-xs font-semibold text-white border border-gray-800">
-                  Length
-                </th>
-                <th className="px-3 py-2 text-left text-xs font-semibold text-white border border-gray-800">
-                  Sleeve
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {sizeMeasurements.map((size, index) => (
-                <tr key={index} className="bg-black border-b border-gray-800">
-                  <td className="px-3 py-2 text-xs font-medium text-white border border-gray-800">
-                    {size.size}
-                  </td>
-                  <td className="px-3 py-2 text-xs text-white border border-gray-800">
-                    {size.chest}
-                  </td>
-                  <td className="px-3 py-2 text-xs text-white border border-gray-800">
-                    {size.length}
-                  </td>
-                  <td className="px-3 py-2 text-xs text-white border border-gray-800">
-                    {size.sleeve}
-                  </td>
+          {/* Mobile Table */}
+          <div className="md:hidden overflow-x-auto">
+            <table className="w-full border-collapse min-w-[400px]">
+              <thead>
+                <tr className="bg-black">
+                  <th className="px-3 py-2 text-left text-xs font-semibold text-white border border-gray-800">
+                    Size
+                  </th>
+                  <th className="px-3 py-2 text-left text-xs font-semibold text-white border border-gray-800">
+                    Chest
+                  </th>
+                  <th className="px-3 py-2 text-left text-xs font-semibold text-white border border-gray-800">
+                    Length
+                  </th>
+                  <th className="px-3 py-2 text-left text-xs font-semibold text-white border border-gray-800">
+                    Sleeve
+                  </th>
+                  <th className="px-3 py-2 text-left text-xs font-semibold text-white border border-gray-800">
+                    Stock
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {sizeMeasurements.map((s, index) => (
+                  <tr key={index} className="bg-black border-b border-gray-800">
+                    <td className="px-3 py-2 text-xs font-medium text-white border border-gray-800">
+                      {s.size}
+                    </td>
+                    <td className="px-3 py-2 text-xs text-white border border-gray-800">
+                      {s.chest}
+                    </td>
+                    <td className="px-3 py-2 text-xs text-white border border-gray-800">
+                      {s.length}
+                    </td>
+                    <td className="px-3 py-2 text-xs text-white border border-gray-800">
+                      {s.sleeve}
+                    </td>
+                    <td className="px-3 py-2 text-xs text-white border border-gray-800">
+                      {s.stock}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      )}
 
       {stock <= 10 && stock > 0 && (
         <div className="mb-4">
-          <p className="text-yellow-400  items-center  inline-block  text-sm font-medium bg-yellow-900/20 px-3 py-2 rounded-lg ">
+          <p className="text-yellow-400 inline-block text-sm font-medium bg-yellow-900/20 px-3 py-2 rounded-lg">
             <span className="flex items-center gap-2">
-              {" "}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width={24}

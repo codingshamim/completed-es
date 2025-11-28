@@ -46,6 +46,7 @@ const productSchema = new Schema(
     stock: {
       required: true,
       type: Number,
+      default: 100,
       min: 0,
     },
     category: {
@@ -60,8 +61,20 @@ const productSchema = new Schema(
       lowercase: true,
     },
     sizes: {
-      type: [String],
-      enum: ["XS", "S", "M", "L", "XL", "2XL", "3XL"],
+      type: [
+        {
+          size: {
+            type: String,
+            enum: ["XS", "S", "M", "L", "XL", "2XL", "3XL"],
+          },
+          stock: { type: Number, min: 0, default: 0 },
+          measurements: {
+            chest: { type: Number, default: 0 },
+            length: { type: Number, default: 0 },
+            sleeve: { type: Number, default: 0 },
+          },
+        },
+      ],
       default: [],
     },
     status: {

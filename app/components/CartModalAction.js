@@ -4,9 +4,9 @@ import useCommonState from "../src/hooks/useCommonState";
 
 export default function CartModalAction({
   id,
-  stock,
   title,
   buyNowStyle,
+  sizes,
   customClass,
 }) {
   const { common, setCommon } = useCommonState();
@@ -16,7 +16,7 @@ export default function CartModalAction({
       buyModal: true,
       productId: id,
       quantity: 1,
-      stock: stock,
+      sizes,
     });
   };
 

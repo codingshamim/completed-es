@@ -124,7 +124,7 @@ export default function ProductItemDesk({ product }) {
               key={index}
               className="px-2.5 py-1 text-xs font-semibold text-white bg-secondary rounded border border-gray-800 whitespace-nowrap"
             >
-              {size}
+              {size?.size}
             </span>
           ))}
         </div>

@@ -3,7 +3,7 @@
 import { getProductByIdAction } from "@/app/backend/actions";
 import useCommonState from "@/app/src/hooks/useCommonState";
 import formatePrice from "@/helpers/formatePrice";
-import Image from "next/image";
+
 import { useEffect, useState, useMemo, useRef } from "react";
 import React from "react";
 import AddCart from "../AddCart";
@@ -29,6 +29,34 @@ const BuyModal = React.memo(function BuyModal() {
     () => formatePrice(product?.price * count, product?.discount),
     [product, count]
   );
+
+  // Get active size stock
+  const activeSizeStock = useMemo(() => {
+    if (!activeSize || !product?.sizes) return 0;
+    return activeSize?.stock || 0;
+  }, [activeSize, product?.sizes]);
+
+  // Calculate size stock information
+  const sizeStockInfo = useMemo(() => {
+    if (!product?.sizes || product.sizes.length === 0) {
+      return {
+        totalStock: common?.stock || 0,
+        lowStockSizes: [],
+        outOfStockSizes: [],
+      };
+    }
+
+    const totalStock = product.sizes.reduce(
+      (sum, size) => sum + (size.stock || 0),
+      0
+    );
+    const lowStockSizes = product.sizes.filter(
+      (size) => size.stock > 0 && size.stock <= 10
+    );
+    const outOfStockSizes = product.sizes.filter((size) => size.stock === 0);
+
+    return { totalStock, lowStockSizes, outOfStockSizes };
+  }, [product?.sizes, common?.stock]);
 
   useEffect(() => {
     const fetchProductById = async () => {
@@ -57,7 +85,8 @@ const BuyModal = React.memo(function BuyModal() {
   }, [common?.quantity]);
 
   const increament = () => {
-    if (count !== common?.stock) {
+    const maxStock = activeSizeStock || common?.stock;
+    if (count < maxStock) {
       setCount(count + 1);
     }
   };
@@ -88,7 +117,7 @@ const BuyModal = React.memo(function BuyModal() {
   const handleTouchStart = (e) => {
     const scrollContainer = modalRef.current?.querySelector(".overflow-y-auto");
     if (scrollContainer && scrollContainer.scrollTop > 0) {
-      return; // Don't handle swipe if content is scrolled
+      return;
     }
 
     startY.current = e.touches[0].clientY;
@@ -106,7 +135,6 @@ const BuyModal = React.memo(function BuyModal() {
     currentY.current = e.touches[0].clientY;
     const diff = currentY.current - startY.current;
 
-    // Only allow downward swipes
     if (diff > 0) {
       setTranslateY(diff);
     }
@@ -115,21 +143,17 @@ const BuyModal = React.memo(function BuyModal() {
   const handleTouchEnd = () => {
     setIsDragging(false);
 
-    // If swiped down more than 150px, close the modal
     if (translateY > 150) {
       handleClose();
     } else {
-      // Reset position
       setTranslateY(0);
     }
   };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-md z-50 flex items-end md:items-center justify-center">
-      {/* Desktop backdrop click to close */}
       <div className="absolute inset-0 hidden md:block" onClick={handleClose} />
 
-      {/* Modal Container */}
       <div
         ref={modalRef}
         className="relative bg-black w-full md:max-w-2xl mx-4 md:rounded-2xl overflow-hidden shadow-2xl border border-gray-800 max-h-[90vh] md:max-h-[85vh] flex flex-col transition-transform duration-200 ease-out"
@@ -137,7 +161,7 @@ const BuyModal = React.memo(function BuyModal() {
           transform: `translateY(${translateY}px)`,
         }}
       >
-        {/* Mobile Handle Bar (YouTube style) - Swipeable */}
+        {/* Mobile Handle Bar */}
         <div
           className="md:hidden flex justify-center py-2 bg-black border-b border-gray-800 cursor-grab active:cursor-grabbing"
           onTouchStart={handleTouchStart}
@@ -235,25 +259,105 @@ const BuyModal = React.memo(function BuyModal() {
                     </span>
                   </div>
 
-                  {/* Stock Warning */}
-                  {common?.stock <= 10 && (
-                    <div className="inline-flex items-center text-xs text-orange-400 bg-orange-900 bg-opacity-20 px-2 py-1 rounded-md border border-orange-800">
-                      <svg
-                        className="w-3 h-3 mr-1"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                      Only {common?.stock} items left
-                    </div>
-                  )}
+                  {/* Active Size Stock Warning */}
+                  {activeSize &&
+                    activeSizeStock <= 10 &&
+                    activeSizeStock > 0 && (
+                      <div className="inline-flex items-center text-xs text-orange-400 bg-orange-900 bg-opacity-20 px-2 py-1 rounded-md border border-orange-800">
+                        <svg
+                          className="w-3 h-3 mr-1"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                        Only {activeSizeStock} items left in size{" "}
+                        {activeSize?.size}
+                      </div>
+                    )}
                 </div>
               </div>
+
+              {/* Size-wise Stock Overview */}
+              {product?.sizes && product.sizes.length > 0 && (
+                <div className="space-y-2">
+                  {/* Low Stock Sizes */}
+                  {sizeStockInfo.lowStockSizes.length > 0 && (
+                    <div className="text-sm">
+                      <div className="flex items-start text-orange-400 bg-orange-900 bg-opacity-20 px-3 py-2 rounded-lg border border-orange-800">
+                        <svg
+                          className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                        <div className="flex-1">
+                          <span className="font-medium bangla-font">
+                            কম স্টক:
+                          </span>
+                          <div className="flex flex-wrap gap-1.5 mt-1.5">
+                            {sizeStockInfo.lowStockSizes.map((size) => (
+                              <span
+                                key={size._id}
+                                className="inline-block bg-orange-800 bg-opacity-30 px-2 py-1 rounded text-xs font-medium"
+                              >
+                                {size.size}: {size.stock} টি বাকি
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Out of Stock Sizes */}
+                  {sizeStockInfo.outOfStockSizes.length > 0 &&
+                    sizeStockInfo.outOfStockSizes.length <
+                      product.sizes.length && (
+                      <div className="text-sm">
+                        <div className="flex items-start text-red-400 bg-red-900 bg-opacity-20 px-3 py-2 rounded-lg border border-red-800">
+                          <svg
+                            className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M6 18L18 6M6 6l12 12"
+                            />
+                          </svg>
+                          <div className="flex-1">
+                            <span className="font-medium bangla-font">
+                              স্টক শেষ:
+                            </span>
+                            <div className="flex flex-wrap gap-1.5 mt-1.5">
+                              {sizeStockInfo.outOfStockSizes.map((size) => (
+                                <span
+                                  key={size._id}
+                                  className="inline-block bg-red-800 bg-opacity-30 px-2 py-1 rounded text-xs font-medium line-through"
+                                >
+                                  {size.size}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                </div>
+              )}
 
               {/* Quantity Selector */}
               <div className="bg-black bg-opacity-50 rounded-xl p-4 border border-gray-700">
@@ -279,7 +383,7 @@ const BuyModal = React.memo(function BuyModal() {
                   <button
                     className="w-10 h-10 bg-black hover:bg-gray-800 border border-gray-600 rounded-lg flex items-center justify-center text-white font-semibold transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     onClick={increament}
-                    disabled={count >= common?.stock}
+                    disabled={count >= (activeSizeStock || common?.stock)}
                   >
                     +
                   </button>
@@ -296,14 +400,22 @@ const BuyModal = React.memo(function BuyModal() {
                     {product.sizes.map((size, index) => (
                       <button
                         key={index}
-                        className={`size-10 rounded-sm border transition-all duration-200 font-medium ${
-                          activeSize === size
+                        disabled={size.stock === 0}
+                        className={`size-10 rounded-sm border transition-all duration-200 font-medium relative ${
+                          activeSize?.size === size?.size
                             ? "bg-white border-white text-black shadow-lg"
+                            : size.stock === 0
+                            ? "bg-gray-900 border-gray-700 text-gray-600 cursor-not-allowed opacity-50"
                             : "bg-black border-gray-600 text-gray-300 hover:bg-gray-800 hover:border-gray-500"
                         }`}
                         onClick={() => setActiveSize(size)}
                       >
-                        {size}
+                        {size?.size}
+                        {size.stock === 0 && (
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="w-full h-0.5 bg-red-500 rotate-45"></div>
+                          </div>
+                        )}
                       </button>
                     ))}
                   </div>
@@ -315,7 +427,7 @@ const BuyModal = React.memo(function BuyModal() {
 
         {/* Footer with Add to Cart Button */}
         {!loading && !error && (
-          <div className="border-t flex md:items-center flex-col md:flex-row gap-3  border-gray-800 bg-black p-4">
+          <div className="border-t flex md:items-center flex-col md:flex-row gap-3 border-gray-800 bg-black p-4">
             <Link
               onClick={() => {
                 setCommon({
@@ -327,8 +439,8 @@ const BuyModal = React.memo(function BuyModal() {
                   size: "",
                 });
               }}
-              href={`/checkout?product=${common?.productId}&quantity=${count}&size=${activeSize}`}
-              className="py-2   justify-center flex items-center  gap-1 px-4 font-medium active:scale-[98%] transition-all duration-300 rounded-sm new-btn hover:border-transparent nav-border text-black text-sm"
+              href={`/checkout?product=${common?.productId}&quantity=${count}&size=${activeSize?.size}`}
+              className="py-2 justify-center flex items-center gap-1 px-4 font-medium active:scale-[98%] transition-all duration-300 rounded-sm new-btn hover:border-transparent nav-border text-black text-sm"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -351,7 +463,7 @@ const BuyModal = React.memo(function BuyModal() {
             <AddCart
               productId={common?.productId}
               quantity={count}
-              size={activeSize}
+              size={activeSize?.size}
             />
           </div>
         )}

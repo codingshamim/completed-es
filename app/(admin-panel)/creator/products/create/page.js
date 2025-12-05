@@ -4,7 +4,7 @@ import { createProduct } from "@/app/actions/product.action";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import ReusableImage from "@/app/_components/ReusableImage";
-import Image from "next/image";
+
 import BasicInformation from "../_components/BasicInformation";
 import Categories from "./_components/Categories";
 

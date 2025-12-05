@@ -23,7 +23,11 @@ export default function AddCart({ quantity, productId, size }) {
         toastMessage: "",
       });
       setLoading(true);
-      const response = await addTocartAction({ quantity, productId, size });
+      const response = await addTocartAction({
+        quantity,
+        productId,
+        size: size,
+      });
 
       if (response.ok) {
         setCommon({

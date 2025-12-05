@@ -100,7 +100,6 @@ const deleteProductById = async (productId) => {
 };
 
 const createProduct = async (formData) => {
-  console.log(formData?.sizes);
   try {
     // 1️⃣ Authentication
     const loggedUser = await auth();

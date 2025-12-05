@@ -156,7 +156,7 @@ export default function ProductItemPhone({ product }) {
             <select className="bg-transparent">
               {product.sizes.map((size, index) => (
                 <option className="bg-black" key={index}>
-                  {size}
+                  {size?.size}
                 </option>
               ))}
             </select>

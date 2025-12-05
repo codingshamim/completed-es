@@ -1,30 +1,32 @@
 "use client";
 
 import { updateProductAction } from "@/app/actions/product.action";
-
 import { useState, useRef, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import getProductBySlug from "@/app/backend/queries/getProductBySlug";
 import ReusableImage from "@/app/_components/ReusableImage";
+
+import BasicInformation from "../../../products/_components/BasicInformation";
+import Categories from "../../../products/create/_components/Categories";
 
 export default function ProductEditPage({ params }) {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [productNotFound, setProductNotFound] = useState(false);
 
-  // Unwrap params using React.use()
   const resolvedParams = use(params);
+
+  const sizeOptions = ["XS", "S", "M", "L", "XL", "2XL", "3XL"];
 
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     price: "",
     discount: "",
-    stock: "",
     slug: "",
     thumbnail: "",
     category: [],
-    sizes: [],
+    sizeDetails: [], // Changed from sizes to sizeDetails
     ability: [""],
     gallery: [""],
     status: "active",
@@ -33,24 +35,10 @@ export default function ProductEditPage({ params }) {
   const [originalSlug, setOriginalSlug] = useState("");
   const [thumbnailPreview, setThumbnailPreview] = useState("");
   const [galleryPreviews, setGalleryPreviews] = useState([]);
-  const [isUploading, setIsUploading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [errors, setErrors] = useState({});
   const [submitError, setSubmitError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-
-  const thumbnailInputRef = useRef(null);
-  const galleryInputRefs = useRef([]);
-
-  const categories = [
-    "Hoodie",
-    "T-Shirt",
-    "Jacket",
-    "Pants",
-    "Accessories",
-    "Shoes",
-  ];
-  const sizeOptions = ["XS", "S", "M", "L", "XL", "2XL", "3XL"];
 
   // Load product data
   useEffect(() => {
@@ -75,20 +63,38 @@ export default function ProductEditPage({ params }) {
         const product = result.product;
         setOriginalSlug(product.slug);
 
-        // Fix 1: Update the form data initialization (around line 90-95)
+        // Transform sizes to sizeDetails format
+        const sizeDetails =
+          product.sizes && product.sizes.length > 0
+            ? product.sizes.map((s) => ({
+                size: s.size || "",
+                stock: s.stock?.toString() || "",
+                measurements: {
+                  chest: s.measurements?.chest?.toString() || "",
+                  length: s.measurements?.length?.toString() || "",
+                  sleeve: s.measurements?.sleeve?.toString() || "",
+                },
+              }))
+            : [
+                {
+                  size: "",
+                  stock: "",
+                  measurements: { chest: "", length: "", sleeve: "" },
+                },
+              ];
+
         setFormData({
           title: product.title || "",
           description: product.description || "",
           price: product.price?.toString() || "",
           discount: product.discount?.toString() || "",
-          stock: product.stock?.toString() || "",
           slug: product.slug || "",
           thumbnail: product.thumbnail || "",
           category: product.category || [],
-          sizes: product.sizes || [],
+          sizeDetails: sizeDetails,
           ability:
             product.ability && product.ability.length > 0
-              ? product.ability // Remove .title access since ability is array of strings
+              ? product.ability
               : [""],
           gallery:
             product.gallery && product.gallery.length > 0
@@ -147,15 +153,12 @@ export default function ProductEditPage({ params }) {
           delete newErrors.price;
         }
         break;
-
-        break;
       case "thumbnail":
         if (!value.trim()) {
           newErrors.thumbnail = "Product thumbnail is required";
         } else {
           delete newErrors.thumbnail;
         }
-        break;
       case "discount":
         if (value && (parseFloat(value) < 0 || parseFloat(value) > 100)) {
           newErrors.discount = "Discount must be between 0 and 100";
@@ -176,7 +179,7 @@ export default function ProductEditPage({ params }) {
 
     validateField(field, value);
 
-    // Auto-generate slug from title (but only if slug hasn't been manually edited)
+    // Auto-generate slug from title
     if (field === "title" && formData.slug === originalSlug) {
       const slug = value
         .toLowerCase()
@@ -191,10 +194,40 @@ export default function ProductEditPage({ params }) {
       }));
     }
 
-    // Clear success message when form is modified
     if (successMessage) {
       setSuccessMessage("");
     }
+  };
+
+  const addSizeDetail = () => {
+    setFormData((p) => ({
+      ...p,
+      sizeDetails: [
+        ...p.sizeDetails,
+        {
+          size: "",
+          stock: "",
+          measurements: { chest: "", length: "", sleeve: "" },
+        },
+      ],
+    }));
+  };
+
+  const updateSizeDetail = (index, field, value) => {
+    const updated = [...formData.sizeDetails];
+    updated[index][field] = value;
+    setFormData((p) => ({ ...p, sizeDetails: updated }));
+  };
+
+  const updateMeasurement = (index, field, value) => {
+    const updated = [...formData.sizeDetails];
+    updated[index].measurements[field] = value;
+    setFormData((p) => ({ ...p, sizeDetails: updated }));
+  };
+
+  const removeSizeDetail = (index) => {
+    const updated = formData.sizeDetails.filter((_, i) => i !== index);
+    setFormData((p) => ({ ...p, sizeDetails: updated }));
   };
 
   const handleArrayChange = (field, index, value) => {
@@ -239,44 +272,22 @@ export default function ProductEditPage({ params }) {
     try {
       new URL(string);
       return true;
-    } catch (_) {
-      return false;
+    } catch {
+      return string.startsWith("/");
     }
   };
 
-  const handleImageUpload = async (file, type, index = null) => {
-    if (!file) return;
+  const handleThumbnailChange = (value) => {
+    handleInputChange("thumbnail", value);
+    setThumbnailPreview(isValidUrl(value) ? value : "");
+  };
 
-    if (!file.type.startsWith("image/")) {
-      alert("Please select a valid image file");
-      return;
-    }
+  const handleGalleryChange = (index, value) => {
+    handleArrayChange("gallery", index, value);
 
-    if (file.size > 5 * 1024 * 1024) {
-      alert("Image size should be less than 5MB");
-      return;
-    }
-
-    setIsUploading(true);
-    try {
-      const mockUrl = URL.createObjectURL(file);
-
-      if (type === "thumbnail") {
-        setThumbnailPreview(mockUrl);
-        handleInputChange("thumbnail", mockUrl);
-      } else if (type === "gallery") {
-        const newPreviews = [...galleryPreviews];
-        newPreviews[index] = mockUrl;
-        setGalleryPreviews(newPreviews);
-        handleArrayChange("gallery", index, mockUrl);
-      }
-
-      setTimeout(() => setIsUploading(false), 1000);
-    } catch (error) {
-      console.error("Upload failed:", error);
-      alert("Upload failed. Please try again.");
-      setIsUploading(false);
-    }
+    const previews = [...galleryPreviews];
+    previews[index] = isValidUrl(value) ? value : "";
+    setGalleryPreviews(previews);
   };
 
   const handleSubmit = async (e) => {
@@ -285,13 +296,7 @@ export default function ProductEditPage({ params }) {
     setSuccessMessage("");
 
     // Validate required fields
-    const requiredFields = [
-      "title",
-      "description",
-      "price",
-      "stock",
-      "thumbnail",
-    ];
+    const requiredFields = ["title", "description", "price", "thumbnail"];
     const fieldErrors = {};
 
     requiredFields.forEach((field) => {
@@ -301,6 +306,12 @@ export default function ProductEditPage({ params }) {
         } is required`;
       }
     });
+
+    // Validate size details
+    if (formData.sizeDetails.some((s) => !s.size || !s.stock)) {
+      setSubmitError("All size rows must have a size and stock.");
+      return;
+    }
 
     if (Object.keys(fieldErrors).length > 0) {
       setErrors(fieldErrors);
@@ -315,14 +326,25 @@ export default function ProductEditPage({ params }) {
         description: formData.description.trim(),
         price: parseFloat(formData.price),
         discount: parseFloat(formData.discount) || 0,
-        stock: parseInt(formData.stock),
         slug: formData.slug.trim(),
         thumbnail: formData.thumbnail.trim(),
         category: formData.category,
-        sizes: formData.sizes,
-        ability: formData.ability.filter((ability) => ability.trim()), // Fix: Remove .title
+        ability: formData.ability.filter((ability) => ability.trim()),
         gallery: formData.gallery.filter((url) => url.trim()),
         status: formData.status,
+        stock: formData.sizeDetails.reduce(
+          (acc, s) => acc + Number(s.stock),
+          0
+        ),
+        sizes: formData.sizeDetails.map((s) => ({
+          size: s.size,
+          stock: Number(s.stock),
+          measurements: {
+            chest: Number(s.measurements.chest) || 0,
+            length: Number(s.measurements.length) || 0,
+            sleeve: Number(s.measurements.sleeve) || 0,
+          },
+        })),
       };
 
       const result = await updateProductAction(originalSlug, cleanedData);
@@ -337,7 +359,6 @@ export default function ProductEditPage({ params }) {
       // Update original slug if it was changed
       if (result.slug && result.slug !== originalSlug) {
         setOriginalSlug(result.slug);
-        // Optionally redirect to new URL
         router.push(`/creator/products/edit/${result.slug}`);
       }
     } catch (error) {
@@ -369,8 +390,7 @@ export default function ProductEditPage({ params }) {
             Product Not Found
           </h1>
           <p className="text-gray-400 mb-6">
-            The product you&#39;re looking for doesn&#39;t exist or has been
-            removed.
+            The product you're looking for doesn't exist or has been removed.
           </p>
           <button
             onClick={() => router.push("/creator/products")}
@@ -408,7 +428,6 @@ export default function ProductEditPage({ params }) {
               strokeWidth={2}
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="lucide lucide-arrow-left-icon lucide-arrow-left"
             >
               <path d="m12 19-7-7 7-7" />
               <path d="M19 12H5" />
@@ -431,212 +450,134 @@ export default function ProductEditPage({ params }) {
           </div>
         )}
 
-        {/* Rest of the form is identical to create page */}
         <form onSubmit={handleSubmit} className="space-y-8">
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
-            {/* Left Column - Product Information */}
+            {/* Left Column */}
             <div className="xl:col-span-2 space-y-6">
               {/* Basic Information */}
-              <div className="backdrop-blur-xl rounded-2xl p-6 border border-gray-700/50 shadow-xl">
-                <h3 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                  Product Information
-                </h3>
+              <BasicInformation
+                handleInputChange={handleInputChange}
+                formData={formData}
+                errors={errors}
+              />
 
-                <div className="space-y-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-3">
-                      Product Title *
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.title}
-                      onChange={(e) =>
-                        handleInputChange("title", e.target.value)
-                      }
-                      className={`w-full bg-transparent border ${
-                        errors.title ? "border-red-500" : "border-gray-600"
-                      } rounded-sm px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all duration-200`}
-                      placeholder="Enter product title"
-                      required
-                    />
-                    {errors.title && (
-                      <p className="text-red-400 text-sm mt-1">
-                        {errors.title}
-                      </p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-3">
-                      Description *
-                    </label>
-                    <textarea
-                      value={formData.description}
-                      onChange={(e) =>
-                        handleInputChange("description", e.target.value)
-                      }
-                      rows={4}
-                      className={`w-full bg-transparent border ${
-                        errors.description
-                          ? "border-red-500"
-                          : "border-gray-600"
-                      } rounded-sm px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none`}
-                      placeholder="Enter product description"
-                      required
-                    />
-                    {errors.description && (
-                      <p className="text-red-400 text-sm mt-1">
-                        {errors.description}
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-3">
-                        Price (৳) *
-                      </label>
-                      <input
-                        type="number"
-                        value={formData.price}
-                        onChange={(e) =>
-                          handleInputChange("price", e.target.value)
-                        }
-                        className={`w-full bg-transparent border ${
-                          errors.price ? "border-red-500" : "border-gray-600"
-                        } rounded-sm px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all duration-200`}
-                        placeholder="0"
-                        required
-                        min="0"
-                        step="0.01"
-                      />
-                      {errors.price && (
-                        <p className="text-red-400 text-sm mt-1">
-                          {errors.price}
-                        </p>
-                      )}
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-3">
-                        Discount (%)
-                      </label>
-                      <input
-                        type="number"
-                        value={formData.discount}
-                        onChange={(e) =>
-                          handleInputChange("discount", e.target.value)
-                        }
-                        className={`w-full bg-transparent border ${
-                          errors.discount ? "border-red-500" : "border-gray-600"
-                        } rounded-sm px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all duration-200`}
-                        placeholder="0"
-                        min="0"
-                        max="100"
-                      />
-                      {errors.discount && (
-                        <p className="text-red-400 text-sm mt-1">
-                          {errors.discount}
-                        </p>
-                      )}
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-3">
-                        Stock *
-                      </label>
-                      <input
-                        type="number"
-                        value={formData.stock}
-                        onChange={(e) =>
-                          handleInputChange("stock", e.target.value)
-                        }
-                        className={`w-full bg-transparent border ${
-                          errors.stock ? "border-red-500" : "border-gray-600"
-                        } rounded-sm px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all duration-200`}
-                        placeholder="0"
-                        required
-                        min="0"
-                      />
-                      {errors.stock && (
-                        <p className="text-red-400 text-sm mt-1">
-                          {errors.stock}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Product Variants */}
+              {/* Size Details */}
               <div className="backdrop-blur-xl rounded-2xl p-6 border border-gray-700/50 shadow-xl">
                 <h3 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
                   <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  Product Variants
+                  Product Sizes (Dynamic)
                 </h3>
 
-                <div className="space-y-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-3">
-                      Sizes
+                {formData.sizeDetails.map((item, index) => (
+                  <div
+                    key={index}
+                    className="border border-gray-700 p-4 rounded-xl mb-4"
+                  >
+                    {/* Size dropdown */}
+                    <label className="block text-sm text-gray-300 mb-1">
+                      Size
                     </label>
-                    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-7 gap-3">
-                      {sizeOptions.map((size) => (
-                        <label
-                          key={size}
-                          className="flex items-center justify-center"
-                        >
-                          <input
-                            type="checkbox"
-                            checked={formData.sizes.includes(size)}
-                            onChange={() => handleCheckboxChange("sizes", size)}
-                            className="sr-only"
-                          />
-                          <div
-                            className={`w-full py-2 px-3 rounded-lg border-2 text-center cursor-pointer transition-all duration-200 ${
-                              formData.sizes.includes(size)
-                                ? "border-blue-500 bg-transparent text-blue-400"
-                                : "border-gray-600 bg-transparent text-gray-300 hover:border-gray-500"
-                            }`}
-                          >
-                            {size}
-                          </div>
-                        </label>
+                    <select
+                      value={item.size}
+                      onChange={(e) =>
+                        updateSizeDetail(index, "size", e.target.value)
+                      }
+                      className="w-full bg-transparent border border-gray-600 text-white p-2 rounded mb-3"
+                    >
+                      <option className="bg-black" value="">
+                        Select Size
+                      </option>
+                      {sizeOptions.map((s) => (
+                        <option className="bg-black" key={s} value={s}>
+                          {s}
+                        </option>
                       ))}
-                    </div>
-                  </div>
+                    </select>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-3">
-                      Categories
+                    {/* Stock */}
+                    <label className="block text-sm text-gray-300 mb-1">
+                      Stock
                     </label>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                      {categories.map((category) => (
-                        <label key={category} className="flex items-center">
-                          <input
-                            type="checkbox"
-                            checked={formData.category.includes(category)}
-                            onChange={() =>
-                              handleCheckboxChange("category", category)
-                            }
-                            className="sr-only"
-                          />
-                          <div
-                            className={`w-full py-2 px-4 rounded-lg border-2 text-center cursor-pointer transition-all duration-200 ${
-                              formData.category.includes(category)
-                                ? "border-blue-500 bg-transparent text-blue-400"
-                                : "border-gray-600 bg-transparent text-gray-300 hover:border-gray-500"
-                            }`}
-                          >
-                            {category}
-                          </div>
+                    <input
+                      type="number"
+                      value={item.stock}
+                      onChange={(e) =>
+                        updateSizeDetail(index, "stock", e.target.value)
+                      }
+                      className="w-full bg-transparent border border-gray-600 text-white p-2 rounded mb-3"
+                    />
+
+                    {/* Measurements */}
+                    <div className="grid grid-cols-3 gap-3">
+                      <div>
+                        <label className="text-sm text-gray-300 mb-1 block">
+                          Chest
                         </label>
-                      ))}
+                        <input
+                          type="number"
+                          value={item.measurements.chest}
+                          onChange={(e) =>
+                            updateMeasurement(index, "chest", e.target.value)
+                          }
+                          className="w-full bg-transparent border border-gray-600 text-white p-2 rounded"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-sm text-gray-300 mb-1 block">
+                          Length
+                        </label>
+                        <input
+                          type="number"
+                          value={item.measurements.length}
+                          onChange={(e) =>
+                            updateMeasurement(index, "length", e.target.value)
+                          }
+                          className="w-full bg-transparent border border-gray-600 text-white p-2 rounded"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-sm text-gray-300 mb-1 block">
+                          Sleeve
+                        </label>
+                        <input
+                          type="number"
+                          value={item.measurements.sleeve}
+                          onChange={(e) =>
+                            updateMeasurement(index, "sleeve", e.target.value)
+                          }
+                          className="w-full bg-transparent border border-gray-600 text-white p-2 rounded"
+                        />
+                      </div>
                     </div>
+
+                    {formData.sizeDetails.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeSizeDetail(index)}
+                        className="mt-4 text-red-400 hover:text-red-300"
+                      >
+                        Remove Size
+                      </button>
+                    )}
                   </div>
-                </div>
+                ))}
+
+                <button
+                  type="button"
+                  onClick={addSizeDetail}
+                  className="text-blue-400 hover:text-blue-300 flex items-center gap-2"
+                >
+                  + Add Size
+                </button>
               </div>
+
+              {/* Categories */}
+              <Categories
+                formData={formData}
+                handleCheckboxChange={handleCheckboxChange}
+              />
 
               {/* Product Features */}
               <div className="bg-transparent backdrop-blur-xl rounded-2xl p-6 border border-gray-700/50 shadow-xl">
@@ -650,7 +591,7 @@ export default function ProductEditPage({ params }) {
                     <div key={index} className="flex items-center gap-3">
                       <input
                         type="text"
-                        value={ability} // Fix: Remove .title since ability is a string
+                        value={ability}
                         onChange={(e) =>
                           handleArrayChange("ability", index, e.target.value)
                         }
@@ -663,24 +604,7 @@ export default function ProductEditPage({ params }) {
                           onClick={() => removeArrayItem("ability", index)}
                           className="p-2 text-red-400 hover:text-red-300 hover:bg-red-400/10 rounded-lg transition-all duration-200"
                         >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width={18}
-                            height={18}
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth={2}
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            className="lucide lucide-trash2-icon lucide-trash-2"
-                          >
-                            <path d="M10 11v6" />
-                            <path d="M14 11v6" />
-                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
-                            <path d="M3 6h18" />
-                            <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                          </svg>
+                          ✕
                         </button>
                       )}
                     </div>
@@ -691,22 +615,7 @@ export default function ProductEditPage({ params }) {
                     onClick={() => addArrayItem("ability")}
                     className="flex items-center gap-2 text-blue-400 hover:text-blue-300 py-2 transition-colors duration-200"
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width={18}
-                      height={18}
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="lucide lucide-plus-icon lucide-plus"
-                    >
-                      <path d="M5 12h14" />
-                      <path d="M12 5v14" />
-                    </svg>
-                    Add Feature
+                    + Add Feature
                   </button>
                 </div>
               </div>
@@ -715,260 +624,116 @@ export default function ProductEditPage({ params }) {
             {/* Right Column - Images & Settings */}
             <div className="space-y-6">
               {/* Product Images */}
-              <div className="bg-transparent backdrop-blur-xl rounded-2xl p-6 border border-gray-700/50 shadow-xl">
+              <div className="backdrop-blur-xl rounded-2xl p-6 border border-gray-700/50 shadow-xl">
                 <h3 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
                   <div className="w-2 h-2 bg-pink-500 rounded-full"></div>
                   Product Images
                 </h3>
 
                 <div className="space-y-6">
-                  {/* Thumbnail Upload */}
+                  {/* Thumbnail */}
                   <div>
                     <label className="block text-sm font-medium text-gray-300 mb-3">
-                      Thumbnail Image *
+                      Thumbnail Image URL *
                     </label>
-
-                    <div className="relative">
-                      {thumbnailPreview ? (
-                        <div className="relative group">
-                          <ReusableImage
-                            width={192}
-                            height={192}
-                            src={thumbnailPreview}
-                            alt="Thumbnail preview"
-                            className="w-full   border-2 border-gray-600"
-                          />
-                          <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-xl flex items-center justify-center">
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setThumbnailPreview("");
-                                handleInputChange("thumbnail", "");
-                              }}
-                              className="p-2 bg-red-500 hover:bg-red-600 rounded-full text-white transition-colors duration-200"
-                            >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width={20}
-                                height={20}
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth={2}
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                className="lucide lucide-x-icon lucide-x"
-                              >
-                                <path d="M18 6 6 18" />
-                                <path d="m6 6 12 12" />
-                              </svg>
-                            </button>
-                          </div>
-                        </div>
-                      ) : (
-                        <div
-                          onClick={() => thumbnailInputRef.current?.click()}
-                          className={`w-full h-48 border-2 border-dashed ${
-                            errors.thumbnail
-                              ? "border-red-500"
-                              : "border-gray-600"
-                          } rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-gray-500 hover:bg-gray-700/20 transition-all duration-200`}
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width={32}
-                            height={32}
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth={2}
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            className="lucide text-gray-400 mb-2 lucide-upload-icon lucide-upload"
-                          >
-                            <path d="M12 3v12" />
-                            <path d="m17 8-5-5-5 5" />
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                          </svg>
-                          <p className="text-gray-400 text-sm text-center">
-                            {isUploading
-                              ? "Uploading..."
-                              : "Click to upload thumbnail"}
-                          </p>
-                        </div>
-                      )}
-
-                      <input
-                        ref={thumbnailInputRef}
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) handleImageUpload(file, "thumbnail");
-                        }}
-                        className="hidden"
-                      />
-                    </div>
+                    <input
+                      type="text"
+                      value={formData.thumbnail}
+                      onChange={(e) => handleThumbnailChange(e.target.value)}
+                      className={`w-full bg-transparent border ${
+                        errors.thumbnail ? "border-red-500" : "border-gray-600"
+                      } rounded-sm px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all duration-200`}
+                      placeholder="Enter image URL"
+                    />
                     {errors.thumbnail && (
                       <p className="text-red-400 text-sm mt-1">
                         {errors.thumbnail}
                       </p>
                     )}
 
-                    <div className="mt-3">
-                      <input
-                        type="url"
-                        value={formData.thumbnail}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          handleInputChange("thumbnail", value);
-                          if (isValidUrl(value)) {
-                            setThumbnailPreview(value);
-                          }
-                        }}
-                        placeholder="Or paste image URL"
-                        className={`w-full bg-transparent border ${
-                          errors.thumbnail
-                            ? "border-red-500"
-                            : "border-gray-600"
-                        } rounded-sm px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all duration-200`}
-                      />
-                    </div>
+                    {thumbnailPreview && (
+                      <div className="mt-3 relative group">
+                        <ReusableImage
+                          width={200}
+                          height={200}
+                          src={thumbnailPreview}
+                          alt="Thumbnail preview"
+                          className="w-full border-2 border-gray-600 rounded"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setThumbnailPreview("");
+                            handleInputChange("thumbnail", "");
+                          }}
+                          className="absolute top-2 right-2 p-1 bg-red-500 hover:bg-red-600 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    )}
                   </div>
 
-                  {/* Gallery Upload */}
+                  {/* Gallery */}
                   <div>
                     <label className="block text-sm font-medium text-gray-300 mb-3">
                       Gallery Images
                     </label>
 
-                    <div className="space-y-3">
-                      {formData.gallery.map((url, index) => (
-                        <div key={index} className="space-y-2">
-                          {galleryPreviews[index] ? (
-                            <div className="relative group">
-                              <ReusableImage
-                                width={192}
-                                height={192}
-                                src={galleryPreviews[index]}
-                                alt={`Gallery ${index + 1}`}
-                                className="w-full   border border-gray-600"
-                              />
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  const newPreviews = [...galleryPreviews];
-                                  newPreviews.splice(index, 1);
-                                  setGalleryPreviews(newPreviews);
-                                  removeArrayItem("gallery", index);
-                                }}
-                                className="absolute top-2 right-2 p-1 bg-red-500 hover:bg-red-600 rounded-full text-white transition-colors duration-200 opacity-0 group-hover:opacity-100"
-                              >
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  width={16}
-                                  height={16}
-                                  viewBox="0 0 24 24"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  strokeWidth={2}
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  className="lucide lucide-x-icon lucide-x"
-                                >
-                                  <path d="M18 6 6 18" />
-                                  <path d="m6 6 12 12" />
-                                </svg>
-                              </button>
-                            </div>
-                          ) : (
-                            <div
-                              onClick={() =>
-                                galleryInputRefs.current[index]?.click()
-                              }
-                              className="w-full h-32 border-2 border-dashed border-gray-600 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-gray-500 hover:bg-gray-700/20 transition-all duration-200"
-                            >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width={24}
-                                height={24}
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth={2}
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                className="lucide lucide-image-icon lucide-image"
-                              >
-                                <rect
-                                  width={18}
-                                  height={18}
-                                  x={3}
-                                  y={3}
-                                  rx={2}
-                                  ry={2}
-                                />
-                                <circle cx={9} cy={9} r={2} />
-                                <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
-                              </svg>
-                              <p className="text-gray-400 text-xs">
-                                Upload image
-                              </p>
-                            </div>
-                          )}
+                    {formData.gallery.map((url, index) => (
+                      <div key={index} className="mb-3">
+                        <input
+                          type="text"
+                          value={url}
+                          onChange={(e) =>
+                            handleGalleryChange(index, e.target.value)
+                          }
+                          className="w-full bg-transparent border border-gray-600 text-white p-2 rounded mb-2"
+                          placeholder="Image URL"
+                        />
 
-                          <input
-                            ref={(el) => (galleryInputRefs.current[index] = el)}
-                            type="file"
-                            accept="image/*"
-                            onChange={(e) => {
-                              const file = e.target.files?.[0];
-                              if (file)
-                                handleImageUpload(file, "gallery", index);
-                            }}
-                            className="hidden"
-                          />
-
-                          <input
-                            type="url"
-                            value={url}
-                            onChange={(e) => {
-                              const value = e.target.value;
-                              handleArrayChange("gallery", index, value);
-                              if (isValidUrl(value)) {
+                        {galleryPreviews[index] && (
+                          <div className="relative group mb-2">
+                            <ReusableImage
+                              src={galleryPreviews[index]}
+                              width={200}
+                              height={200}
+                              alt="Gallery"
+                              className="w-full border border-gray-600 rounded"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => {
                                 const newPreviews = [...galleryPreviews];
-                                newPreviews[index] = value;
+                                newPreviews.splice(index, 1);
                                 setGalleryPreviews(newPreviews);
-                              }
-                            }}
-                            placeholder="Or paste image URL"
-                            className="w-full bg-transparent border border-gray-600 rounded-sm px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm"
-                          />
-                        </div>
-                      ))}
-                    </div>
+                                removeArrayItem("gallery", index);
+                              }}
+                              className="absolute top-2 right-2 p-1 bg-red-500 hover:bg-red-600 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        )}
+
+                        {formData.gallery.length > 1 && (
+                          <button
+                            type="button"
+                            className="text-red-400 text-sm"
+                            onClick={() => removeArrayItem("gallery", index)}
+                          >
+                            Remove
+                          </button>
+                        )}
+                      </div>
+                    ))}
 
                     <button
                       type="button"
                       onClick={() => addArrayItem("gallery")}
-                      className="mt-3 flex items-center gap-2 text-blue-400 hover:text-blue-300 py-2 transition-colors duration-200"
+                      className="text-blue-400 hover:text-blue-300 flex items-center gap-2"
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width={18}
-                        height={18}
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="lucide lucide-plus-icon lucide-plus"
-                      >
-                        <path d="M5 12h14" />
-                        <path d="M12 5v14" />
-                      </svg>
-                      Add More Images
+                      + Add More Images
                     </button>
                   </div>
                 </div>
@@ -988,7 +753,6 @@ export default function ProductEditPage({ params }) {
                   <input
                     type="text"
                     value={formData.slug}
-                    name="slug"
                     onChange={(e) => handleInputChange("slug", e.target.value)}
                     className="w-full bg-transparent border border-gray-600 rounded-sm px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                     placeholder="product-slug"
@@ -1031,7 +795,7 @@ export default function ProductEditPage({ params }) {
               </div>
 
               {/* Save Button */}
-              <div className="bg-transparent backdrop-blur-xl rounded-2xl p-6 border border-gray-700/50 shadow-xl">
+              <div className="backdrop-blur-xl rounded-2xl p-6 border border-gray-700/50 shadow-xl">
                 <button
                   type="submit"
                   disabled={isSaving || Object.keys(errors).length > 0}
@@ -1054,7 +818,6 @@ export default function ProductEditPage({ params }) {
                         strokeWidth={2}
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        className="lucide lucide-save-icon lucide-save"
                       >
                         <path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" />
                         <path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7" />

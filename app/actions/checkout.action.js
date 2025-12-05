@@ -296,7 +296,7 @@ const makeCheckout = async (checkout, publicBuy) => {
     // Connect to database
     await dbConnect();
 
-    // Enhanced product verification with stock checking
+    // Enhanced product verification with size-wise stock checking
     const productVerificationPromises = orders.map(async (order) => {
       try {
         const productId = order.productId._id || order.productId;
@@ -306,26 +306,66 @@ const makeCheckout = async (checkout, publicBuy) => {
           throw new Error(`Product not found: ${productId}`);
         }
 
-        // Check if stock field exists and is a valid number
-        if (typeof product.stock !== "number" || product.stock < 0) {
-          console.warn(
-            `Product ${productId} has invalid stock value:`,
-            product.stock
-          );
-          // If stock is not properly set, assume unlimited stock for now
+        // Check if product has sizes array
+        if (
+          product.sizes &&
+          Array.isArray(product.sizes) &&
+          product.sizes.length > 0
+        ) {
+          // Find the specific size
+          const sizeInfo = product.sizes.find((s) => s.size === order.size);
+
+          if (!sizeInfo) {
+            throw new Error(
+              `Size "${order.size}" not available for "${
+                product.title || "Unknown Product"
+              }"`
+            );
+          }
+
+          // Check size-specific stock
+          if (typeof sizeInfo.stock !== "number" || sizeInfo.stock < 0) {
+            console.warn(
+              `Product ${productId} size ${order.size} has invalid stock value:`,
+              sizeInfo.stock
+            );
+            throw new Error(
+              `Invalid stock data for "${product.title}" size ${order.size}`
+            );
+          }
+
+          // Check if size has sufficient stock
+          if (sizeInfo.stock < order.quantity) {
+            throw new Error(
+              `Insufficient stock for "${
+                product.title || "Unknown Product"
+              }" size ${order.size}. Available: ${sizeInfo.stock}, Requested: ${
+                order.quantity
+              }`
+            );
+          }
+
+          return { product, hasStock: true, sizeInfo };
+        } else {
+          // Fallback to general stock if no sizes array
+          if (typeof product.stock !== "number" || product.stock < 0) {
+            console.warn(
+              `Product ${productId} has invalid stock value:`,
+              product.stock
+            );
+            return { product, hasStock: true };
+          }
+
+          if (product.stock < order.quantity) {
+            throw new Error(
+              `Insufficient stock for "${
+                product.title || "Unknown Product"
+              }". Available: ${product.stock}, Requested: ${order.quantity}`
+            );
+          }
+
           return { product, hasStock: true };
         }
-
-        // Check stock availability
-        if (product.stock < order.quantity) {
-          throw new Error(
-            `Insufficient stock for "${
-              product.title || "Unknown Product"
-            }". Available: ${product.stock}, Requested: ${order.quantity}`
-          );
-        }
-
-        return { product, hasStock: true };
       } catch (error) {
         throw error;
       }
@@ -374,7 +414,7 @@ const makeCheckout = async (checkout, publicBuy) => {
       ...(userId && { user: new mongoose.Types.ObjectId(userId) }),
     };
 
-    // Create order with transaction and stock management
+    // Create order with transaction and size-wise stock management
     const session = await mongoose.startSession();
 
     try {
@@ -383,50 +423,115 @@ const makeCheckout = async (checkout, publicBuy) => {
       // Create the order
       const response = await orderModel.create([orderData], { session });
 
-      // Update product stock for each ordered item
-      const stockUpdatePromises = orders.map(async (order, index) => {
+      // Update product stock for each ordered item (size-wise)
+      const stockUpdatePromises = orders.map(async (order) => {
         const productId = order.productId._id || order.productId;
         const quantity = parseInt(order.quantity);
+        const orderSize = order.size;
 
         try {
-          const updateResult = await ProductModel.findOneAndUpdate(
-            {
-              _id: new mongoose.Types.ObjectId(productId),
-              stock: { $gte: quantity }, // Ensure we don't go negative
-            },
-            {
-              $inc: { stock: -quantity },
-            },
-            {
-              session,
-              new: true, // Return updated document
-              runValidators: true, // Run model validators
-            }
+          // First, get the product to check if it has sizes
+          const product = await ProductModel.findById(productId).session(
+            session
           );
 
-          if (!updateResult) {
-            const currentProduct = await ProductModel.findById(
-              productId
-            ).session(session);
-            if (!currentProduct) {
-              throw new Error(
-                `Product not found during stock update: ${productId}`
-              );
-            } else {
-              throw new Error(
-                `Insufficient stock for product. Available: ${currentProduct.stock}, Requested: ${quantity}`
-              );
-            }
+          if (!product) {
+            throw new Error(
+              `Product not found during stock update: ${productId}`
+            );
           }
 
-          return updateResult;
+          // Check if product has sizes array
+          if (
+            product.sizes &&
+            Array.isArray(product.sizes) &&
+            product.sizes.length > 0
+          ) {
+            // Find the size index in the array
+            const sizeIndex = product.sizes.findIndex(
+              (s) => s.size === orderSize
+            );
+
+            if (sizeIndex === -1) {
+              throw new Error(
+                `Size "${orderSize}" not found for product ${productId}`
+              );
+            }
+
+            const currentSizeStock = product.sizes[sizeIndex].stock;
+
+            // Verify stock availability
+            if (currentSizeStock < quantity) {
+              throw new Error(
+                `Insufficient stock for size ${orderSize}. Available: ${currentSizeStock}, Requested: ${quantity}`
+              );
+            }
+
+            // Update the specific size's stock using array element update
+            const updateResult = await ProductModel.findOneAndUpdate(
+              {
+                _id: new mongoose.Types.ObjectId(productId),
+                "sizes.size": orderSize,
+                "sizes.stock": { $gte: quantity }, // Ensure we don't go negative
+              },
+              {
+                $inc: { "sizes.$.stock": -quantity },
+              },
+              {
+                session,
+                new: true,
+                runValidators: true,
+              }
+            );
+
+            if (!updateResult) {
+              throw new Error(
+                `Failed to update stock for product ${productId} size ${orderSize}. Stock may have changed.`
+              );
+            }
+
+            return updateResult;
+          } else {
+            // Fallback to general stock update if no sizes array
+            const updateResult = await ProductModel.findOneAndUpdate(
+              {
+                _id: new mongoose.Types.ObjectId(productId),
+                stock: { $gte: quantity },
+              },
+              {
+                $inc: { stock: -quantity },
+              },
+              {
+                session,
+                new: true,
+                runValidators: true,
+              }
+            );
+
+            if (!updateResult) {
+              const currentProduct = await ProductModel.findById(
+                productId
+              ).session(session);
+              if (!currentProduct) {
+                throw new Error(
+                  `Product not found during stock update: ${productId}`
+                );
+              } else {
+                throw new Error(
+                  `Insufficient stock for product. Available: ${currentProduct.stock}, Requested: ${quantity}`
+                );
+              }
+            }
+
+            return updateResult;
+          }
         } catch (error) {
           console.error(
-            `❌ Error updating stock for product ${productId}:`,
+            `❌ Error updating stock for product ${productId} size ${orderSize}:`,
             error
           );
           throw new Error(
-            `Failed to update inventory for product: ${productId} - ${error.message}`
+            `Failed to update inventory for product: ${productId} size ${orderSize} - ${error.message}`
           );
         }
       });
@@ -466,7 +571,8 @@ const makeCheckout = async (checkout, publicBuy) => {
       // Return user-friendly error message
       if (
         transactionError.message.includes("stock") ||
-        transactionError.message.includes("inventory")
+        transactionError.message.includes("inventory") ||
+        transactionError.message.includes("Insufficient")
       ) {
         return {
           error: true,

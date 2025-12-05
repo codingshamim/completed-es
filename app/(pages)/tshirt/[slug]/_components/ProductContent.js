@@ -57,19 +57,19 @@ export default function ProductContent({
 
           {/* Desktop Table */}
           <div className="hidden md:block overflow-x-auto">
-            <table className="w-full border-collapse">
+            <table className="w-full text-center border-collapse">
               <thead>
-                <tr className="bg-black">
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-white border border-gray-800">
+                <tr className="bg-black ">
+                  <th className="px-4 py-3  text-sm font-semibold text-white border border-gray-800">
                     Size
                   </th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-white border border-gray-800">
+                  <th className="px-4 py-3  text-sm font-semibold text-white border border-gray-800">
                     Chest (round)
                   </th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-white border border-gray-800">
+                  <th className="px-4 py-3  text-sm font-semibold text-white border border-gray-800">
                     Length
                   </th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-white border border-gray-800">
+                  <th className="px-4 py-3  text-sm font-semibold text-white border border-gray-800">
                     Sleeve
                   </th>
                   <th className="px-4 py-3 text-left text-sm font-semibold text-white border border-gray-800">
@@ -77,11 +77,11 @@ export default function ProductContent({
                   </th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="text-center">
                 {sizeMeasurements.map((s, index) => (
                   <tr
                     key={index}
-                    className="bg-black border-b border-gray-800 hover:bg-gray-900 transition-colors"
+                    className="bg-black border-b border-gray-800 hover:bg-secondary transition-colors"
                   >
                     <td className="px-4 py-3 text-sm font-medium text-white border border-gray-800">
                       {s.size}

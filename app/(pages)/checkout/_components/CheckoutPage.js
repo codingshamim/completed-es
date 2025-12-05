@@ -24,6 +24,7 @@ export default async function CheckoutPage({
   isPublicbuy,
 }) {
   let carts = [];
+
   const cart = await getCartById();
   const product = await getBuyProductById(productId);
   carts = isBuyNow

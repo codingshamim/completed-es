@@ -30,6 +30,7 @@ export default async function ProductsSection() {
                     slug={product?.slug}
                     stock={product?.stock}
                     quantity={product?.quantity}
+                    sizes={product?.sizes}
                   />
                 ))
               : "No Products Found!"}

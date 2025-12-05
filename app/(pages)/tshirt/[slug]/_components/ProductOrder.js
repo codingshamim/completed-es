@@ -13,7 +13,7 @@ export default function ProductOrder({
   originalPrice,
   discount,
 }) {
-  const [activeSize, setActiveSize] = useState(sizes[0] || null);
+  const [activeSize, setActiveSize] = useState(sizes[0]?.size || null);
   const [count, setCount] = useState(1);
   const price = formatePrice(originalPrice, discount, count);
 
@@ -34,9 +34,9 @@ export default function ProductOrder({
           <button
             key={index}
             className={`nav-border ${
-              activeSize === sizeObj ? "btn" : "variable-btn"
+              activeSize === sizeObj?.size ? "btn" : "variable-btn"
             }`}
-            onClick={() => setActiveSize(sizeObj)}
+            onClick={() => setActiveSize(sizeObj?.size)}
           >
             {sizeObj.size} {/* ✅ display only the size string */}
           </button>
@@ -66,7 +66,7 @@ export default function ProductOrder({
         ) : (
           <div className="flex md:w-max w-full flex-col md:flex-row gap-4">
             <Link
-              href={`/checkout?product=${productId}&quantity=${count}&size=${activeSize?.size}`}
+              href={`/checkout?product=${productId}&quantity=${count}&size=${activeSize}`}
               className="py-2 w-full md:w-max justify-center flex items-center gap-1 px-4 font-medium active:scale-[98%] transition-all duration-300 rounded-sm new-btn hover:border-transparent nav-border text-black text-sm"
             >
               এখনই কিনুন

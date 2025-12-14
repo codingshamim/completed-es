@@ -4,7 +4,7 @@ import TryAgainButton from "./TryAgainButton";
 /* eslint-disable react/no-unescaped-entities */
 export default function NoProductsFound() {
   return (
-    <div className="bg-black text-white py-20 px-6 text-center min-h-[400px] flex flex-col items-center justify-center">
+    <div className=" text-white py-20 px-6 text-center min-h-[400px] flex flex-col items-center justify-center">
       {/* Icon Container */}
       <div className="relative mb-8">
         <div className="w-24 h-24 md:w-32 md:h-32 border-2 border-gray-700 rounded-full flex items-center justify-center mb-4 relative">

@@ -6,14 +6,25 @@ import mainPrice from "@/helpers/mainPrice";
 
 export default function SelectedProducts() {
   const { common, setCommon } = useCommonState();
+
+  const updateProduct = (index, updatedFields) => {
+    setCommon({
+      ...common,
+      selectedProducts: common.selectedProducts.map((prod, i) =>
+        i === index ? { ...prod, ...updatedFields } : prod
+      ),
+    });
+  };
+
   return (
     <>
       {common?.selectedProducts.length > 0 ? (
         <div className="divide-y divide-gray-700">
-          {common?.selectedProducts.map((item, index) => (
+          {common.selectedProducts.map((item, index) => (
             <div key={index} className="px-3 sm:px-6 py-4">
               {/* Desktop Layout */}
               <div className="hidden lg:grid grid-cols-12 gap-4 items-center">
+                {/* IMAGE */}
                 <div className="col-span-1">
                   <ReusableImage
                     src={item?.thumbnail}
@@ -23,62 +34,58 @@ export default function SelectedProducts() {
                     className="w-12 h-12 rounded border border-gray-600"
                   />
                 </div>
+
+                {/* TITLE */}
                 <div className="col-span-4">
                   <h4 className="font-medium text-white text-sm">
                     {item?.title || "Untitled"}
                   </h4>
                   <p className="text-gray-400 text-xs">SKU: {item?.sku}</p>
                 </div>
+
+                {/* PRICE */}
                 <div className="col-span-2">
                   <span className="text-white font-medium">
                     {mainPrice(item.price)}
                   </span>
                 </div>
+
+                {/* QUANTITY */}
                 <div className="col-span-2">
                   <input
                     type="number"
                     min="1"
-                    onChange={(e) => {
-                      setCommon({
-                        ...common,
-                        selectedProducts: common.selectedProducts.map(
-                          (prod, i) =>
-                            i === index
-                              ? {
-                                  ...prod,
-                                  quantity: parseInt(e.target.value) || 1,
-                                }
-                              : prod
-                        ),
-                      });
-                    }}
                     value={item.quantity}
+                    onChange={(e) =>
+                      updateProduct(index, {
+                        quantity: parseInt(e.target.value) || 1,
+                      })
+                    }
                     className="bg-black border border-gray-600 rounded px-2 py-1 w-16 text-sm text-white focus:outline-none focus:border-blue-500"
                   />
                 </div>
+
+                {/* SIZE SELECT */}
                 <div className="col-span-1">
                   <select
-                    value={item.size}
+                    value={item.size?.size}
                     onChange={(e) => {
-                      setCommon({
-                        ...common,
-                        selectedProducts: common.selectedProducts.map(
-                          (prod, i) =>
-                            i === index
-                              ? { ...prod, size: e.target.value }
-                              : prod
-                        ),
-                      });
+                      const selectedSize = item.sizes.find(
+                        (sz) => sz.size === e.target.value
+                      );
+                      updateProduct(index, { size: selectedSize });
                     }}
                     className="bg-black border border-gray-600 rounded px-2 py-1 text-sm text-white focus:outline-none focus:border-blue-500"
                   >
-                    {item.sizes.map((size) => (
-                      <option key={size} value={size}>
-                        {size}
+                    {item.sizes.map((sz) => (
+                      <option key={sz.size} value={sz.size}>
+                        {sz.size}
                       </option>
                     ))}
                   </select>
                 </div>
+
+                {/* TOTAL */}
                 <div className="col-span-2">
                   <span className="font-bold text-white">
                     {mainPrice(item.price * item.quantity)}
@@ -86,8 +93,9 @@ export default function SelectedProducts() {
                 </div>
               </div>
 
-              {/* Mobile/Tablet Layout */}
+              {/* Mobile / Tablet Layout */}
               <div className="lg:hidden space-y-3">
+                {/* IMAGE + INFO */}
                 <div className="flex gap-3">
                   <ReusableImage
                     src={item?.thumbnail}
@@ -96,7 +104,7 @@ export default function SelectedProducts() {
                     alt={item?.title}
                     className="w-16 h-16 flex-shrink-0 rounded border border-gray-600"
                   />
-                  <div className="flex-1 min-w-0">
+                  <div className="flex-1">
                     <h4 className="font-medium text-white text-sm truncate">
                       {item?.title || "Untitled"}
                     </h4>
@@ -107,7 +115,9 @@ export default function SelectedProducts() {
                   </div>
                 </div>
 
+                {/* GRID CONTROLS */}
                 <div className="grid grid-cols-3 gap-2">
+                  {/* QUANTITY */}
                   <div>
                     <label className="text-gray-400 text-xs block mb-1">
                       Quantity
@@ -115,50 +125,40 @@ export default function SelectedProducts() {
                     <input
                       type="number"
                       min="1"
-                      onChange={(e) => {
-                        setCommon({
-                          ...common,
-                          selectedProducts: common.selectedProducts.map(
-                            (prod, i) =>
-                              i === index
-                                ? {
-                                    ...prod,
-                                    quantity: parseInt(e.target.value) || 1,
-                                  }
-                                : prod
-                          ),
-                        });
-                      }}
                       value={item.quantity}
-                      className="bg-black border border-gray-600 rounded px-2 py-1 w-full text-sm text-white focus:outline-none focus:border-blue-500"
+                      onChange={(e) =>
+                        updateProduct(index, {
+                          quantity: parseInt(e.target.value) || 1,
+                        })
+                      }
+                      className="bg-black border border-gray-600 rounded px-2 py-1 w-full text-sm text-white"
                     />
                   </div>
+
+                  {/* SIZE SELECT */}
                   <div>
                     <label className="text-gray-400 text-xs block mb-1">
                       Size
                     </label>
                     <select
-                      value={item.size}
+                      value={item.size?.size}
                       onChange={(e) => {
-                        setCommon({
-                          ...common,
-                          selectedProducts: common.selectedProducts.map(
-                            (prod, i) =>
-                              i === index
-                                ? { ...prod, size: e.target.value }
-                                : prod
-                          ),
-                        });
+                        const selectedSize = item.sizes.find(
+                          (sz) => sz.size === e.target.value
+                        );
+                        updateProduct(index, { size: selectedSize });
                       }}
-                      className="bg-black border border-gray-600 rounded px-2 py-1 w-full text-sm text-white focus:outline-none focus:border-blue-500"
+                      className="bg-black border border-gray-600 rounded px-2 py-1 w-full text-sm text-white"
                     >
-                      {item.sizes.map((size) => (
-                        <option key={size} value={size}>
-                          {size}
+                      {item.sizes.map((sz) => (
+                        <option key={sz.size} value={sz.size}>
+                          {sz.size}
                         </option>
                       ))}
                     </select>
                   </div>
+
+                  {/* TOTAL */}
                   <div>
                     <label className="text-gray-400 text-xs block mb-1">
                       Total

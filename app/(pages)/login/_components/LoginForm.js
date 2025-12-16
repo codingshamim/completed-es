@@ -6,7 +6,7 @@ import { LogIn, Eye, EyeOff, Phone, Lock, AlertCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-export default function LoginForm({ children }) {
+export default function LoginForm({ children, socialLoginButtons }) {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isShow, setIsShow] = useState(false);
@@ -141,7 +141,7 @@ export default function LoginForm({ children }) {
         <LoadingBtn
           loading={loading}
           disabled={!isFormValid}
-          customClass="mt-2 bangla-font font-medium flex items-center justify-center gap-2 !py-[7px] w-full"
+          customClass="mt-2 bangla-font font-medium flex items-center justify-center gap-2 !py-3 w-full"
         >
           <LogIn width={18} height={18} />
           লগিন করুন
@@ -153,6 +153,7 @@ export default function LoginForm({ children }) {
             Please fill in all fields to continue
           </p>
         )}
+        {socialLoginButtons}
       </div>
     </form>
   );

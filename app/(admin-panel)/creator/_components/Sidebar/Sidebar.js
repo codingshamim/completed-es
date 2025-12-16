@@ -108,30 +108,6 @@ export const sidebarList = [
     items: [],
     target: "/creator/categories",
   },
-  {
-    title: "Inbox",
-    svg: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width={18}
-        height={18}
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={1.5}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="lucide lucide-message-square-more-icon lucide-message-square-more"
-      >
-        <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" />
-        <path d="M12 11h.01" />
-        <path d="M16 11h.01" />
-        <path d="M8 11h.01" />
-      </svg>
-    ),
-    items: [],
-    target: "/creator/inbox",
-  },
 ];
 export default function Sidebar() {
   return (

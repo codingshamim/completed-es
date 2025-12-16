@@ -43,6 +43,7 @@ export default function CommonProviders({ children, authenticatedUser }) {
       title: "Inside of Dhaka",
       fee: 40,
     },
+    loginModal: false,
     payementMethod: "Bkash",
     voucher: { amount: 0 },
     categoryModal: false,

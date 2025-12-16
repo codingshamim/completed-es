@@ -4,7 +4,7 @@ import Link from "next/link";
 import ForgotPasswordForm from "./_components/ForgotPasswordForm";
 
 export const metadata = {
-  title: "Esvibes - Forgot Password",
+  title: "ES FITT | Forgot Password",
 };
 
 export default function page() {

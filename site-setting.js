@@ -1,13 +1,16 @@
 export const siteAddres =
-  process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+  process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:4000";
 
 const siteSettings = {
-  siteName: "ES Vibes",
+  siteName: "ES FITT",
   siteUrl: siteAddres,
-  siteTitle: "Esvibes | Premium T-Shirts & Unique Apparel Designs",
+  siteTitle: "ES FITT | Crafted T-Shirts & Premium Apparel",
   siteDescription:
-    "Discover Esvibes collection of premium T-shirts featuring unique, trendy designs. High-quality materials, comfortable fit, and original artwork.",
+    "Explore ES FIT premium T-shirts with stylish, original designs. Made from high-quality materials for comfort, durability, and a perfect fit..",
   siteKeywords: [
+    "ES FITT",
+    "es fitt",
+
     "premium t-shirts",
     "unique t-shirt designs",
     "stylish apparel",
@@ -33,40 +36,40 @@ const siteSettings = {
     {
       name: "Md Shamim Mia",
       role: "CEO & Founder",
-      brand: "Esvibes",
+      brand: "ES FITT",
       description:
-        "Full Stack Developer specializing in JavaScript and Next.js, founder of Esvibes, a premium t-shirt and stylish apparel brand.",
-      email: "contact@esvibes.com",
-      website: process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000",
+        "Full Stack Developer specializing in JavaScript and Next.js, founder of ES FITT, a premium t-shirt and stylish apparel brand.",
+      email: "contact@esfitt.com",
+      website: process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:4000",
       social: {
         facebook: "https://www.facebook.com/mdshamimmia07",
       },
     },
   ],
-  creator: "Esvibes",
-  publisher: "Esvibes",
+  creator: "ES FITT",
+  publisher: "ES FITT",
 
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://esvibes.com",
-    title: "Esvibes - Premium T-Shirts with Unique Designs",
+    url: "https://esfitt.com",
+    title: "ES FITT - Crafted T-Shirts with Unique Designs",
     description:
-      "Discover premium T-shirts with unique designs at Esvibes. High-quality materials, comfortable fit, and original artwork. Shop stylish apparel now!",
-    siteName: "Esvibes",
+      "Discover premium T-shirts with unique designs at ES FITT. High-quality materials, comfortable fit, and original artwork. Shop stylish apparel now!",
+    siteName: "ES FITT",
     images: [
       {
         url: "/og/og.png",
         width: 1200,
         height: 600,
-        alt: "Esvibes - Premium T-Shirts Collection",
+        alt: "ES FITT - Premium T-Shirts Collection",
         type: "image/png",
       },
       {
         url: "/og/og2.png", // Add a square image for better compatibility
         width: 600,
         height: 600,
-        alt: "Esvibes Logo",
+        alt: "ES FITT Logo",
         type: "image/jpeg",
       },
     ],
@@ -75,11 +78,11 @@ const siteSettings = {
   // Twitter Card
   twitter: {
     card: "summary_large_image",
-    site: "@esvibes", // Replace with your actual Twitter handle
-    creator: "@esvibes",
-    title: "Esvibes - Premium T-Shirts with Unique Designs",
+    site: "@esfitt", // Replace with your actual Twitter handle
+    creator: "@esfitt",
+    title: "ES FITT - Crafted T-Shirts with Unique Designs",
     description:
-      "Discover premium T-shirts with unique designs. High-quality materials, comfortable fit, and original artwork. Shop now!",
+      "Explore ES FIT premium T-shirts with stylish, original designs. Made from high-quality materials for comfort, durability, and a perfect fit.",
     images: ["https://i.ibb.co.com/LtjVBLq/image.png"],
   },
 
@@ -89,7 +92,7 @@ const siteSettings = {
     yandex: "your-yandex-verification-code",
     yahoo: "your-yahoo-verification-code",
     other: {
-      me: ["your@email.com", "https://esvibes.com"],
+      me: ["your@email.com", "https://esfitt.com"],
     },
   },
   siteCategory: "E-commerce",
@@ -102,70 +105,6 @@ const siteSettings = {
     "business:contact_data:postal_code": "1710",
     "business:contact_data:country_name": "Bangladesh",
   },
-  pages: [
-    {
-      websitePages: [
-        { title: "Home", url: "/", description: "Esvibes Home Page" },
-        {
-          title: "Cart",
-          url: "/cart",
-          description: "Your Shopping Cart",
-        },
-        { title: "Checkout", url: "/checkout", description: "Checkout Page" },
-        { title: "Contact", url: "/contact", description: "Contact Us Page" },
-        {
-          title: "forgot-password",
-          url: "/forgot-password",
-          description: "Forgot Password Page",
-        },
-        {
-          title: "Goodbye",
-          url: "/goodbye",
-          description: "Account Deletion Confirmation Page",
-        },
-        {
-          title: "Login",
-          url: "/login",
-          description: "User Login Page",
-        },
-        {
-          title: "Order Success",
-          url: "/order-success",
-          description: "Order Success Confirmation Page",
-        },
-        {
-          title: "Register",
-          url: "/register",
-          description: "User Registration Page",
-        },
-        {
-          title: "Shop",
-          url: "/shop",
-          description: "Shop All Products Page",
-        },
-        {
-          title: "Terms and Conditions",
-          url: "/terms",
-          description: "Terms and Conditions Page",
-        },
-        {
-          title: "Tshirt page",
-          url: "/tshirt/[slug]",
-          description: "Individual Tshirt Product Page",
-        },
-        {
-          title: "Privacy Policy",
-          url: "/privacy",
-          description: "Privacy Policy Page",
-        },
-        {
-          title: "Validatate your payment",
-          url: "/validate-payment",
-          description: "Validate Payment Page",
-        },
-      ],
-    },
-  ],
 };
 
 export default siteSettings;

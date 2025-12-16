@@ -7,7 +7,7 @@ import Form from "./_components/Form";
 import Link from "next/link";
 
 export const metadata = {
-  title: "Esvibes - Validate Payment",
+  title: "ES FITT | Validate Payment",
 };
 
 /* eslint-disable react/no-unescaped-entities */

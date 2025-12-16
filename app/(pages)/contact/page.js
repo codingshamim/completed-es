@@ -1,7 +1,7 @@
 import AnimationContainer from "@/app/components/AnimationContainer";
 import ContactForm from "./_components/ContactForm";
 export const metadata = {
-  title: "Esvibes - Contact",
+  title: "ES FITT | Contact",
 };
 export default function page() {
   return (

@@ -13,7 +13,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-export default function RegisterForm({ children }) {
+export default function RegisterForm({ children, socialLoginButtons }) {
   const router = useRouter();
   const [registerState, setRegisterState] = useState({
     fName: "",
@@ -200,7 +200,7 @@ export default function RegisterForm({ children }) {
 
         {/* Enhanced Register Button */}
         <LoadingBtn
-          customClass="mt-4 bangla-font font-medium flex items-center gap-2 justify-center !py-[7px] w-full"
+          customClass="mt-4 bangla-font font-medium flex items-center gap-2 justify-center !py-3 w-full"
           loading={loading}
           disabled={!isFormValid}
         >
@@ -214,6 +214,7 @@ export default function RegisterForm({ children }) {
             Please fill in all fields to continue
           </p>
         )}
+        {socialLoginButtons}
       </div>
     </form>
   );

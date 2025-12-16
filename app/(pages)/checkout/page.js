@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import CheckoutPage from "./_components/CheckoutPage";
 export const metadata = {
-  title: "Esvibes - Checkout",
+  title: "ES FITT | Checkout",
 };
 export default async function page({ searchParams }) {
   const param = (await searchParams) || null;

@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 import Link from "next/link";
 export const metadata = {
-  title: "Esvibes - Goodbye",
+  title: "ES FITT - Goodbye",
 };
 export default function page() {
   return (

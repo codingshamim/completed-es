@@ -4,8 +4,8 @@
 import SectionHeader from "../(profile)/_components/SectionHeader";
 
 export const metadata = {
-  title: "Esvibes - Terms & Conditions",
-  description: "Terms and Conditions for ES VIBES - Premium T-shirt Store",
+  title: "ES FITT | Terms & Conditions",
+  description: "Terms and Conditions for ES FITT - Premium T-shirt Store",
 };
 
 const TermsAndConditionsPage = () => {
@@ -14,7 +14,7 @@ const TermsAndConditionsPage = () => {
       {/* Header Section */}
       <div className="max-w-6xl mx-auto px-6 py-8">
         <SectionHeader title={"Terms and Conditions"}>
-          Terms and Conditions for ES VIBES
+          Terms and Conditions for ES FITT
         </SectionHeader>
 
         {/* Main Content */}
@@ -27,7 +27,7 @@ const TermsAndConditionsPage = () => {
             <div className="bg-gray-900/30 border border-gray-800 rounded-lg p-6">
               <div className="space-y-4 text-gray-300 leading-relaxed">
                 <p>
-                  Welcome to ES VIBES! These Terms and Conditions ("Terms")
+                  Welcome to ES FITT! These Terms and Conditions ("Terms")
                   govern your use of our website and services. By accessing or
                   using our website, you agree to be bound by these Terms.
                 </p>
@@ -51,7 +51,7 @@ const TermsAndConditionsPage = () => {
                     <span className="text-white text-xl">•</span>
                     <p>
                       <strong className="text-white">"Company"</strong> refers
-                      to ES VIBES
+                      to ES FITT
                     </p>
                   </div>
                   <div className="flex items-start gap-3">
@@ -450,7 +450,7 @@ const TermsAndConditionsPage = () => {
             <div className="bg-gray-900/30 border border-gray-800 rounded-lg p-6">
               <p className="text-gray-300 mb-4">
                 All content on this website, including designs, logos, text,
-                graphics, and images, is the property of ES VIBES and is
+                graphics, and images, is the property of ES FITT and is
                 protected by copyright and trademark laws.
               </p>
               <div className="space-y-2 text-gray-300">
@@ -466,7 +466,7 @@ const TermsAndConditionsPage = () => {
                 </div>
                 <div className="flex items-start gap-3">
                   <span className="text-white text-xl">•</span>
-                  <p>ES VIBES logo and branding are registered trademarks</p>
+                  <p>ES FITT logo and branding are registered trademarks</p>
                 </div>
                 <div className="flex items-start gap-3">
                   <span className="text-white text-xl">•</span>
@@ -483,7 +483,7 @@ const TermsAndConditionsPage = () => {
             </h2>
             <div className="bg-gray-900/30 border border-gray-800 rounded-lg p-6">
               <p className="text-gray-300 mb-4">
-                ES VIBES shall not be liable for any direct, indirect,
+                ES FITT shall not be liable for any direct, indirect,
                 incidental, consequential, or punitive damages resulting from
                 your use of our website or products.
               </p>
@@ -560,7 +560,7 @@ const TermsAndConditionsPage = () => {
               </p>
               <div className="bg-black/50 border border-gray-700 rounded-lg p-6">
                 <h4 className="font-semibold text-white mb-4 text-xl">
-                  ES VIBES
+                  ES FITT
                 </h4>
                 <div className="space-y-3 text-gray-300">
                   <p>
@@ -591,7 +591,7 @@ const TermsAndConditionsPage = () => {
                 Agreement Acknowledgment
               </h3>
               <p className="text-gray-300 text-lg">
-                By using ES VIBES website and services, you acknowledge that you
+                By using ES FITT website and services, you acknowledge that you
                 have read, understood, and agree to be bound by these Terms and
                 Conditions.
               </p>

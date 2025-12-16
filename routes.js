@@ -18,4 +18,6 @@ export const PUBLIC_ROUTES = [
   "/privacy",
   "/terms",
   "/dashboard/order/",
+  "/api/auth/callback/google",
+  "/api/auth/callback/facebook",
 ];

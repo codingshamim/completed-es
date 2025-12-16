@@ -27,7 +27,7 @@ const getStatusColor = (status) => {
   }
 };
 export const metadata = {
-  title: "Esvibes - Orders",
+  title: "ES FITT | Orders",
 };
 const getPaymentStatusColor = (status) => {
   switch (status.toLowerCase()) {

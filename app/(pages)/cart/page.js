@@ -6,7 +6,7 @@ import getCartById from "@/app/backend/queries/getCartById";
 import Link from "next/link";
 import SectionHeader from "../(profile)/_components/SectionHeader";
 export const metadata = {
-  title: "Esvibes - Cart",
+  title: "ES FITT | My Cart",
 };
 export default async function page() {
   const carts = await getCartById();

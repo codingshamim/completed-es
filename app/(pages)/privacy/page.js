@@ -4,8 +4,8 @@ import React from "react";
 import SectionHeader from "../(profile)/_components/SectionHeader";
 
 export const metadata = {
-  title: "Esvibes - Privacy Policy",
-  description: "Privacy Policy for Esvibes - Premium T-shirt Store",
+  title: "ES FITT | Privacy Policy",
+  description: "Privacy Policy for ES FITT - Premium T-shirt Store",
 };
 
 const PrivacyPolicyPage = () => {
@@ -13,7 +13,7 @@ const PrivacyPolicyPage = () => {
     <div className="min-h-screen bg-black text-white !mt-12">
       {/* Header */}
       <SectionHeader title={"Privacy Policy"}>
-        Your privacy matters to us at ES VIBES
+        Your privacy matters to us at ES FITT
       </SectionHeader>
 
       {/* Content */}
@@ -27,7 +27,7 @@ const PrivacyPolicyPage = () => {
             </div>
             <div className="text-gray-300 leading-relaxed space-y-6 text-lg pl-8">
               <p className="border-l-2 border-gray-600 pl-6">
-                Welcome to ES VIBES . We are committed to protecting your
+                Welcome to ES FITT . We are committed to protecting your
                 personal information and your right to privacy. This Privacy
                 Policy explains how we collect, use, disclose, and safeguard
                 your information when you visit our website or make purchases
@@ -381,7 +381,7 @@ const PrivacyPolicyPage = () => {
                 practices, please contact us:
               </p>
               <div className=" p-8 rounded-2xl border-2 border-white/20">
-                <h4 className="font-bold text-white mb-6 text-2xl">ES VIBES</h4>
+                <h4 className="font-bold text-white mb-6 text-2xl">ES FITT</h4>
                 <div className="space-y-4">
                   <div className="flex items-center space-x-4">
                     <div className="w-3 h-3 bg-white rounded-full flex-shrink-0"></div>

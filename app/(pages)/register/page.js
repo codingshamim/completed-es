@@ -2,8 +2,9 @@ import AnimationContainer from "@/app/components/AnimationContainer";
 
 import Link from "next/link";
 import RegisterForm from "./_components/RegisterForm";
+import SocialLoginButtons from "@/app/_components/SocialLoginButtons";
 export const metadata = {
-  title: "Esvibes - Register",
+  title: "ES FITT | Register",
 };
 export default function page() {
   return (
@@ -20,7 +21,7 @@ export default function page() {
             </p>
           </div>
 
-          <RegisterForm>
+          <RegisterForm socialLoginButtons={<SocialLoginButtons />}>
             <div>
               <p className="text-sm mt-4 text-gray-300 bangla-font">
                 যদি আপনার ইতিমধ্যেই একটি অ্যাকাউন্ট থাকে

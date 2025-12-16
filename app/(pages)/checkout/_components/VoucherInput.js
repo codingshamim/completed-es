@@ -77,10 +77,10 @@ export default function VoucherInput({ totalPrice }) {
           <button
             onClick={handleCoupon}
             type="button"
-            className="ml-2 px-2 md:px-4 py-2 bg-white text-black font-medium disabled:opacity-50"
+            className="ml-2 bangla-font px-2 md:px-4 py-2 bg-white text-black font-medium disabled:opacity-50"
             disabled={loading}
           >
-            {loading ? "Applying..." : "Apply"}
+            {loading ? "Applying..." : "এপ্লাই করুন"}
           </button>
         </div>
 

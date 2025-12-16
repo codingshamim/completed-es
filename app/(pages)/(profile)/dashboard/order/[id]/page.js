@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 
 export const metadata = {
-  title: "Esvibes - Order Details",
+  title: "ES FITT | Order Details",
 };
 
 // Helper function to format date

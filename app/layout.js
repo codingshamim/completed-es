@@ -5,12 +5,8 @@ import siteSettings, { siteAddres } from "@/site-setting";
 
 export const metadata = {
   // Basic SEO
-  title:
-    siteSettings?.siteTitle ||
-    "Esvibes | Premium T-Shirts & Unique Apparel Designs",
-  description:
-    siteSettings?.siteDescription ||
-    "Discover Esvibes' collection of premium T-shirts featuring unique, trendy designs. High-quality materials, comfortable fit, and original artwork. Free shipping on orders over $50. Shop now!",
+  title: siteSettings?.siteTitle || "Premium T-Shirts & Unique Apparel Designs",
+  description: siteSettings?.siteDescription || "",
   metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL),
   // Open Graph image
   image:
@@ -28,14 +24,14 @@ export const metadata = {
     {
       name: "Md Shamim Mia",
       role: "CEO & Founder",
-      brand: "Esvibes",
+      brand: "ES FITT",
       description:
-        "Full Stack Developer specializing in JavaScript and Next.js, founder of Esvibes, a premium t-shirt and stylish apparel brand.",
-      email: "contact@esvibes.com",
+        "Full Stack Developer specializing in JavaScript and Next.js, founder of ES FITT, a premium t-shirt and stylish apparel brand.",
+      email: "contact@esfitt.com",
     },
   ],
-  creator: siteSettings?.creator || "Esvibes",
-  publisher: siteSettings?.publisher || "Esvibes",
+  creator: siteSettings?.creator || "",
+  publisher: siteSettings?.publisher || "",
 
   // Robots and indexing
   robots: {

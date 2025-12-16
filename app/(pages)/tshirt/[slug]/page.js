@@ -15,12 +15,12 @@ export async function generateMetadata({ params }) {
   const product = await getProductBySlug(param?.slug);
 
   return {
-    title: `Esvibes - ${
+    title: `ES FITT | ${
       product?.title?.length > 50 ? product.title.slice(0, 50) : product.title
     }`,
     description: product.description.slice(0, 150),
     openGraph: {
-      title: "Esvibes - " + product?.title,
+      title: "ES FITT | " + product?.title,
       description: product?.description.slice(0, 150),
       images: [product?.thumbnail || siteSettings?.openGraph?.images?.[0]?.url],
     },

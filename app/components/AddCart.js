@@ -41,13 +41,10 @@ export default function AddCart({ quantity, productId, size }) {
       } else if (response?.message === "User not authenticated.") {
         setCommon({
           ...common,
-          toastSuccess: false,
-          toast: true,
           buyModal: false,
           quantity: 1,
-          toastMessage: response?.message,
+          loginModal: true,
         });
-        router.push("/login");
       } else {
         const newCartItem = { quantity, productId, size };
         const updatedCarts = [...localCarts, newCartItem]; // Add the new item to the existing cart list

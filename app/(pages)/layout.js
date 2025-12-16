@@ -8,12 +8,16 @@ import ModalContainer from "@/app/(pages)/tshirt/[slug]/_components/ModalContain
 
 import BuyModal from "../components/BuyModal/BuyModal";
 import PaymentModal from "./_components/PaymentMethods";
+import LoginModal from "../_components/LoginModal";
+import LoginModalContent from "../_components/LoginModalContent";
 
 export default function Websitelayout({ children }) {
   return (
     <div className="min-h-screen bg-[#000] text-white pb-[100px]  max-w-6xl mx-auto py-6 px-4 md:px-6">
       <PaymentModal />
-
+      <LoginModal>
+        <LoginModalContent />
+      </LoginModal>
       <ToastContainer />
       <ModalContainer />
       <BuyModal />

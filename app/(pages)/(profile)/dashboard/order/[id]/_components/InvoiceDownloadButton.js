@@ -373,7 +373,7 @@ const InvoiceDownloadButton = ({ order, customClass = "", children }) => {
         letter-spacing: 0.5px;
       "
     >
-      ES VIBES
+      ES FITT
     </div>
     <p
       style="

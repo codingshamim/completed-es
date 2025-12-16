@@ -25,7 +25,7 @@ export default function Footer() {
                 <span className="text-gray-500 mr-2">
                   <Mail size={18} />
                 </span>
-                contact@esvibes.com
+                contact@esfitt.com
               </p>
               <p className="text-sm flex items-center">
                 <span className="text-gray-500 mr-2">
@@ -69,8 +69,8 @@ export default function Footer() {
         <div className="border-t border-gray-800 pt-6">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="text-white font-bold  tracking-wide logo-es">
-                ES VIBES
+              <div className="text-white font-bold  tracking-wide logo-font">
+                ES FITT
               </div>
               <p className="text-sm text-gray-400">
                 &copy; 2024 All rights reserved.

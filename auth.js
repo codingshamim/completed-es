@@ -2,9 +2,10 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import FacebookProvider from "next-auth/providers/facebook";
+import bcrypt from "bcrypt";
+
 import { UserModel } from "./app/backend/models/UserModel";
 import { dbConnect } from "./app/backend/connection/dbConnect";
-import bcrypt from "bcrypt";
 import { authConfig } from "@/auth.config";
 
 export const {
@@ -18,11 +19,13 @@ export const {
   secret: process.env.AUTH_SECRET,
 
   providers: [
+    // ===== GOOGLE =====
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
 
+    // ===== FACEBOOK =====
     FacebookProvider({
       clientId: process.env.FACEBOOK_CLIENT_ID,
       clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
@@ -33,24 +36,31 @@ export const {
       },
     }),
 
+    // ===== CREDENTIALS =====
     CredentialsProvider({
       name: "credentials",
       credentials: {
         phone: { label: "Phone", type: "text" },
         password: { label: "Password", type: "password" },
       },
+
       async authorize(credentials) {
         if (!credentials) return null;
 
         try {
           await dbConnect();
-          const user = await UserModel.findOne({ phone: credentials.phone });
+
+          const user = await UserModel.findOne({
+            phone: credentials.phone,
+          });
+
           if (!user) return null;
 
           const isMatch = await bcrypt.compare(
             credentials.password,
             user.password
           );
+
           if (!isMatch) return null;
 
           return {
@@ -59,7 +69,7 @@ export const {
             email: user.phone,
             role: user.role,
           };
-        } catch (error) {
+        } catch (err) {
           return null;
         }
       },
@@ -72,22 +82,20 @@ export const {
         try {
           await dbConnect();
 
-          const email = profile?.email;
-          if (!email) {
-            return false;
-          }
+          // Facebook may not return email
+          const email =
+            profile?.email || `${profile?.id}@${account.provider}.local`;
 
-          let existingUser = await UserModel.findOne({ phone: email });
+          let existingUser = await UserModel.findOne({
+            phone: email,
+          });
 
           if (!existingUser) {
             existingUser = await UserModel.create({
-              name: profile.name || `${account.provider} User`,
+              name: profile?.name || `${account.provider} User`,
               role: "user",
               phone: email,
-              password: await bcrypt.hash(
-                Math.random().toString(36).slice(2),
-                10
-              ),
+              password: await bcrypt.hash(Math.random().toString(36), 10),
               isVerified: true,
             });
           }
@@ -96,18 +104,14 @@ export const {
           user.name = existingUser.name;
           user.email = existingUser.phone;
           user.role = existingUser.role;
-
-          return true;
-        } catch (error) {
+        } catch (err) {
+          console.error("OAuth sign-in error:", err);
           return false;
         }
       }
 
+      // IMPORTANT: Always return true
       return true;
-    },
-
-    async redirect({ url, baseUrl }) {
-      return baseUrl + "/";
     },
 
     async jwt({ token, user }) {
@@ -121,13 +125,17 @@ export const {
     },
 
     async session({ session, token }) {
-      if (token && session.user) {
+      if (session.user) {
         session.user.id = token.id;
         session.user.name = token.name;
         session.user.email = token.email;
         session.user.role = token.role;
       }
       return session;
+    },
+
+    async redirect({ baseUrl }) {
+      return baseUrl;
     },
   },
 });

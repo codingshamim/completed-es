@@ -79,21 +79,14 @@ export default function VerifiedButton({ transactionId, orderId }) {
           type="text"
           value={customerTransactionId}
           onChange={handleInputChange}
-          placeholder={
-            transactionId
-              ? "Transaction ID (already provided)"
-              : "Enter Transaction ID"
-          }
-          disabled={loading || !!transactionId}
+          placeholder="Enter Transaction ID"
           className={`w-full p-3 bg-black text-white border rounded-lg focus:outline-none transition-colors placeholder-gray-400 ${
             error
               ? "border-red-500 focus:border-red-400"
               : success
               ? "border-green-500 focus:border-green-400"
               : "border-gray-600 focus:border-white"
-          } ${
-            loading || !!transactionId ? "opacity-60 cursor-not-allowed" : ""
-          }`}
+          } `}
           maxLength={100}
           autoComplete="off"
         />

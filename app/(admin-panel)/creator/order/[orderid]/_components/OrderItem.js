@@ -6,7 +6,7 @@ export default async function OrderItem({ order }) {
   const product = await getProductByIdAction(order.productId);
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 p-4 sm:p-0">
+    <div className="flex flex-col sm:flex-row sm:items-center mb-4 gap-4 sm:gap-6 p-4 sm:p-0">
       {/* Image and Badge Container */}
       <div className="relative flex-shrink-0 w-20 h-20 sm:w-20 sm:h-20">
         <ReusableImage
@@ -22,24 +22,24 @@ export default async function OrderItem({ order }) {
       </div>
 
       {/* Content Container */}
-      <div className="flex-1 space-y-3">
+      <div className="flex-1 ">
         {/* Title */}
-        <h4 className="text-base sm:text-xl font-semibold text-white leading-tight">
+        <h4 className="text-base  font-semibold text-white leading-tight">
           {product?.title || "Invalid title"}
         </h4>
 
         {/* Size and Quantity Tags - Mobile: Row, Desktop: Row */}
         <div className="flex items-center gap-2 sm:gap-4">
-          <span className="px-2 sm:px-3 py-1 bg-secondary rounded-lg text-xs sm:text-sm text-gray-300">
+          <span className="px-2 sm:px-3 py-1 bg-secondary rounded-lg text-xs  text-gray-300">
             Size: {order?.size || 0}
           </span>
-          <span className="px-2 sm:px-3 py-1 bg-secondary rounded-lg text-xs sm:text-sm text-white">
+          <span className="px-2 sm:px-3 py-1 bg-secondary rounded-lg text-xs  text-white">
             Qty: {order?.quantity || 0}
           </span>
         </div>
 
         {/* Price Section */}
-        <div className="space-y-2 sm:space-y-0 sm:flex sm:items-center sm:justify-between">
+        <div className="space-y-2  sm:flex sm:items-center sm:justify-between">
           {/* Unit Price */}
           <div className="text-gray-400 text-sm sm:text-base">
             <span className="text-base sm:text-lg font-medium text-white">
@@ -51,7 +51,7 @@ export default async function OrderItem({ order }) {
           {/* Total Price */}
           <div className="text-left sm:text-right">
             <p className="text-sm text-gray-400 sm:hidden">Total Price:</p>
-            <p className="text-xl sm:text-2xl font-bold text-white">
+            <p className="text-xl  font-bold text-white">
               {formatePrice(product?.price, product?.discount, order?.quantity)}
             </p>
           </div>

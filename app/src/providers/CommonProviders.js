@@ -49,6 +49,7 @@ export default function CommonProviders({ children, authenticatedUser }) {
     categoryModal: false,
     customerSupportModal: false,
     deliveryDistrict: "",
+    chatModal: false,
   });
   const [checkout, setCheckout] = useState([]);
   const [discountPercentage, setDiscountPercentage] = useState(null);

@@ -2,6 +2,8 @@ import { auth } from "@/auth";
 import CommonProviders from "./src/providers/CommonProviders";
 import "./globals.css";
 import siteSettings, { siteAddres } from "@/site-setting";
+import CustomerSupportChat from "./_components/chats/ChatModal";
+import ChatButton from "./_components/chats/ChatButton";
 
 export const metadata = {
   // Basic SEO
@@ -112,6 +114,8 @@ export default async function RootLayout({ children }) {
       </head>
       <body className="bg-[#000] text-white">
         <CommonProviders authenticatedUser={user?.user.id || null}>
+          <ChatButton />
+          <CustomerSupportChat />
           {children}
         </CommonProviders>
       </body>

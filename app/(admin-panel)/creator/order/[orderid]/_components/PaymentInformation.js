@@ -1,5 +1,6 @@
 import { format } from "date-fns";
 import VerifiedButton from "./VerifiedButton";
+import Link from "next/link";
 
 export default function PaymentInformation({
   paymentMethod,
@@ -13,6 +14,7 @@ export default function PaymentInformation({
     ? format(new Date(createdAt), "MMM d, yyyy")
     : "N/A";
   const formattedTime = createdAt ? format(new Date(createdAt), "h:mm a") : "";
+
   return (
     <div className=" rounded-lg border border-gray-800">
       <div className="p-6 border-b border-gray-800 ">
@@ -59,7 +61,7 @@ export default function PaymentInformation({
             <span className="text-gray-300">Status:</span>
             <span
               className={`${
-                paymentStatus === "submitted" ? "bg-yellow-600" : "bg-green-600"
+                paymentStatus === "pending" ? "bg-yellow-600" : "bg-green-600"
               } px-3 capitalize py-1 text-xs font-semibold  text-white rounded-full`}
             >
               {paymentStatus}
@@ -67,7 +69,7 @@ export default function PaymentInformation({
           </div>
           <div className="flex justify-between items-center">
             <span className="text-gray-300">Transaction ID:</span>
-            <span className="text-white font-mono text-sm bg-gray-800 px-2 py-1 rounded border border-gray-700">
+            <span className="text-white font-mono text-sm bg-secondary px-2 py-1 rounded border-none ">
               {transactionId}
             </span>
           </div>
@@ -77,13 +79,14 @@ export default function PaymentInformation({
               {formattedDate} - {formattedTime}
             </span>
           </div>
-        </div>
-
-        <div className="mt-6 pt-4 border-t border-gray-700 space-y-3">
-          <VerifiedButton orderId={tranId} transactionId={transactionId} />
-          <button className="w-full hover:bg-secondary border text-white py-3 rounded-lg font-medium transition-colors">
-            Mark as Failed
-          </button>
+          {transactionId === "N/A" && (
+            <Link
+              href={`/validate-payment?transaction=${tranId}&method=cod`}
+              className="new-variable-btn bg-secondary flex justify-center items-center !py-3 px-4"
+            >
+              Verify Payment
+            </Link>
+          )}
         </div>
       </div>
     </div>

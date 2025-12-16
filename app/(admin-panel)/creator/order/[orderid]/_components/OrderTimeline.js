@@ -147,7 +147,7 @@ export default function OrderTimeline({ status = "Pending", createdAt }) {
               const isCompleted = index < currentStepIndex;
               const isActive = index === currentStepIndex;
 
-              let bgColor = "bg-gray-700";
+              let bgColor = "bg-secondary";
               let textColor = "text-gray-400";
               let subText = "Pending";
 

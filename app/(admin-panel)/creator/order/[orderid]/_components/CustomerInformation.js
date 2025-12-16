@@ -99,12 +99,6 @@ export default async function CustomerInformation({ user }) {
             </div>
           </div>
         </div>
-        <div className="mt-6 pt-4 border-t border-gray-700">
-          <button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg font-medium transition-colors">
-            <i className="fas fa-user-edit mr-2" />
-            View Customer Profile
-          </button>
-        </div>
       </div>
     </div>
   );

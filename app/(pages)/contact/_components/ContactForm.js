@@ -1,6 +1,7 @@
 import { Phone } from "lucide-react";
 import Link from "next/link";
 import SectionHeader from "../../(profile)/_components/SectionHeader";
+import LiveSupport from "./LiveSupport";
 
 export default function ContactForm() {
   const contacts = [
@@ -104,6 +105,7 @@ export default function ContactForm() {
             <span>{contact.label}</span>
           </Link>
         ))}
+        <LiveSupport />
       </div>
     </div>
   );

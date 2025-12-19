@@ -14,6 +14,11 @@ import {
 import { createChat, getChatHistory } from "./actions/chat.actions";
 import ReusableImage from "../ReusableImage";
 import useCommonState from "@/app/src/hooks/useCommonState";
+import { io } from "socket.io-client";
+import { createNotification } from "@/app/backend/actions/notification.action";
+
+// Initialize socket connection
+let socket;
 
 export default function CustomerSupportChat() {
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
@@ -30,9 +35,12 @@ export default function CustomerSupportChat() {
   const [imagePreview, setImagePreview] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isInitializing, setIsInitializing] = useState(true);
+  const [isTyping, setIsTyping] = useState(false);
+  const [adminViewing, setAdminViewing] = useState(false);
   const fileInputRef = useRef(null);
   const { common, setCommon } = useCommonState();
   const messagesEndRef = useRef(null);
+  const typingTimeoutRef = useRef(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -41,6 +49,72 @@ export default function CustomerSupportChat() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Initialize Socket.IO
+  useEffect(() => {
+    socketInitializer();
+
+    return () => {
+      if (socket) {
+        socket.disconnect();
+      }
+    };
+  }, []);
+
+  const socketInitializer = async () => {
+    // Connect to Socket.IO server
+    socket = io("http://localhost:4000", {
+      transports: ["websocket", "polling"],
+    });
+
+    socket.on("connect", () => {
+      console.log("Socket connected:", socket.id);
+    });
+
+    // Listen for messages from admin
+    socket.on("admin:new-message", (data) => {
+      console.log("Received message from admin:", data);
+
+      const timestamp = new Date().toLocaleTimeString("bn-BD", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+
+      const newMessage = {
+        id: Date.now(),
+        text: data.message.text,
+        image: data.message.image,
+        sender: "support",
+        timestamp: timestamp,
+      };
+
+      setMessages((prev) => [...prev, newMessage]);
+    });
+
+    // Listen for admin typing indicator
+    socket.on("admin:typing", () => {
+      setIsTyping(true);
+      setTimeout(() => setIsTyping(false), 3000);
+    });
+
+    // Listen for admin viewing indicator
+    socket.on("admin:viewing", () => {
+      setAdminViewing(true);
+      setTimeout(() => setAdminViewing(false), 5000);
+    });
+
+    socket.on("disconnect", () => {
+      console.log("Socket disconnected");
+    });
+  };
+
+  // Join chat room when user logs in
+  useEffect(() => {
+    if (loggedInUser && socket) {
+      socket.emit("customer:join", loggedInUser.phone);
+      console.log("Customer joined room:", loggedInUser.phone);
+    }
+  }, [loggedInUser]);
 
   useEffect(() => {
     const initializeChat = async () => {
@@ -92,7 +166,6 @@ export default function CustomerSupportChat() {
     setIsLoading(true);
 
     try {
-      // Create initial user message
       const userMessage = {
         text: formData.message,
         sender: "user",
@@ -117,13 +190,12 @@ export default function CustomerSupportChat() {
           phone: formData.phone,
         });
 
-        // Add messages to UI
         const timestamp = new Date().toLocaleTimeString("bn-BD", {
           hour: "2-digit",
           minute: "2-digit",
         });
 
-        setMessages([
+        const newMessages = [
           {
             id: 1,
             text: formData.message,
@@ -136,7 +208,21 @@ export default function CustomerSupportChat() {
             sender: "support",
             timestamp: timestamp,
           },
-        ]);
+        ];
+
+        setMessages(newMessages);
+
+        // Emit message to admin via Socket.IO
+        if (socket) {
+          socket.emit("customer:message", {
+            phone: formData.phone,
+            message: {
+              text: formData.message,
+              sender: "user",
+              timestamp: timestamp,
+            },
+          });
+        }
 
         // Save auto-reply to database
         setTimeout(async () => {
@@ -166,7 +252,6 @@ export default function CustomerSupportChat() {
     const file = e.target.files[0];
     if (file && file.type.startsWith("image/")) {
       if (file.size > 5 * 1024 * 1024) {
-        // 5MB limit
         setError("ছবির সাইজ ৫MB এর কম হতে হবে।");
         return;
       }
@@ -208,6 +293,20 @@ export default function CustomerSupportChat() {
 
       // Add message to UI immediately
       setMessages((prev) => [...prev, newMessage]);
+
+      // Emit message to admin via Socket.IO
+      if (socket && loggedInUser) {
+        socket.emit("customer:message", {
+          phone: loggedInUser.phone,
+          message: {
+            text: currentMessage,
+            image: imagePreview,
+            sender: "user",
+            timestamp: timestamp,
+          },
+        });
+      }
+
       setCurrentMessage("");
       const tempImagePreview = imagePreview;
       setSelectedImage(null);
@@ -232,11 +331,33 @@ export default function CustomerSupportChat() {
       if (!response.success) {
         setError("মেসেজ পাঠাতে সমস্যা হয়েছে। আবার চেষ্টা করুন।");
       }
+      await createNotification({
+        title: "New customer message received.",
+        message: "You have a new message from customer " + loggedInUser?.name,
+        type: "chat",
+        userId: loggedInUser?.id,
+      });
     } catch (err) {
       console.error("Error sending message:", err);
       setError("মেসেজ পাঠাতে সমস্যা হয়েছে। আবার চেষ্টা করুন।");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleTyping = () => {
+    if (socket && loggedInUser) {
+      socket.emit("customer:typing", loggedInUser.phone);
+
+      // Clear previous timeout
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+
+      // Set new timeout to stop typing indicator
+      typingTimeoutRef.current = setTimeout(() => {
+        // Typing stopped
+      }, 1000);
     }
   };
 
@@ -257,7 +378,11 @@ export default function CustomerSupportChat() {
               <div>
                 <h3 className="font-bold text-lg">ES FITT Support</h3>
                 <p className="text-xs text-white/80 bangla-font">
-                  সাধারণত ৫ মিনিটে উত্তর দেয়
+                  {adminViewing
+                    ? "দেখছেন..."
+                    : isTyping
+                    ? "লিখছেন..."
+                    : "সাধারণত ৫ মিনিটে উত্তর দেয়"}
                 </p>
               </div>
             </div>
@@ -412,6 +537,26 @@ export default function CustomerSupportChat() {
                     </div>
                   </div>
                 ))}
+                {isTyping && (
+                  <div className="flex justify-start">
+                    <div className="bg-secondary text-white rounded-lg p-3 shadow-lg">
+                      <div className="flex gap-1">
+                        <div
+                          className="w-2 h-2 bg-white rounded-full animate-bounce"
+                          style={{ animationDelay: "0ms" }}
+                        ></div>
+                        <div
+                          className="w-2 h-2 bg-white rounded-full animate-bounce"
+                          style={{ animationDelay: "150ms" }}
+                        ></div>
+                        <div
+                          className="w-2 h-2 bg-white rounded-full animate-bounce"
+                          style={{ animationDelay: "300ms" }}
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+                )}
                 <div ref={messagesEndRef} />
               </div>
 
@@ -451,7 +596,10 @@ export default function CustomerSupportChat() {
                   </button>
                   <textarea
                     value={currentMessage}
-                    onChange={(e) => setCurrentMessage(e.target.value)}
+                    onChange={(e) => {
+                      setCurrentMessage(e.target.value);
+                      handleTyping();
+                    }}
                     onKeyPress={handleKeyPress}
                     placeholder="মেসেজ লিখুন..."
                     disabled={isLoading}

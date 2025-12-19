@@ -10,6 +10,8 @@ import BuyModal from "../components/BuyModal/BuyModal";
 import PaymentModal from "./_components/PaymentMethods";
 import LoginModal from "../_components/LoginModal";
 import LoginModalContent from "../_components/LoginModalContent";
+import ChatButton from "../_components/chats/ChatButton";
+import CustomerSupportChat from "../_components/chats/ChatModal";
 
 export default function Websitelayout({ children }) {
   return (
@@ -29,6 +31,8 @@ export default function Websitelayout({ children }) {
       <Navigation />
       {/*bottom navbar end */}
       {children}
+      <ChatButton />
+      <CustomerSupportChat />
       <Footer />
     </div>
   );

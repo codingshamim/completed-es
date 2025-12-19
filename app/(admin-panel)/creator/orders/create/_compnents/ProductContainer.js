@@ -46,7 +46,7 @@ export default function ProductContainer({ product, children }) {
         className={`w-full mt-2 py-2 px-3 rounded-lg text-sm font-medium transition-colors ${
           product.stock === 0
             ? "bg-gray-700 text-gray-400 cursor-not-allowed"
-            : "bg-blue-600 hover:bg-blue-700 text-white"
+            : "bg-white active:scale-[98%] hover:bg-white/80 text-black"
         }`}
       >
         {product.stock === 0 ? "Out of Stock" : "Add to Order"}

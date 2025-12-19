@@ -1,5 +1,5 @@
 import mainPrice from "@/helpers/mainPrice";
-import Image from "next/image";
+
 import DeleteCartButton from "./DeleteCartButton";
 import EditCartButton from "./EditCartButton";
 import ReusableImage from "@/app/_components/ReusableImage";

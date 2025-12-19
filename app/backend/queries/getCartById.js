@@ -10,7 +10,7 @@ export default async function getCartById() {
     const cartItem = await cartModel.find({ userId: userId }).populate({
       path: "productId",
       model: ProductModel,
-      select: ["thumbnail", "title", "discount", "stock"],
+      select: ["thumbnail", "title", "discount", "stock", "sizes"],
     });
 
     return formateMongo(cartItem);

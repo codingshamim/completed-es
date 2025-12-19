@@ -34,7 +34,11 @@ export default async function page() {
                     cartId={cartItem?._id}
                     size={cartItem?.size}
                     title={cartItem?.productId?.title}
-                    stock={cartItem?.stock}
+                    stock={
+                      cartItem?.productId?.sizes?.find(
+                        (f) => f.size === cartItem.size
+                      )?.stock
+                    }
                     thumbnail={cartItem?.productId?.thumbnail}
                     price={cartItem?.price}
                     quantity={cartItem?.quantity}

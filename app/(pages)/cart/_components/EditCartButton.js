@@ -11,7 +11,6 @@ export default function EditCartButton({
 }) {
   const { common, setCommon } = useCommonState();
   const handleEdit = () => {
-    
     setCommon({
       ...common,
       buyModal: true,

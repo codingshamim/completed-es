@@ -8,33 +8,23 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "i.ibb.co.com",
-        port: "",
-        pathname: "/**/image.png",
+        hostname: "i.ibb.co",
+        pathname: "/**/*.png",
       },
       {
         protocol: "https",
-        hostname: "i.ibb.co.com",
-        port: "",
-        pathname: "/**/**.png",
+        hostname: "i.ibb.co",
+        pathname: "/**/*.jpg",
       },
       {
         protocol: "https",
-        hostname: "i.ibb.co.com",
-        port: "",
-        pathname: "/**/**.jpg",
-      },
-      {
-        protocol: "https",
-        hostname: "i.ibb.co.com",
-        port: "",
-        pathname: "/**/**.webp",
+        hostname: "i.ibb.co",
+        pathname: "/**/*.webp",
       },
       // SSLCommerz payment gateway images
       {
         protocol: "https",
         hostname: "sandbox.sslcommerz.com",
-        port: "",
         pathname: "/gwprocess/v4/image/gw/**",
       },
     ],

@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 //react / no - unescaped - entities;
 import getOrders from "@/app/actions/order.action";
 import FilterAndSearch from "../_components/FilterAndSearch";

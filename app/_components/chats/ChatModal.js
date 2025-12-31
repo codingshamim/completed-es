@@ -5,7 +5,7 @@ import {
   MessageCircle,
   X,
   Send,
-  Image,
+  Image as ImageIcon,
   User,
   Phone,
   Mail,
@@ -63,7 +63,7 @@ export default function CustomerSupportChat() {
 
   const socketInitializer = async () => {
     // Connect to Socket.IO server
-    socket = io("http://localhost:4000", {
+    socket = io(process.env.NEXT_PUBLIC_SOCKET_URL, {
       transports: ["websocket", "polling"],
     });
 
@@ -592,7 +592,7 @@ export default function CustomerSupportChat() {
                     disabled={isLoading}
                     className="bg-secondary rounded-lg text-white p-3 disabled:opacity-50 transition-colors shrink-0"
                   >
-                    <Image className="w-5 h-5" />
+                    <ImageIcon className="w-5 h-5" />
                   </button>
                   <textarea
                     value={currentMessage}

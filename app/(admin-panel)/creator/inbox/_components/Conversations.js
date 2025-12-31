@@ -1,7 +1,7 @@
 "use client";
 
 import { Search, Trash2, X } from "lucide-react";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import {
   getChats,
   deleteConversation as deleteConv,
@@ -80,6 +80,46 @@ export default function Conversations({
   const router = useRouter();
   const isInitialMount = useRef(true);
 
+  // Wrap fetchChats in useCallback to stabilize the function reference
+  const fetchChats = useCallback(
+    async (showLoader = false) => {
+      try {
+        if (showLoader) {
+          setLoading(true);
+        } else {
+          setIsRefreshing(true);
+        }
+        setError(null);
+
+        const result = await getChats();
+
+        if (result.error) {
+          setError(result.message);
+          if (showLoader) {
+            setConversations([]);
+          }
+        } else {
+          // Map online status to conversations
+          const chatsWithOnlineStatus = (result.data || []).map((conv) => ({
+            ...conv,
+            online: onlineCustomers.includes(conv.phone),
+          }));
+          setConversations(chatsWithOnlineStatus);
+        }
+      } catch (err) {
+        console.error("Error fetching chats:", err);
+        setError("Failed to load conversations");
+        if (showLoader) {
+          setConversations([]);
+        }
+      } finally {
+        setLoading(false);
+        setIsRefreshing(false);
+      }
+    },
+    [onlineCustomers]
+  ); // Only recreate if onlineCustomers changes
+
   // Fetch chats on mount and when refresh changes
   useEffect(() => {
     if (isInitialMount.current) {
@@ -90,7 +130,7 @@ export default function Conversations({
       // Subsequent refreshes - silent update
       fetchChats(false);
     }
-  }, [refresh]);
+  }, [refresh, fetchChats]);
 
   // Filter conversations based on search
   useEffect(() => {
@@ -122,43 +162,7 @@ export default function Conversations({
         };
       })
     );
-  }, [onlineCustomers]);
-
-  const fetchChats = async (showLoader = false) => {
-    try {
-      if (showLoader) {
-        setLoading(true);
-      } else {
-        setIsRefreshing(true);
-      }
-      setError(null);
-
-      const result = await getChats();
-
-      if (result.error) {
-        setError(result.message);
-        if (showLoader) {
-          setConversations([]);
-        }
-      } else {
-        // Map online status to conversations
-        const chatsWithOnlineStatus = (result.data || []).map((conv) => ({
-          ...conv,
-          online: onlineCustomers.includes(conv.phone),
-        }));
-        setConversations(chatsWithOnlineStatus);
-      }
-    } catch (err) {
-      console.error("Error fetching chats:", err);
-      setError("Failed to load conversations");
-      if (showLoader) {
-        setConversations([]);
-      }
-    } finally {
-      setLoading(false);
-      setIsRefreshing(false);
-    }
-  };
+  }, [onlineCustomers, conversations.length]);
 
   const handleDeleteConversation = async (phone) => {
     try {

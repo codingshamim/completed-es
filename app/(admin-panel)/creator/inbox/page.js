@@ -1,10 +1,10 @@
 "use client";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import {
   Send,
   MoreVertical,
   X,
-  Image,
+  Image as ImageIcon,
   CheckCircle,
   Loader2,
   ArrowLeft,
@@ -17,12 +17,23 @@ import {
   markMessagesAsRead,
 } from "./actions/chat.action";
 import { io } from "socket.io-client";
+import ReusableImage from "@/app/_components/ReusableImage";
+
+// Constants
+const SOCKET_URL =
+  process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:4000";
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
+const SCROLL_THRESHOLD = 100;
+const TYPING_TIMEOUT = 3000;
+const MESSAGE_LOAD_DELAY = 150;
+const SCROLL_DELAY = 100;
 
 export default function InboxPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const receiverId = searchParams.get("receiverId");
 
+  // State management
   const [selectedChat, setSelectedChat] = useState(null);
   const [selectedChatName, setSelectedChatName] = useState("");
   const [message, setMessage] = useState("");
@@ -31,11 +42,12 @@ export default function InboxPage() {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [sending, setSending] = useState(false);
-  const [selectedConv, setSelectedConv] = useState(null);
   const [customerTyping, setCustomerTyping] = useState(false);
   const [onlineCustomers, setOnlineCustomers] = useState([]);
   const [refreshConversations, setRefreshConversations] = useState(0);
   const [socketConnected, setSocketConnected] = useState(false);
+
+  // Refs
   const fileInputRef = useRef(null);
   const messagesEndRef = useRef(null);
   const messagesContainerRef = useRef(null);
@@ -43,37 +55,391 @@ export default function InboxPage() {
   const socketRef = useRef(null);
   const shouldScrollRef = useRef(true);
 
-  const scrollToBottom = (force = false) => {
+  // Utility function for formatting time
+  const formatTime = useCallback((date) => {
+    if (!date) return "";
+    const d = new Date(date);
+    return d.toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+  }, []);
+
+  // Scroll to bottom functionality
+  const scrollToBottom = useCallback((force = false) => {
     if (!messagesEndRef.current) return;
 
-    // Check if user is near bottom (within 100px)
     const container = messagesContainerRef.current;
     if (container && !force) {
       const { scrollTop, scrollHeight, clientHeight } = container;
-      const isNearBottom = scrollHeight - scrollTop - clientHeight < 100;
+      const isNearBottom =
+        scrollHeight - scrollTop - clientHeight < SCROLL_THRESHOLD;
 
-      // Only auto-scroll if user is near bottom or force is true
       if (!isNearBottom && !shouldScrollRef.current) return;
     }
 
-    // Use requestAnimationFrame for smooth scroll after DOM update
     requestAnimationFrame(() => {
       messagesEndRef.current?.scrollIntoView({
         behavior: shouldScrollRef.current ? "smooth" : "auto",
         block: "end",
       });
     });
-  };
+  }, []);
+
+  // Load messages function
+  const loadMessages = useCallback(
+    async (phone) => {
+      setLoading(true);
+      shouldScrollRef.current = false;
+
+      try {
+        const result = await getChatMessages(phone);
+
+        if (result.error) {
+          console.error("Error loading messages:", result.message);
+          setMessages([]);
+        } else {
+          setMessages(result.data || []);
+          await markMessagesAsRead(phone);
+
+          setTimeout(() => {
+            scrollToBottom(true);
+            shouldScrollRef.current = true;
+          }, MESSAGE_LOAD_DELAY);
+        }
+      } catch (err) {
+        console.error("Error loading messages:", err);
+        setMessages([]);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [scrollToBottom]
+  );
+
+  // Open chat function
+  const openChat = useCallback(
+    async (phone, name = "") => {
+      setSelectedChat(phone);
+      setSelectedChatName(name || phone);
+      setIsMobileChatOpen(true);
+
+      const currentPath = window.location.pathname;
+      router.push(`${currentPath}?receiverId=${phone}`, { scroll: false });
+
+      await loadMessages(phone);
+
+      if (socketRef.current?.connected) {
+        console.log("Emitting admin:view-conversation for", phone);
+        socketRef.current.emit("admin:view-conversation", phone);
+      }
+    },
+    [router, loadMessages]
+  );
+
+  // Close chat function
+  const closeChat = useCallback(() => {
+    setIsMobileChatOpen(false);
+    setSelectedChat(null);
+    setSelectedChatName("");
+    setMessages([]);
+    setCustomerTyping(false);
+
+    const currentPath = window.location.pathname;
+    router.push(currentPath, { scroll: false });
+  }, [router]);
+
+  // Socket initialization
+  const socketInitializer = useCallback(() => {
+    try {
+      const socket = io(SOCKET_URL, {
+        transports: ["websocket", "polling"],
+        reconnection: true,
+        reconnectionAttempts: 5,
+        reconnectionDelay: 1000,
+      });
+
+      socket.on("connect", () => {
+        console.log("Admin socket connected:", socket.id);
+        setSocketConnected(true);
+        socket.emit("admin:join");
+      });
+
+      socket.on("connect_error", (error) => {
+        console.error("Socket connection error:", error);
+        setSocketConnected(false);
+      });
+
+      socket.on("customer:online", (data) => {
+        console.log("Customer online:", data);
+        setOnlineCustomers((prev) => {
+          if (!prev.includes(data.phone)) {
+            return [...prev, data.phone];
+          }
+          return prev;
+        });
+      });
+
+      socket.on("customer:offline", (data) => {
+        console.log("Customer offline:", data);
+        setOnlineCustomers((prev) =>
+          prev.filter((phone) => phone !== data.phone)
+        );
+      });
+
+      socket.on("customers:online", (customers) => {
+        console.log("Online customers:", customers);
+        setOnlineCustomers(customers);
+      });
+
+      socket.on("disconnect", () => {
+        console.log("Admin socket disconnected");
+        setSocketConnected(false);
+      });
+
+      socketRef.current = socket;
+    } catch (error) {
+      console.error("Socket initialization error:", error);
+    }
+  }, []);
+
+  // Handle send message
+  const handleSendMessage = useCallback(async () => {
+    if ((!message.trim() && previewImages.length === 0) || !selectedChat) {
+      return;
+    }
+
+    setSending(true);
+
+    try {
+      const messageData = {
+        text: message.trim(),
+        image: previewImages[0] || null,
+      };
+
+      const result = await sendSupportMessage(selectedChat, messageData);
+
+      if (result.success) {
+        const newMessage = {
+          id: result.data._id,
+          sender: "admin",
+          text: messageData.text,
+          image: result.data.image,
+          time: formatTime(new Date()),
+          isRead: false,
+          createdAt: new Date(),
+        };
+
+        setMessages((prev) => [...prev, newMessage]);
+        shouldScrollRef.current = true;
+
+        if (socketRef.current?.connected) {
+          console.log("Emitting admin message to customer:", selectedChat);
+          socketRef.current.emit("admin:message", {
+            phone: selectedChat,
+            message: {
+              text: messageData.text,
+              image: result.data.image,
+              sender: "support",
+            },
+          });
+        } else {
+          console.warn("Socket not connected, message saved to DB only");
+        }
+
+        setMessage("");
+        setPreviewImages([]);
+      } else {
+        alert(result.message || "Failed to send message");
+      }
+    } catch (err) {
+      console.error("Error sending message:", err);
+      alert("Failed to send message. Please try again.");
+    } finally {
+      setSending(false);
+    }
+  }, [message, previewImages, selectedChat, formatTime]);
+
+  // Handle typing indicator
+  const handleTyping = useCallback(() => {
+    if (socketRef.current?.connected && selectedChat) {
+      socketRef.current.emit("admin:typing", selectedChat);
+    }
+  }, [selectedChat]);
+
+  // Handle image selection
+  const handleImageSelect = useCallback((e) => {
+    const files = Array.from(e.target.files);
+    if (files.length === 0) return;
+
+    const file = files[0];
+
+    if (!file.type.startsWith("image/")) {
+      alert("Please select an image file");
+      return;
+    }
+
+    if (file.size > MAX_IMAGE_SIZE) {
+      alert("Image size must be less than 5MB");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreviewImages([reader.result]);
+    };
+    reader.readAsDataURL(file);
+  }, []);
+
+  // Remove preview image
+  const removePreviewImage = useCallback((index) => {
+    setPreviewImages((prev) => prev.filter((_, i) => i !== index));
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  }, []);
+
+  // Handle key press
+  const handleKeyPress = useCallback(
+    (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        handleSendMessage();
+      }
+    },
+    [handleSendMessage]
+  );
+
+  // Mark conversation as solved
+  const markAsSolved = useCallback(async () => {
+    if (!selectedChat) return;
+
+    const confirmed = window.confirm("Mark this conversation as solved?");
+    if (!confirmed) return;
+
+    try {
+      const result = await sendSupportMessage(selectedChat, {
+        text: "✅ This conversation has been marked as solved.",
+      });
+
+      if (result.success) {
+        await loadMessages(selectedChat);
+
+        if (socketRef.current?.connected) {
+          socketRef.current.emit("admin:message", {
+            phone: selectedChat,
+            message: {
+              text: "✅ This conversation has been marked as solved.",
+              sender: "support",
+            },
+          });
+        }
+      }
+    } catch (err) {
+      console.error("Error marking as solved:", err);
+    }
+  }, [selectedChat, loadMessages]);
+
+  // Initialize Socket.IO
+  useEffect(() => {
+    socketInitializer();
+
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+      }
+    };
+  }, [socketInitializer]);
+
+  // Handle incoming customer messages
+  useEffect(() => {
+    if (!socketRef.current) return;
+
+    const handleNewMessage = (data) => {
+      const { phone, message: incomingMessage } = data;
+
+      if (selectedChat === phone) {
+        const newMessage = {
+          id: Date.now(),
+          sender: "client",
+          text: incomingMessage.text,
+          image: incomingMessage.image,
+          time: formatTime(new Date()),
+          isRead: false,
+          createdAt: new Date(),
+        };
+
+        setMessages((prev) => [...prev, newMessage]);
+        shouldScrollRef.current = true;
+        markMessagesAsRead(phone);
+      }
+
+      setRefreshConversations((prev) => prev + 1);
+    };
+
+    socketRef.current.off("customer:new-message");
+    socketRef.current.on("customer:new-message", handleNewMessage);
+
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.off("customer:new-message", handleNewMessage);
+      }
+    };
+  }, [selectedChat, formatTime]);
+
+  // Handle customer typing
+  useEffect(() => {
+    if (!socketRef.current) return;
+
+    const handleTyping = (data) => {
+      console.log("Customer typing:", data);
+      if (selectedChat === data.phone) {
+        setCustomerTyping(true);
+
+        if (typingTimeoutRef.current) {
+          clearTimeout(typingTimeoutRef.current);
+        }
+
+        typingTimeoutRef.current = setTimeout(() => {
+          setCustomerTyping(false);
+        }, TYPING_TIMEOUT);
+      }
+    };
+
+    socketRef.current.off("customer:typing");
+    socketRef.current.on("customer:typing", handleTyping);
+
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.off("customer:typing", handleTyping);
+      }
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+    };
+  }, [selectedChat]);
+
+  // Handle receiverId from URL params
+  useEffect(() => {
+    if (receiverId) {
+      openChat(receiverId);
+    } else {
+      setSelectedChat(null);
+      setSelectedChatName("");
+      setMessages([]);
+      setIsMobileChatOpen(false);
+    }
+  }, [receiverId, openChat]);
 
   // Scroll when messages change
   useEffect(() => {
-    // Small delay to ensure images and content are rendered
     const timeoutId = setTimeout(() => {
       scrollToBottom();
-    }, 100);
+    }, SCROLL_DELAY);
 
     return () => clearTimeout(timeoutId);
-  }, [messages, customerTyping]);
+  }, [messages, customerTyping, scrollToBottom]);
 
   // Scroll when images load
   useEffect(() => {
@@ -107,355 +473,9 @@ export default function InboxPage() {
         img.removeEventListener("load", handleImageLoad);
       });
     };
-  }, [messages]);
+  }, [messages, scrollToBottom]);
 
-  // Initialize Socket.IO
-  useEffect(() => {
-    socketInitializer();
-
-    return () => {
-      if (socketRef.current) {
-        socketRef.current.disconnect();
-      }
-    };
-  }, []);
-
-  const socketInitializer = async () => {
-    try {
-      socketRef.current = io("http://localhost:4000", {
-        transports: ["websocket", "polling"],
-        reconnection: true,
-        reconnectionAttempts: 5,
-        reconnectionDelay: 1000,
-      });
-
-      socketRef.current.on("connect", () => {
-        console.log("Admin socket connected:", socketRef.current.id);
-        setSocketConnected(true);
-        socketRef.current.emit("admin:join");
-      });
-
-      socketRef.current.on("connect_error", (error) => {
-        console.error("Socket connection error:", error);
-        setSocketConnected(false);
-      });
-
-      // Listen for customer online status
-      socketRef.current.on("customer:online", (data) => {
-        console.log("Customer online:", data);
-        setOnlineCustomers((prev) => {
-          if (!prev.includes(data.phone)) {
-            return [...prev, data.phone];
-          }
-          return prev;
-        });
-      });
-
-      socketRef.current.on("customer:offline", (data) => {
-        console.log("Customer offline:", data);
-        setOnlineCustomers((prev) =>
-          prev.filter((phone) => phone !== data.phone)
-        );
-      });
-
-      // Get list of online customers when admin joins
-      socketRef.current.on("customers:online", (customers) => {
-        console.log("Online customers:", customers);
-        setOnlineCustomers(customers);
-      });
-
-      socketRef.current.on("disconnect", () => {
-        console.log("Admin socket disconnected");
-        setSocketConnected(false);
-      });
-    } catch (error) {
-      console.error("Socket initialization error:", error);
-    }
-  };
-
-  // Handle incoming customer messages - updates when selectedChat changes
-  useEffect(() => {
-    if (!socketRef.current) return;
-
-    // Remove old listener to prevent duplicates
-    socketRef.current.off("customer:new-message");
-
-    // Attach new listener with current selectedChat value
-    socketRef.current.on("customer:new-message", (data) => {
-      console.log("New message from customer:", data);
-
-      const { phone, message } = data;
-
-      // ONLY update UI if we're currently viewing THIS conversation
-      if (selectedChat === phone) {
-        const newMessage = {
-          id: Date.now(),
-          sender: "client",
-          text: message.text,
-          image: message.image,
-          time: formatTime(new Date()),
-          isRead: false,
-          createdAt: new Date(),
-        };
-
-        setMessages((prev) => [...prev, newMessage]);
-        shouldScrollRef.current = true;
-
-        // Mark as read since admin is viewing
-        markMessagesAsRead(phone);
-      }
-
-      // Always trigger conversation list refresh to show unread indicator
-      setRefreshConversations((prev) => prev + 1);
-    });
-
-    return () => {
-      // Cleanup listener on unmount or when selectedChat changes
-      if (socketRef.current) {
-        socketRef.current.off("customer:new-message");
-      }
-    };
-  }, [selectedChat]);
-
-  // Handle customer typing - updates when selectedChat changes
-  useEffect(() => {
-    if (!socketRef.current) return;
-
-    socketRef.current.off("customer:typing");
-
-    socketRef.current.on("customer:typing", (data) => {
-      console.log("Customer typing:", data);
-      if (selectedChat === data.phone) {
-        setCustomerTyping(true);
-
-        if (typingTimeoutRef.current) {
-          clearTimeout(typingTimeoutRef.current);
-        }
-
-        typingTimeoutRef.current = setTimeout(() => {
-          setCustomerTyping(false);
-        }, 3000);
-      }
-    });
-
-    return () => {
-      if (socketRef.current) {
-        socketRef.current.off("customer:typing");
-      }
-    };
-  }, [selectedChat]);
-
-  useEffect(() => {
-    if (receiverId) {
-      openChat(receiverId);
-    } else {
-      setSelectedChat(null);
-      setSelectedChatName("");
-      setMessages([]);
-      setSelectedConv(null);
-      setIsMobileChatOpen(false);
-    }
-  }, [receiverId]);
-
-  const loadMessages = async (phone) => {
-    setLoading(true);
-    shouldScrollRef.current = false; // Don't animate scroll on initial load
-    try {
-      const result = await getChatMessages(phone);
-
-      if (result.error) {
-        console.error("Error loading messages:", result.message);
-        setMessages([]);
-      } else {
-        setMessages(result.data || []);
-        await markMessagesAsRead(phone);
-
-        // Force scroll to bottom after messages load
-        setTimeout(() => {
-          scrollToBottom(true);
-          shouldScrollRef.current = true; // Re-enable smooth scrolling
-        }, 150);
-      }
-    } catch (err) {
-      console.error("Error loading messages:", err);
-      setMessages([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const openChat = async (phone, name = "") => {
-    setSelectedChat(phone);
-    setSelectedChatName(name || phone);
-    setIsMobileChatOpen(true);
-
-    // Get current path to maintain consistency
-    const currentPath = window.location.pathname;
-    router.push(`${currentPath}?receiverId=${phone}`, { scroll: false });
-
-    await loadMessages(phone);
-
-    // Notify customer that admin is viewing
-    if (socketRef.current && socketRef.current.connected) {
-      console.log("Emitting admin:view-conversation for", phone);
-      socketRef.current.emit("admin:view-conversation", phone);
-    }
-  };
-
-  const closeChat = () => {
-    setIsMobileChatOpen(false);
-    setSelectedChat(null);
-    setSelectedChatName("");
-    setSelectedConv(null);
-    setMessages([]);
-    setCustomerTyping(false);
-
-    // Get current path to maintain consistency
-    const currentPath = window.location.pathname;
-    router.push(currentPath, { scroll: false });
-  };
-
-  const handleSendMessage = async () => {
-    if ((!message.trim() && previewImages.length === 0) || !selectedChat) {
-      return;
-    }
-
-    setSending(true);
-
-    try {
-      const messageData = {
-        text: message.trim(),
-        image: previewImages[0] || null,
-      };
-
-      const result = await sendSupportMessage(selectedChat, messageData);
-
-      if (result.success) {
-        const newMessage = {
-          id: result.data._id,
-          sender: "admin",
-          text: messageData.text,
-          image: result.data.image,
-          time: formatTime(new Date()),
-          isRead: false,
-          createdAt: new Date(),
-        };
-
-        setMessages((prev) => [...prev, newMessage]);
-        shouldScrollRef.current = true;
-
-        // Emit message to customer via Socket.IO
-        if (socketRef.current && socketRef.current.connected) {
-          console.log("Emitting admin message to customer:", selectedChat);
-          socketRef.current.emit("admin:message", {
-            phone: selectedChat,
-            message: {
-              text: messageData.text,
-              image: result.data.image,
-              sender: "support",
-            },
-          });
-        } else {
-          console.warn("Socket not connected, message saved to DB only");
-        }
-
-        setMessage("");
-        setPreviewImages([]);
-      } else {
-        alert(result.message || "Failed to send message");
-      }
-    } catch (err) {
-      console.error("Error sending message:", err);
-      alert("Failed to send message. Please try again.");
-    } finally {
-      setSending(false);
-    }
-  };
-
-  const handleTyping = () => {
-    if (socketRef.current && socketRef.current.connected && selectedChat) {
-      socketRef.current.emit("admin:typing", selectedChat);
-    }
-  };
-
-  const handleImageSelect = (e) => {
-    const files = Array.from(e.target.files);
-
-    if (files.length === 0) return;
-
-    const file = files[0];
-
-    if (!file.type.startsWith("image/")) {
-      alert("Please select an image file");
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      alert("Image size must be less than 5MB");
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setPreviewImages([reader.result]);
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const removePreviewImage = (index) => {
-    setPreviewImages((prev) => prev.filter((_, i) => i !== index));
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  };
-
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
-    }
-  };
-
-  const markAsSolved = async () => {
-    if (!selectedChat) return;
-
-    const confirmed = confirm("Mark this conversation as solved?");
-    if (!confirmed) return;
-
-    try {
-      const result = await sendSupportMessage(selectedChat, {
-        text: "✅ This conversation has been marked as solved.",
-      });
-
-      if (result.success) {
-        await loadMessages(selectedChat);
-
-        // Notify customer via Socket.IO
-        if (socketRef.current && socketRef.current.connected) {
-          socketRef.current.emit("admin:message", {
-            phone: selectedChat,
-            message: {
-              text: "✅ This conversation has been marked as solved.",
-              sender: "support",
-            },
-          });
-        }
-      }
-    } catch (err) {
-      console.error("Error marking as solved:", err);
-    }
-  };
-
-  const formatTime = (date) => {
-    if (!date) return "";
-    const d = new Date(date);
-    return d.toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    });
-  };
-
+  // Check if customer is online
   const isCustomerOnline =
     selectedChat && onlineCustomers.includes(selectedChat);
 
@@ -477,11 +497,13 @@ export default function InboxPage() {
         >
           {selectedChat ? (
             <>
+              {/* Chat Header */}
               <div className="bg-[#000] border-b border-zinc-900 px-5 py-4 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <button
                     onClick={closeChat}
                     className="md:hidden mr-1 p-2 hover:bg-zinc-900 rounded-lg transition-colors"
+                    aria-label="Close chat"
                   >
                     <ArrowLeft size={20} className="text-white" />
                   </button>
@@ -490,7 +512,10 @@ export default function InboxPage() {
                       {selectedChatName.charAt(0).toUpperCase()}
                     </div>
                     {isCustomerOnline && (
-                      <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-black rounded-full"></div>
+                      <div
+                        className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-black rounded-full"
+                        aria-label="Online"
+                      />
                     )}
                   </div>
                   <div>
@@ -510,16 +535,21 @@ export default function InboxPage() {
                   <button
                     onClick={markAsSolved}
                     className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg transition-colors text-white text-sm font-medium flex items-center gap-2"
+                    aria-label="Mark as solved"
                   >
                     <CheckCircle size={16} />
                     Solved
                   </button>
-                  <button className="p-2.5 hover:bg-zinc-900 rounded-lg transition-colors">
+                  <button
+                    className="p-2.5 hover:bg-zinc-900 rounded-lg transition-colors"
+                    aria-label="More options"
+                  >
                     <MoreVertical size={18} className="text-zinc-400" />
                   </button>
                 </div>
               </div>
 
+              {/* Messages Container */}
               <div
                 ref={messagesContainerRef}
                 className="flex-1 overflow-y-auto p-5 space-y-4 bg-[#000]"
@@ -572,15 +602,15 @@ export default function InboxPage() {
                             }`}
                           >
                             {msg.image && (
-                              <img
+                              <ReusableImage
                                 src={msg.image}
-                                alt="Attachment"
+                                alt="Message attachment"
                                 className="rounded-lg mb-2 max-w-full h-auto"
                                 loading="lazy"
                               />
                             )}
                             {msg.text && (
-                              <p className="text-[14px] leading-relaxed">
+                              <p className="text-[14px] leading-relaxed whitespace-pre-wrap break-words">
                                 {msg.text}
                               </p>
                             )}
@@ -599,18 +629,13 @@ export default function InboxPage() {
                         </div>
                         <div className="bg-zinc-950 text-white rounded-2xl rounded-bl-sm border border-zinc-900 px-4 py-2.5">
                           <div className="flex gap-1">
-                            <div
-                              className="w-2 h-2 bg-white rounded-full animate-bounce"
-                              style={{ animationDelay: "0ms" }}
-                            ></div>
-                            <div
-                              className="w-2 h-2 bg-white rounded-full animate-bounce"
-                              style={{ animationDelay: "150ms" }}
-                            ></div>
-                            <div
-                              className="w-2 h-2 bg-white rounded-full animate-bounce"
-                              style={{ animationDelay: "300ms" }}
-                            ></div>
+                            {[0, 150, 300].map((delay, index) => (
+                              <div
+                                key={index}
+                                className="w-2 h-2 bg-white rounded-full animate-bounce"
+                                style={{ animationDelay: `${delay}ms` }}
+                              />
+                            ))}
                           </div>
                         </div>
                       </div>
@@ -621,19 +646,23 @@ export default function InboxPage() {
                 )}
               </div>
 
+              {/* Preview Images */}
               {previewImages.length > 0 && (
                 <div className="px-5 py-3 border-t border-zinc-900 bg-[#000]">
                   <div className="flex gap-2 overflow-x-auto">
                     {previewImages.map((img, index) => (
                       <div key={index} className="relative flex-shrink-0">
-                        <img
+                        <ReusableImage
                           src={img}
+                          width={80}
+                          height={80}
                           alt={`Preview ${index + 1}`}
                           className="w-20 h-20 object-cover rounded-lg border border-zinc-800"
                         />
                         <button
                           onClick={() => removePreviewImage(index)}
                           className="absolute -top-2 -right-2 p-1 bg-red-600 hover:bg-red-700 rounded-full transition-colors"
+                          aria-label="Remove image"
                         >
                           <X size={14} className="text-white" />
                         </button>
@@ -643,6 +672,7 @@ export default function InboxPage() {
                 </div>
               )}
 
+              {/* Message Input */}
               <div className="bg-[#000] border-t border-zinc-900 p-4">
                 <div className="flex items-end gap-2">
                   <input
@@ -651,13 +681,15 @@ export default function InboxPage() {
                     accept="image/*"
                     onChange={handleImageSelect}
                     className="hidden"
+                    aria-label="Upload image"
                   />
                   <button
                     onClick={() => fileInputRef.current?.click()}
                     disabled={sending}
                     className="p-3 hover:bg-zinc-900 rounded-xl transition-colors flex-shrink-0 disabled:opacity-50"
+                    aria-label="Attach image"
                   >
-                    <Image size={20} className="text-zinc-500" />
+                    <ImageIcon size={20} className="text-zinc-500" />
                   </button>
                   <div className="flex-1 bg-zinc-950 border border-zinc-900 rounded-2xl overflow-hidden focus-within:border-zinc-800 transition-colors">
                     <textarea
@@ -668,9 +700,10 @@ export default function InboxPage() {
                       }}
                       onKeyDown={handleKeyPress}
                       placeholder="Type a message..."
-                      rows="1"
+                      rows={1}
                       disabled={sending}
                       className="w-full bg-transparent text-white px-4 py-3 resize-none focus:outline-none placeholder:text-zinc-600 text-[14px] disabled:opacity-50"
+                      aria-label="Message input"
                     />
                   </div>
                   <button
@@ -679,6 +712,7 @@ export default function InboxPage() {
                       sending || (!message.trim() && previewImages.length === 0)
                     }
                     className="p-3 bg-white hover:bg-zinc-200 rounded-xl transition-colors flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                    aria-label="Send message"
                   >
                     {sending ? (
                       <Loader2 size={20} className="text-black animate-spin" />
@@ -698,6 +732,7 @@ export default function InboxPage() {
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
+                    aria-hidden="true"
                   >
                     <path
                       strokeLinecap="round"

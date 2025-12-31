@@ -37,7 +37,7 @@ export default function LoginModalContent() {
           {/* Footer Text */}
           <div className="mt-8 text-center">
             <p className="text-gray-500 text-sm">
-              Don't have an account?{" "}
+              Don&apos;t have an account?{" "}
               <Link
                 href="/register"
                 className="text-white hover:text-gray-300 font-medium transition-colors hover:underline"

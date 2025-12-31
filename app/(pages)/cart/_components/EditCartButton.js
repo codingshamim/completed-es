@@ -23,7 +23,7 @@ export default function EditCartButton({
     });
   };
   return (
-    <button onClick={handleEdit} className="btn">
+    <button onClick={handleEdit} className="new-btn">
       Edit
     </button>
   );

@@ -53,7 +53,7 @@ export default function DeleteCartButton({ cartId, itemName = "item" }) {
     <>
       <button
         onClick={handleDeleteClick}
-        className="variable-btn bg-red-600 hover:bg-red-400 transition-colors duration-200"
+        className="new-variable-btn bg-red-600 hover:bg-red-400 transition-colors duration-200"
       >
         Delete
       </button>

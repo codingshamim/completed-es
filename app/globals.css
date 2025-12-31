@@ -18,7 +18,7 @@
 }
 
 .bangla-font {
-  font-family: "Noto Sans Bengali", sans-serif;
+  font-family: "Noto Sans Bengali", sans-serif !important;
 }
 .logo-es {
   font-family: "Asimovian", sans-serif;

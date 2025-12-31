@@ -24,7 +24,7 @@ export default function ReusableImage({
   height = 1200,
   className = "w-full md:w-[40%]",
   imageClassName = "w-full h-full object-cover",
-  containerClassName = "block relative overflow-hidden  bg-gray-900 shadow-2xl hover:shadow-white/10 transition-all duration-500 group-hover:scale-[1.02]",
+  containerClassName = "block relative overflow-hidden  bg-secondary shadow-2xl hover:shadow-white/10 transition-all duration-500 group-hover:scale-[1.02]",
   aspectRatio = "aspect-square",
   priority = true,
   quality = 100,

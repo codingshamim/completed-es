@@ -38,7 +38,7 @@ export function PaymentMethod({ paymentMethod, paymentStatus, transactionId }) {
       <div className="text-gray-300">
         <div className="flex items-center space-x-2 mb-2">
           <div
-            className={`w-8 h-6 ${paymentIcon.color} rounded flex items-center justify-center text-white text-xs font-bold`}
+            className={`w-8 h-6 ${paymentIcon.color} rounded flex items-center justify-center text-white text-xs font-bold bangla-font`}
           >
             {paymentIcon.text}
           </div>

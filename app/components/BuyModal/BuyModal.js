@@ -178,8 +178,7 @@ const BuyModal = React.memo(function BuyModal() {
           </h2>
           <button
             onClick={handleClose}
-            className="p-2 hover:bg-gray-800 rounded-full transition-colors duration-200"
-            aria-label="Close modal"
+            className="p-2 hover:bg-secondary rounded-full transition-colors duration-200"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -366,7 +365,7 @@ const BuyModal = React.memo(function BuyModal() {
                 </h3>
                 <div className="flex items-center gap-3">
                   <button
-                    className="w-10 h-10 bg-black hover:bg-gray-800 border border-gray-600 rounded-lg flex items-center justify-center text-white font-semibold transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-10 h-10 bg-black hover:bg-secondary border border-gray-600 hover:border-transparent rounded-lg flex items-center justify-center text-white font-semibold transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     onClick={decrement}
                     disabled={count <= 1}
                   >
@@ -381,7 +380,7 @@ const BuyModal = React.memo(function BuyModal() {
                     />
                   </div>
                   <button
-                    className="w-10 h-10 bg-black hover:bg-gray-800 border border-gray-600 rounded-lg flex items-center justify-center text-white font-semibold transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-10 h-10 bg-black hover:bg-secondary border border-gray-600 hover:border-transparent rounded-lg flex items-center justify-center text-white font-semibold transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     onClick={increament}
                     disabled={count >= (activeSizeStock || common?.stock)}
                   >
@@ -406,7 +405,7 @@ const BuyModal = React.memo(function BuyModal() {
                             ? "bg-white border-white text-black shadow-lg"
                             : size.stock === 0
                             ? "bg-gray-900 border-gray-700 text-gray-600 cursor-not-allowed opacity-50"
-                            : "bg-black border-gray-600 text-gray-300 hover:bg-gray-800 hover:border-gray-500"
+                            : "bg-black border-gray-600 text-gray-300 hover:bg-secondary hover:border-transparent"
                         }`}
                         onClick={() => setActiveSize(size)}
                       >

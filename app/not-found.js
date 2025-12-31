@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 // app/not-found.js
-import { Home, ArrowLeft, Search, Mail } from "lucide-react";
+import { Home, Search, Mail } from "lucide-react";
 import Link from "next/link";
 
 export const metadata = {
@@ -44,17 +44,10 @@ export default function NotFound() {
             <Home className="w-5 h-5" />
             Go Home
           </Link>
-
-          <Link
-            href="/"
-            className="flex items-center gap-2 border border-white/20 px-6 py-3 rounded-lg font-medium hover:bg-white/10 transition-colors min-w-[140px]"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            Go Back
-          </Link>
         </div>
 
-        {/* Additional Actions */}
+        {/* Additional Actions - Only show if these routes exist */}
+        {/* Uncomment these if you have these routes in your app
         <div className="flex flex-col sm:flex-row gap-6 justify-center items-center text-white/60">
           <Link
             href="/search"
@@ -74,8 +67,10 @@ export default function NotFound() {
             <span className="text-sm">Contact support</span>
           </Link>
         </div>
+        */}
 
-        {/* Popular Links */}
+        {/* Popular Links - Only include routes that actually exist in your app */}
+        {/* Uncomment and modify based on your actual routes
         <div className="mt-16 pt-8 border-t border-white/10">
           <h3 className="text-sm font-medium text-white/60 mb-4 uppercase tracking-wide">
             Popular Pages
@@ -93,26 +88,9 @@ export default function NotFound() {
             >
               About Us
             </Link>
-            <Link
-              href="/contact"
-              className="text-white/70 hover:text-white transition-colors text-sm"
-            >
-              Contact
-            </Link>
-            <Link
-              href="/support"
-              className="text-white/70 hover:text-white transition-colors text-sm"
-            >
-              Support
-            </Link>
-            <Link
-              href="/blog"
-              className="text-white/70 hover:text-white transition-colors text-sm"
-            >
-              Blog
-            </Link>
           </div>
         </div>
+        */}
 
         {/* Brand Footer */}
         <div className="mt-12 pt-8 border-t border-white/10">
